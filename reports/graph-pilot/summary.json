@@ -1,0 +1,498 @@
+{
+  "models": {
+    "graph_gru": {
+      "horizons": [
+        {
+          "mae": {
+            "mean": 7.166137713936206,
+            "sd": null
+          },
+          "minutes": 5,
+          "rmse": {
+            "mean": 14.634854985009985,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.100600027427596,
+            "sd": null
+          },
+          "minutes": 10,
+          "rmse": {
+            "mean": 14.557789503303114,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.2605300386966265,
+            "sd": null
+          },
+          "minutes": 15,
+          "rmse": {
+            "mean": 14.74105183917432,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.302218018041705,
+            "sd": null
+          },
+          "minutes": 20,
+          "rmse": {
+            "mean": 14.592834238977847,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.2122758719987825,
+            "sd": null
+          },
+          "minutes": 25,
+          "rmse": {
+            "mean": 14.633578361324707,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.322411593516712,
+            "sd": null
+          },
+          "minutes": 30,
+          "rmse": {
+            "mean": 14.802443222495258,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.230425110888209,
+            "sd": null
+          },
+          "minutes": 35,
+          "rmse": {
+            "mean": 14.576186993793446,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.232744679721161,
+            "sd": null
+          },
+          "minutes": 40,
+          "rmse": {
+            "mean": 14.441982914865577,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.415963493493078,
+            "sd": null
+          },
+          "minutes": 45,
+          "rmse": {
+            "mean": 14.609042624984617,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.278141946026725,
+            "sd": null
+          },
+          "minutes": 50,
+          "rmse": {
+            "mean": 14.560693456500205,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.231709432166063,
+            "sd": null
+          },
+          "minutes": 55,
+          "rmse": {
+            "mean": 14.43067354520129,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.584335991165094,
+            "sd": null
+          },
+          "minutes": 60,
+          "rmse": {
+            "mean": 14.426017572737463,
+            "sd": null
+          }
+        }
+      ],
+      "inference_ms_per_window": {
+        "mean": 0.025743750001083754,
+        "sd": null
+      },
+      "mae": {
+        "mean": 7.278309385802849,
+        "sd": null
+      },
+      "n": 1,
+      "parameter_count": 15760,
+      "peak_process_mib": {
+        "mean": 319.89453125,
+        "sd": null
+      },
+      "rmse": {
+        "mean": 14.584148553415467,
+        "sd": null
+      },
+      "seeds": [
+        42
+      ],
+      "train_seconds": {
+        "mean": 0.2697410000000673,
+        "sd": null
+      }
+    },
+    "gru": {
+      "horizons": [
+        {
+          "mae": {
+            "mean": 6.511667874602597,
+            "sd": null
+          },
+          "minutes": 5,
+          "rmse": {
+            "mean": 12.588968768067241,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 6.795352693024777,
+            "sd": null
+          },
+          "minutes": 10,
+          "rmse": {
+            "mean": 13.104341372920581,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 6.90599128519413,
+            "sd": null
+          },
+          "minutes": 15,
+          "rmse": {
+            "mean": 13.086250152741714,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 6.914138490862663,
+            "sd": null
+          },
+          "minutes": 20,
+          "rmse": {
+            "mean": 13.60861545814311,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 6.825686123655541,
+            "sd": null
+          },
+          "minutes": 25,
+          "rmse": {
+            "mean": 13.02265789575307,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.240024479936768,
+            "sd": null
+          },
+          "minutes": 30,
+          "rmse": {
+            "mean": 13.689135871459321,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.10204401497109,
+            "sd": null
+          },
+          "minutes": 35,
+          "rmse": {
+            "mean": 13.840508541593275,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 6.955548053808823,
+            "sd": null
+          },
+          "minutes": 40,
+          "rmse": {
+            "mean": 13.381326741676727,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.116129399573553,
+            "sd": null
+          },
+          "minutes": 45,
+          "rmse": {
+            "mean": 13.224633679937405,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.147943929302242,
+            "sd": null
+          },
+          "minutes": 50,
+          "rmse": {
+            "mean": 13.514922047923074,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.186796755677386,
+            "sd": null
+          },
+          "minutes": 55,
+          "rmse": {
+            "mean": 13.557025506646365,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 7.247852091552221,
+            "sd": null
+          },
+          "minutes": 60,
+          "rmse": {
+            "mean": 13.734011441594394,
+            "sd": null
+          }
+        }
+      ],
+      "inference_ms_per_window": {
+        "mean": 0.012682812503328478,
+        "sd": null
+      },
+      "mae": {
+        "mean": 6.996139981943253,
+        "sd": null
+      },
+      "n": 1,
+      "parameter_count": 11136,
+      "peak_process_mib": {
+        "mean": 319.9375,
+        "sd": null
+      },
+      "rmse": {
+        "mean": 13.367745435764492,
+        "sd": null
+      },
+      "seeds": [
+        42
+      ],
+      "train_seconds": {
+        "mean": 0.12933539999994537,
+        "sd": null
+      }
+    },
+    "persistence": {
+      "horizons": [
+        {
+          "mae": {
+            "mean": 2.937096473480202,
+            "sd": null
+          },
+          "minutes": 5,
+          "rmse": {
+            "mean": 4.883706401291544,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 3.3892023715772646,
+            "sd": null
+          },
+          "minutes": 10,
+          "rmse": {
+            "mean": 6.254152185196035,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 3.8591455473645175,
+            "sd": null
+          },
+          "minutes": 15,
+          "rmse": {
+            "mean": 7.448959883461912,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 4.19219244007159,
+            "sd": null
+          },
+          "minutes": 20,
+          "rmse": {
+            "mean": 8.348963092364635,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 4.489181683937826,
+            "sd": null
+          },
+          "minutes": 25,
+          "rmse": {
+            "mean": 9.071366807029726,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 4.779601231039108,
+            "sd": null
+          },
+          "minutes": 30,
+          "rmse": {
+            "mean": 9.694285566406773,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 5.111823931045729,
+            "sd": null
+          },
+          "minutes": 35,
+          "rmse": {
+            "mean": 10.291669603822676,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 5.382729974189517,
+            "sd": null
+          },
+          "minutes": 40,
+          "rmse": {
+            "mean": 10.874449746957,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 5.706635907977414,
+            "sd": null
+          },
+          "minutes": 45,
+          "rmse": {
+            "mean": 11.484518425718093,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 6.074251047280581,
+            "sd": null
+          },
+          "minutes": 50,
+          "rmse": {
+            "mean": 12.087074275415896,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 6.345149682513974,
+            "sd": null
+          },
+          "minutes": 55,
+          "rmse": {
+            "mean": 12.631330071203502,
+            "sd": null
+          }
+        },
+        {
+          "mae": {
+            "mean": 6.713604321953846,
+            "sd": null
+          },
+          "minutes": 60,
+          "rmse": {
+            "mean": 13.185218569457646,
+            "sd": null
+          }
+        }
+      ],
+      "inference_ms_per_window": {
+        "mean": 9.375000331601768e-05,
+        "sd": null
+      },
+      "mae": {
+        "mean": 4.9177162293638315,
+        "sd": null
+      },
+      "n": 1,
+      "parameter_count": 0,
+      "peak_process_mib": {
+        "mean": 319.34765625,
+        "sd": null
+      },
+      "rmse": {
+        "mean": 10.005401303344128,
+        "sd": null
+      },
+      "seeds": [
+        42
+      ],
+      "train_seconds": {
+        "mean": 0.0,
+        "sd": null
+      }
+    }
+  },
+  "paired_mae": {
+    "graph_gru": {
+      "differences": [
+        0.2821694038595961
+      ],
+      "mean": 0.2821694038595961,
+      "metric": "MAE difference versus GRU; negative favors candidate",
+      "sd": null
+    }
+  },
+  "uncertainty": "Sample SD across training seeds; common fixed test block"
+}

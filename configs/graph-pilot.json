@@ -1,0 +1,1 @@
+{"sensors":16,"rows":2016,"history":12,"horizon":12,"hidden":32,"embedding":4,"batch_size":64,"epochs":1,"lr":0.001,"seeds":[42],"threads":4,"threshold":0.1,"models":["gru","graph_gru"]}

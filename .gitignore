@@ -12,3 +12,5 @@ runs/*
 *.fab
 *.npz
 .flower/
+
+data/topology/

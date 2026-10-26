@@ -1,0 +1,479 @@
+[
+  {
+    "best_epoch": null,
+    "history": [],
+    "inference": {
+      "batch_size": 64,
+      "median_batch_seconds": 6.000000212225132e-06,
+      "median_ms_per_window": 9.375000331601768e-05,
+      "repetitions": 30,
+      "scope": "Normalized forward pass only; fixed first test batch; excludes loader and metrics",
+      "warmups": 5
+    },
+    "model": "persistence",
+    "parameter_count": 0,
+    "peak_memory": {
+      "bytes": 334860288,
+      "method": "Windows PeakWorkingSetSize; whole fresh trial process"
+    },
+    "seed": 42,
+    "state_sha256": null,
+    "test": {
+      "mae": 4.9177162293638315,
+      "per_horizon": [
+        {
+          "count": 5428,
+          "mae": 2.937096473480202,
+          "minutes": 5,
+          "rmse": 4.883706401291544
+        },
+        {
+          "count": 5429,
+          "mae": 3.3892023715772646,
+          "minutes": 10,
+          "rmse": 6.254152185196035
+        },
+        {
+          "count": 5430,
+          "mae": 3.8591455473645175,
+          "minutes": 15,
+          "rmse": 7.448959883461912
+        },
+        {
+          "count": 5431,
+          "mae": 4.19219244007159,
+          "minutes": 20,
+          "rmse": 8.348963092364635
+        },
+        {
+          "count": 5432,
+          "mae": 4.489181683937826,
+          "minutes": 25,
+          "rmse": 9.071366807029726
+        },
+        {
+          "count": 5433,
+          "mae": 4.779601231039108,
+          "minutes": 30,
+          "rmse": 9.694285566406773
+        },
+        {
+          "count": 5434,
+          "mae": 5.111823931045729,
+          "minutes": 35,
+          "rmse": 10.291669603822676
+        },
+        {
+          "count": 5436,
+          "mae": 5.382729974189517,
+          "minutes": 40,
+          "rmse": 10.874449746957
+        },
+        {
+          "count": 5438,
+          "mae": 5.706635907977414,
+          "minutes": 45,
+          "rmse": 11.484518425718093
+        },
+        {
+          "count": 5454,
+          "mae": 6.074251047280581,
+          "minutes": 50,
+          "rmse": 12.087074275415896
+        },
+        {
+          "count": 5470,
+          "mae": 6.345149682513974,
+          "minutes": 55,
+          "rmse": 12.631330071203502
+        },
+        {
+          "count": 5472,
+          "mae": 6.713604321953846,
+          "minutes": 60,
+          "rmse": 13.185218569457646
+        }
+      ],
+      "rmse": 10.005401303344128
+    },
+    "test_evaluation_seconds": 0.008383799999137409,
+    "train_seconds": 0.0,
+    "validation_seconds": 0.0
+  },
+  {
+    "best_epoch": 1,
+    "history": [
+      {
+        "epoch": 1,
+        "observed_targets": 258795,
+        "optimizer_steps": 22,
+        "train_normalized_mae": 0.5310330250431621,
+        "train_seconds": 0.12933539999994537,
+        "validation": {
+          "mae": 3.00184545358192,
+          "per_horizon": [
+            {
+              "count": 2729,
+              "mae": 2.945391781123054,
+              "minutes": 5,
+              "rmse": 4.3333397807836445
+            },
+            {
+              "count": 2730,
+              "mae": 2.9943421961187004,
+              "minutes": 10,
+              "rmse": 4.381493269061053
+            },
+            {
+              "count": 2731,
+              "mae": 2.942329370421134,
+              "minutes": 15,
+              "rmse": 4.121969556425188
+            },
+            {
+              "count": 2732,
+              "mae": 2.9330015713089903,
+              "minutes": 20,
+              "rmse": 4.323403186003594
+            },
+            {
+              "count": 2732,
+              "mae": 2.886430981916704,
+              "minutes": 25,
+              "rmse": 4.18874165540652
+            },
+            {
+              "count": 2732,
+              "mae": 3.1135216932171086,
+              "minutes": 30,
+              "rmse": 4.505249695924238
+            },
+            {
+              "count": 2732,
+              "mae": 3.06614250948279,
+              "minutes": 35,
+              "rmse": 4.516227497221204
+            },
+            {
+              "count": 2732,
+              "mae": 2.913996185425609,
+              "minutes": 40,
+              "rmse": 4.291686212052774
+            },
+            {
+              "count": 2732,
+              "mae": 2.9126519793821815,
+              "minutes": 45,
+              "rmse": 4.182660197922868
+            },
+            {
+              "count": 2733,
+              "mae": 3.1222681561277064,
+              "minutes": 50,
+              "rmse": 4.41618828962667
+            },
+            {
+              "count": 2718,
+              "mae": 3.1007116821603447,
+              "minutes": 55,
+              "rmse": 4.4139051810344965
+            },
+            {
+              "count": 2702,
+              "mae": 3.092728608454006,
+              "minutes": 60,
+              "rmse": 4.363019150966391
+            }
+          ],
+          "rmse": 4.338070238642459
+        },
+        "validation_seconds": 0.0067049999997834675
+      }
+    ],
+    "inference": {
+      "batch_size": 64,
+      "median_batch_seconds": 0.0008117000002130226,
+      "median_ms_per_window": 0.012682812503328478,
+      "repetitions": 30,
+      "scope": "Normalized forward pass only; fixed first test batch; excludes loader and metrics",
+      "warmups": 5
+    },
+    "model": "gru",
+    "parameter_count": 11136,
+    "peak_memory": {
+      "bytes": 335478784,
+      "method": "Windows PeakWorkingSetSize; whole fresh trial process"
+    },
+    "seed": 42,
+    "state_sha256": "d293dfbcac1976aa6227635fbcad415a1b419213d6c5f24c941669f69c738550",
+    "test": {
+      "mae": 6.996139981943253,
+      "per_horizon": [
+        {
+          "count": 5428,
+          "mae": 6.511667874602597,
+          "minutes": 5,
+          "rmse": 12.588968768067241
+        },
+        {
+          "count": 5429,
+          "mae": 6.795352693024777,
+          "minutes": 10,
+          "rmse": 13.104341372920581
+        },
+        {
+          "count": 5430,
+          "mae": 6.90599128519413,
+          "minutes": 15,
+          "rmse": 13.086250152741714
+        },
+        {
+          "count": 5431,
+          "mae": 6.914138490862663,
+          "minutes": 20,
+          "rmse": 13.60861545814311
+        },
+        {
+          "count": 5432,
+          "mae": 6.825686123655541,
+          "minutes": 25,
+          "rmse": 13.02265789575307
+        },
+        {
+          "count": 5433,
+          "mae": 7.240024479936768,
+          "minutes": 30,
+          "rmse": 13.689135871459321
+        },
+        {
+          "count": 5434,
+          "mae": 7.10204401497109,
+          "minutes": 35,
+          "rmse": 13.840508541593275
+        },
+        {
+          "count": 5436,
+          "mae": 6.955548053808823,
+          "minutes": 40,
+          "rmse": 13.381326741676727
+        },
+        {
+          "count": 5438,
+          "mae": 7.116129399573553,
+          "minutes": 45,
+          "rmse": 13.224633679937405
+        },
+        {
+          "count": 5454,
+          "mae": 7.147943929302242,
+          "minutes": 50,
+          "rmse": 13.514922047923074
+        },
+        {
+          "count": 5470,
+          "mae": 7.186796755677386,
+          "minutes": 55,
+          "rmse": 13.557025506646365
+        },
+        {
+          "count": 5472,
+          "mae": 7.247852091552221,
+          "minutes": 60,
+          "rmse": 13.734011441594394
+        }
+      ],
+      "rmse": 13.367745435764492
+    },
+    "test_evaluation_seconds": 0.012074199999915436,
+    "train_seconds": 0.12933539999994537,
+    "validation_seconds": 0.0067049999997834675
+  },
+  {
+    "best_epoch": 1,
+    "history": [
+      {
+        "epoch": 1,
+        "observed_targets": 258795,
+        "optimizer_steps": 22,
+        "train_normalized_mae": 0.5348972078654531,
+        "train_seconds": 0.2697410000000673,
+        "validation": {
+          "mae": 3.1363093149940604,
+          "per_horizon": [
+            {
+              "count": 2729,
+              "mae": 3.1315650087260813,
+              "minutes": 5,
+              "rmse": 4.62819250149022
+            },
+            {
+              "count": 2730,
+              "mae": 2.9325931087955013,
+              "minutes": 10,
+              "rmse": 4.442399533154733
+            },
+            {
+              "count": 2731,
+              "mae": 3.0702657179271986,
+              "minutes": 15,
+              "rmse": 4.559488831224565
+            },
+            {
+              "count": 2732,
+              "mae": 3.1329191020781266,
+              "minutes": 20,
+              "rmse": 4.5971963045668645
+            },
+            {
+              "count": 2732,
+              "mae": 3.1168570218288707,
+              "minutes": 25,
+              "rmse": 4.587864968790897
+            },
+            {
+              "count": 2732,
+              "mae": 3.2196047141995296,
+              "minutes": 30,
+              "rmse": 4.707019249746597
+            },
+            {
+              "count": 2732,
+              "mae": 3.0672752413882343,
+              "minutes": 35,
+              "rmse": 4.497207645176903
+            },
+            {
+              "count": 2732,
+              "mae": 3.0170744858234904,
+              "minutes": 40,
+              "rmse": 4.43886687992124
+            },
+            {
+              "count": 2732,
+              "mae": 3.344975224351115,
+              "minutes": 45,
+              "rmse": 4.801189258757003
+            },
+            {
+              "count": 2733,
+              "mae": 3.097233845905816,
+              "minutes": 50,
+              "rmse": 4.567105211274571
+            },
+            {
+              "count": 2718,
+              "mae": 3.118032699652329,
+              "minutes": 55,
+              "rmse": 4.556880716904888
+            },
+            {
+              "count": 2702,
+              "mae": 3.389841768672782,
+              "minutes": 60,
+              "rmse": 4.771700238555033
+            }
+          ],
+          "rmse": 4.5974635599379265
+        },
+        "validation_seconds": 0.014132700000118348
+      }
+    ],
+    "inference": {
+      "batch_size": 64,
+      "median_batch_seconds": 0.0016476000000693602,
+      "median_ms_per_window": 0.025743750001083754,
+      "repetitions": 30,
+      "scope": "Normalized forward pass only; fixed first test batch; excludes loader and metrics",
+      "warmups": 5
+    },
+    "model": "graph_gru",
+    "parameter_count": 15760,
+    "peak_memory": {
+      "bytes": 335433728,
+      "method": "Windows PeakWorkingSetSize; whole fresh trial process"
+    },
+    "seed": 42,
+    "state_sha256": "74764b2a675785e51a0f2fffd27fda852c4377d9e0cc080696621cd66661c9cb",
+    "test": {
+      "mae": 7.278309385802849,
+      "per_horizon": [
+        {
+          "count": 5428,
+          "mae": 7.166137713936206,
+          "minutes": 5,
+          "rmse": 14.634854985009985
+        },
+        {
+          "count": 5429,
+          "mae": 7.100600027427596,
+          "minutes": 10,
+          "rmse": 14.557789503303114
+        },
+        {
+          "count": 5430,
+          "mae": 7.2605300386966265,
+          "minutes": 15,
+          "rmse": 14.74105183917432
+        },
+        {
+          "count": 5431,
+          "mae": 7.302218018041705,
+          "minutes": 20,
+          "rmse": 14.592834238977847
+        },
+        {
+          "count": 5432,
+          "mae": 7.2122758719987825,
+          "minutes": 25,
+          "rmse": 14.633578361324707
+        },
+        {
+          "count": 5433,
+          "mae": 7.322411593516712,
+          "minutes": 30,
+          "rmse": 14.802443222495258
+        },
+        {
+          "count": 5434,
+          "mae": 7.230425110888209,
+          "minutes": 35,
+          "rmse": 14.576186993793446
+        },
+        {
+          "count": 5436,
+          "mae": 7.232744679721161,
+          "minutes": 40,
+          "rmse": 14.441982914865577
+        },
+        {
+          "count": 5438,
+          "mae": 7.415963493493078,
+          "minutes": 45,
+          "rmse": 14.609042624984617
+        },
+        {
+          "count": 5454,
+          "mae": 7.278141946026725,
+          "minutes": 50,
+          "rmse": 14.560693456500205
+        },
+        {
+          "count": 5470,
+          "mae": 7.231709432166063,
+          "minutes": 55,
+          "rmse": 14.43067354520129
+        },
+        {
+          "count": 5472,
+          "mae": 7.584335991165094,
+          "minutes": 60,
+          "rmse": 14.426017572737463
+        }
+      ],
+      "rmse": 14.584148553415467
+    },
+    "test_evaluation_seconds": 0.02320400000007794,
+    "train_seconds": 0.2697410000000673,
+    "validation_seconds": 0.014132700000118348
+  }
+]
