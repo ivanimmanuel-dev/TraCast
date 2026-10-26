@@ -45,16 +45,16 @@ The smoke GRU performs worse than persistence after two epochs. The full-date-ra
 
 The 16-sensor GRU contains 11,136 trainable parameters. Sensor IDs are listed in the manifests and scaler reports.
 
-## Commands executed
+## Commands to reproduce
 
 From the TraCast repository directory, using the development environment:
 
 ```powershell
-..\..\work\venv\Scripts\python.exe -m pytest -q -W error
-..\..\work\venv\Scripts\python.exe -m tracast.cli inspect --out runs/inspection-verified
-..\..\work\venv\Scripts\python.exe -m tracast.cli run --config configs/smoke.json --out runs/smoke-verified
-..\..\work\venv\Scripts\python.exe -m tracast.cli run --config configs/smoke.json --out runs/smoke-repeat
-..\..\work\venv\Scripts\python.exe -m tracast.cli run --config configs/subset.json --out runs/subset
+..\..\work\flwr-venv\Scripts\python.exe -m pytest -q -W error
+..\..\work\flwr-venv\Scripts\python.exe -m tracast.cli inspect --out runs/inspection-verified
+..\..\work\flwr-venv\Scripts\python.exe -m tracast.cli run --config configs/smoke.json --out runs/smoke-verified
+..\..\work\flwr-venv\Scripts\python.exe -m tracast.cli run --config configs/smoke.json --out runs/smoke-repeat
+..\..\work\flwr-venv\Scripts\python.exe -m tracast.cli run --config configs/subset.json --out runs/subset
 ```
 
 The initial pre-fix smoke and inspection attempts failed while plotting legacy HDF5 frequency metadata. Rebuilding the index from its timestamp values fixed the issue; a regression test covers it. The initial smoke directory is marked failed. Verified reports come only from completed post-fix runs. The raw file was not changed.
@@ -66,6 +66,6 @@ The initial pre-fix smoke and inspection attempts failed while plotting legacy H
 - Exact floating-point reproducibility across other machines and operating systems is unverified.
 - A complete clean-environment reinstall from the lock has not been tested; dependency consistency and the installed editable package were checked.
 - The original Google Drive file was not independently compared to the mirror. Original-provider dataset-specific licensing and the mirror's relicensing authority remain unverified; see `DATA.md`.
-- Flower and GNNs are not implemented.
+- Flower was outside Phase 1; its subsequent simulation is reported separately. GNNs remain unimplemented.
 
 Next iteration: keep this baseline fixed, repeat the 16-sensor experiment over several seeds, then inspect validation errors by horizon and sensor before changing the model.

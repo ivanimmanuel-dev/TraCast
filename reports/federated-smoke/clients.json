@@ -1,0 +1,320 @@
+[
+  {
+    "client_id": 0,
+    "missing": {
+      "test": {
+        "end": "2012-03-07 23:55:00",
+        "missing_fraction": 0.03712871287128713,
+        "nan_count": 0,
+        "per_sensor": {
+          "767541": {
+            "missing_fraction": 0.03712871287128713,
+            "nan": 0,
+            "zero": 15
+          },
+          "773869": {
+            "missing_fraction": 0.03712871287128713,
+            "nan": 0,
+            "zero": 15
+          }
+        },
+        "rows": 404,
+        "sensors": 2,
+        "start": "2012-03-06 14:20:00",
+        "zero_count": 30
+      },
+      "train": {
+        "end": "2012-03-05 21:30:00",
+        "missing_fraction": 0.021261516654854713,
+        "nan_count": 0,
+        "per_sensor": {
+          "767541": {
+            "missing_fraction": 0.014174344436569808,
+            "nan": 0,
+            "zero": 20
+          },
+          "773869": {
+            "missing_fraction": 0.028348688873139617,
+            "nan": 0,
+            "zero": 40
+          }
+        },
+        "rows": 1411,
+        "sensors": 2,
+        "start": "2012-03-01 00:00:00",
+        "zero_count": 60
+      },
+      "val": {
+        "end": "2012-03-06 14:15:00",
+        "missing_fraction": 0.01990049751243781,
+        "nan_count": 0,
+        "per_sensor": {
+          "767541": {
+            "missing_fraction": 0.01990049751243781,
+            "nan": 0,
+            "zero": 4
+          },
+          "773869": {
+            "missing_fraction": 0.01990049751243781,
+            "nan": 0,
+            "zero": 4
+          }
+        },
+        "rows": 201,
+        "sensors": 2,
+        "start": "2012-03-05 21:35:00",
+        "zero_count": 8
+      }
+    },
+    "normalization": {
+      "fit": "local observed train values only",
+      "mean": [
+        63.41292953491211,
+        64.64739990234375
+      ],
+      "std": [
+        10.219168663024902,
+        2.9886388778686523
+      ]
+    },
+    "sensor_ids": [
+      "773869",
+      "767541"
+    ],
+    "splits": {
+      "test": {
+        "candidate_examples": 762,
+        "examples": 762,
+        "first": "2012-03-06 14:20:00",
+        "last": "2012-03-07 23:55:00",
+        "rows": 404
+      },
+      "train": {
+        "candidate_examples": 2776,
+        "examples": 2764,
+        "first": "2012-03-01 00:00:00",
+        "last": "2012-03-05 21:30:00",
+        "rows": 1411
+      },
+      "val": {
+        "candidate_examples": 356,
+        "examples": 356,
+        "first": "2012-03-05 21:35:00",
+        "last": "2012-03-06 14:15:00",
+        "rows": 201
+      }
+    }
+  },
+  {
+    "client_id": 1,
+    "missing": {
+      "test": {
+        "end": "2012-03-07 23:55:00",
+        "missing_fraction": 0.043316831683168314,
+        "nan_count": 0,
+        "per_sensor": {
+          "717447": {
+            "missing_fraction": 0.04950495049504951,
+            "nan": 0,
+            "zero": 20
+          },
+          "767542": {
+            "missing_fraction": 0.03712871287128713,
+            "nan": 0,
+            "zero": 15
+          }
+        },
+        "rows": 404,
+        "sensors": 2,
+        "start": "2012-03-06 14:20:00",
+        "zero_count": 35
+      },
+      "train": {
+        "end": "2012-03-05 21:30:00",
+        "missing_fraction": 0.014174344436569808,
+        "nan_count": 0,
+        "per_sensor": {
+          "717447": {
+            "missing_fraction": 0.014174344436569808,
+            "nan": 0,
+            "zero": 20
+          },
+          "767542": {
+            "missing_fraction": 0.014174344436569808,
+            "nan": 0,
+            "zero": 20
+          }
+        },
+        "rows": 1411,
+        "sensors": 2,
+        "start": "2012-03-01 00:00:00",
+        "zero_count": 40
+      },
+      "val": {
+        "end": "2012-03-06 14:15:00",
+        "missing_fraction": 0.01990049751243781,
+        "nan_count": 0,
+        "per_sensor": {
+          "717447": {
+            "missing_fraction": 0.01990049751243781,
+            "nan": 0,
+            "zero": 4
+          },
+          "767542": {
+            "missing_fraction": 0.01990049751243781,
+            "nan": 0,
+            "zero": 4
+          }
+        },
+        "rows": 201,
+        "sensors": 2,
+        "start": "2012-03-05 21:35:00",
+        "zero_count": 8
+      }
+    },
+    "normalization": {
+      "fit": "local observed train values only",
+      "mean": [
+        64.51203918457031,
+        53.799110412597656
+      ],
+      "std": [
+        10.34528923034668,
+        8.096033096313477
+      ]
+    },
+    "sensor_ids": [
+      "767542",
+      "717447"
+    ],
+    "splits": {
+      "test": {
+        "candidate_examples": 762,
+        "examples": 762,
+        "first": "2012-03-06 14:20:00",
+        "last": "2012-03-07 23:55:00",
+        "rows": 404
+      },
+      "train": {
+        "candidate_examples": 2776,
+        "examples": 2764,
+        "first": "2012-03-01 00:00:00",
+        "last": "2012-03-05 21:30:00",
+        "rows": 1411
+      },
+      "val": {
+        "candidate_examples": 356,
+        "examples": 356,
+        "first": "2012-03-05 21:35:00",
+        "last": "2012-03-06 14:15:00",
+        "rows": 201
+      }
+    }
+  },
+  {
+    "client_id": 2,
+    "missing": {
+      "test": {
+        "end": "2012-03-07 23:55:00",
+        "missing_fraction": 0.04950495049504951,
+        "nan_count": 0,
+        "per_sensor": {
+          "717445": {
+            "missing_fraction": 0.04950495049504951,
+            "nan": 0,
+            "zero": 20
+          },
+          "717446": {
+            "missing_fraction": 0.04950495049504951,
+            "nan": 0,
+            "zero": 20
+          }
+        },
+        "rows": 404,
+        "sensors": 2,
+        "start": "2012-03-06 14:20:00",
+        "zero_count": 40
+      },
+      "train": {
+        "end": "2012-03-05 21:30:00",
+        "missing_fraction": 0.015237420269312544,
+        "nan_count": 0,
+        "per_sensor": {
+          "717445": {
+            "missing_fraction": 0.014174344436569808,
+            "nan": 0,
+            "zero": 20
+          },
+          "717446": {
+            "missing_fraction": 0.01630049610205528,
+            "nan": 0,
+            "zero": 23
+          }
+        },
+        "rows": 1411,
+        "sensors": 2,
+        "start": "2012-03-01 00:00:00",
+        "zero_count": 43
+      },
+      "val": {
+        "end": "2012-03-06 14:15:00",
+        "missing_fraction": 0.01990049751243781,
+        "nan_count": 0,
+        "per_sensor": {
+          "717445": {
+            "missing_fraction": 0.01990049751243781,
+            "nan": 0,
+            "zero": 4
+          },
+          "717446": {
+            "missing_fraction": 0.01990049751243781,
+            "nan": 0,
+            "zero": 4
+          }
+        },
+        "rows": 201,
+        "sensors": 2,
+        "start": "2012-03-05 21:35:00",
+        "zero_count": 8
+      }
+    },
+    "normalization": {
+      "fit": "local observed train values only",
+      "mean": [
+        49.751564025878906,
+        57.389610290527344
+      ],
+      "std": [
+        14.851527214050293,
+        9.809629440307617
+      ]
+    },
+    "sensor_ids": [
+      "717446",
+      "717445"
+    ],
+    "splits": {
+      "test": {
+        "candidate_examples": 762,
+        "examples": 762,
+        "first": "2012-03-06 14:20:00",
+        "last": "2012-03-07 23:55:00",
+        "rows": 404
+      },
+      "train": {
+        "candidate_examples": 2776,
+        "examples": 2764,
+        "first": "2012-03-01 00:00:00",
+        "last": "2012-03-05 21:30:00",
+        "rows": 1411
+      },
+      "val": {
+        "candidate_examples": 356,
+        "examples": 356,
+        "first": "2012-03-05 21:35:00",
+        "last": "2012-03-06 14:15:00",
+        "rows": 201
+      }
+    }
+  }
+]

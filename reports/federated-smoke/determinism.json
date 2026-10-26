@@ -1,0 +1,15 @@
+{
+  "centralized-history.json": true,
+  "centralized.json": true,
+  "checkpoint_names": true,
+  "checkpoint_tensors": true,
+  "clients.json": true,
+  "completed": true,
+  "config.json": true,
+  "federated.json": true,
+  "initial.json": true,
+  "partition_hashes": true,
+  "rounds.json": true,
+  "run_id": true,
+  "status.json": true
+}

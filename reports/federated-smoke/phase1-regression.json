@@ -1,0 +1,5 @@
+{
+  "original_smoke_metrics_identical": true,
+  "original_report": "reports/smoke/metrics.json",
+  "rerun": "runs/phase1-regression/metrics.json"
+}

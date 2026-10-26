@@ -1,0 +1,103 @@
+
+Flower configuration not found. Created default configuration at C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\outputs\TraCast\runs\fl-smoke-a\.flower\config.toml
+
+Flower App configuration warnings in 'C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\outputs\TraCast\pyproject.toml':
+- Recommended property "license" missing in [project]
+Using SuperLink: local (127.0.0.1:39091)
+Successfully started run 7955019418866526772
+INFO :      Starting logstream for run_id `7955019418866526772`
+INFO :      Starting Flower Simulation
+WARNING :   Since flwr 1.32, default simulated SuperNodes changed from 10 to 2.
+INFO :      Federation `@none/default` (3 simulated SuperNodes)
+INFO :      To change federation size, use the following command:
+INFO :      	flwr federation simulation-config @none/default <superlink> --num-supernodes <N>
+Successfully installed tracast to C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\outputs\TraCast\runs\federated-locked\.flower\apps\ivanimmanuel-dev.tracast.0.2.0.a9d6d07a.
+INFO :      Starting LoggedFedAvg strategy:
+INFO :      	├── Number of rounds: 3
+INFO :      	├── ArrayRecord (0.02 MB)
+INFO :      	├── ConfigRecord (train): {'job-dir': C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\outputs\TraCast\runs\fl-smoke-a}
+INFO :      	├── ConfigRecord (evaluate): {'job-dir': C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\outputs\TraCast\runs\fl-smoke-a, 'stage': val}
+INFO :      	├──> Sampling:
+INFO :      	│	├──Fraction: train (1.00) | evaluate ( 1.00)
+INFO :      	│	├──Minimum nodes: train (3) | evaluate (3)
+INFO :      	│	└──Minimum available nodes: 3
+INFO :      	└──> Keys in records:
+INFO :      		├── Weighted by: 'num-examples'
+INFO :      		├── ArrayRecord key: 'arrays'
+INFO :      		└── ConfigRecord key: 'config'
+INFO :
+INFO :
+INFO :      [ROUND 1/3]
+INFO :      configure_train: Sampled 3 nodes (out of 3)
+(raylet) Stack (most recent call first):
+(raylet)   File "C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\work\flwr-venv\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config
+(raylet)   File "C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\work\flwr-venv\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect
+(raylet)   File "C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\work\flwr-venv\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown
+(raylet)   File "C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\work\flwr-venv\Lib\site-packages\ray\_private\worker.py", line 1143 in wrapper
+(raylet)   File "C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\work\flwr-venv\Lib\site-packages\ray\_private\client_mode_hook.py", line Windows fatal exception: access violation
+(raylet)
+(raylet)   File 107 in wrapper
+(raylet) "C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\work\flwr-venv\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown
+INFO :      aggregate_train: Received 3 results and 0 failures
+INFO :      	└──> Aggregated MetricRecord: {'train-normalized-mae': 0.5961190078827607, 'target-count': 98364, 'num-examples': 8292, 'optimizer-steps': 132, 'processed-examples': 8292}
+INFO :      configure_evaluate: Sampled 3 nodes (out of 3)
+INFO :      aggregate_evaluate: Received 3 results and 0 failures
+round 1: validation MAE=5.173102, RMSE=8.634060 mph
+INFO :      	└──> Aggregated MetricRecord: {'mae': 5.173102420899132, 'rmse': 8.634059777461772}
+INFO :
+INFO :      [ROUND 2/3]
+INFO :      configure_train: Sampled 3 nodes (out of 3)
+INFO :      aggregate_train: Received 3 results and 0 failures
+INFO :      	└──> Aggregated MetricRecord: {'train-normalized-mae': 0.43519639289984835, 'target-count': 98364, 'num-examples': 8292, 'optimizer-steps': 132, 'processed-examples': 8292}
+INFO :      configure_evaluate: Sampled 3 nodes (out of 3)
+INFO :      aggregate_evaluate: Received 3 results and 0 failures
+round 2: validation MAE=4.069572, RMSE=7.256250 mph
+INFO :      	└──> Aggregated MetricRecord: {'mae': 4.069572082454416, 'rmse': 7.256250138287888}
+INFO :
+INFO :      [ROUND 3/3]
+INFO :      configure_train: Sampled 3 nodes (out of 3)
+INFO :      aggregate_train: Received 3 results and 0 failures
+INFO :      	└──> Aggregated MetricRecord: {'train-normalized-mae': 0.4023779207849424, 'target-count': 98364, 'num-examples': 8292, 'optimizer-steps': 132, 'processed-examples': 8292}
+INFO :      configure_evaluate: Sampled 3 nodes (out of 3)
+INFO :      aggregate_evaluate: Received 3 results and 0 failures
+round 3: validation MAE=3.937742, RMSE=6.970981 mph
+INFO :      	└──> Aggregated MetricRecord: {'mae': 3.937741799472877, 'rmse': 6.9709813700310885}
+INFO :
+INFO :      Strategy execution finished in 18.08s
+INFO :
+INFO :      Final results:
+INFO :
+INFO :      	Global Arrays:
+INFO :      		ArrayRecord (0.015 MB)
+INFO :
+INFO :      	Aggregated ClientApp-side Train Metrics:
+INFO :      	{ 1: { 'num-examples': '8292',
+INFO :      	       'optimizer-steps': '132',
+INFO :      	       'processed-examples': '8292',
+INFO :      	       'target-count': '98364',
+INFO :      	       'train-normalized-mae': '5.9612e-01'},
+INFO :      	  2: { 'num-examples': '8292',
+INFO :      	       'optimizer-steps': '132',
+INFO :      	       'processed-examples': '8292',
+INFO :      	       'target-count': '98364',
+INFO :      	       'train-normalized-mae': '4.3520e-01'},
+INFO :      	  3: { 'num-examples': '8292',
+INFO :      	       'optimizer-steps': '132',
+INFO :      	       'processed-examples': '8292',
+INFO :      	       'target-count': '98364',
+INFO :      	       'train-normalized-mae': '4.0238e-01'}}
+INFO :
+INFO :      	Aggregated ClientApp-side Evaluate Metrics:
+INFO :      	{ 1: {'mae': '5.1731e+00', 'rmse': '8.6341e+00'},
+INFO :      	  2: {'mae': '4.0696e+00', 'rmse': '7.2563e+00'},
+INFO :      	  3: {'mae': '3.9377e+00', 'rmse': '6.9710e+00'}}
+INFO :
+INFO :      	ServerApp-side Evaluate Metrics:
+INFO :      	{}
+INFO :
+(ClientAppActor pid=20036) WARNING :   Manually terminating ClientAppActor
+(raylet) Stack (most recent call first):
+(raylet)   File "C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\work\flwr-venv\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config
+(raylet)   File "C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\work\flwr-venv\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect
+(raylet)   File "C:\Users\IvanI\Documents\Codex\2026-10-26\help-me-develop-trafficmind-a-reproducible\work\flwr-venv\Lib\site-packages\ray\_private\client_mode_hook.py", line 107 in wrapper [repeated 2x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)
+INFO :

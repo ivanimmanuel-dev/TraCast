@@ -1,0 +1,14 @@
+{
+  "command": [
+    "C:\\Users\\IvanI\\Documents\\Codex\\2026-10-26\\help-me-develop-trafficmind-a-reproducible\\work\\flwr-venv\\Scripts\\flwr.exe",
+    "run",
+    ".",
+    "--run-config",
+    "C:\\Users\\IvanI\\Documents\\Codex\\2026-10-26\\help-me-develop-trafficmind-a-reproducible\\outputs\\TraCast\\runs\\fl-smoke-a\\flower-run.toml",
+    "--federation-config",
+    "num-supernodes=3 client-resources-num-cpus=2 client-resources-num-gpus=0.0 init-args-num-cpus=2 init-args-num-gpus=0",
+    "--stream"
+  ],
+  "flwr_home": "C:\\Users\\IvanI\\Documents\\Codex\\2026-10-26\\help-me-develop-trafficmind-a-reproducible\\outputs\\TraCast\\runs\\fl-smoke-a\\.flower",
+  "ray_object_store_max_bytes": 134217728
+}
