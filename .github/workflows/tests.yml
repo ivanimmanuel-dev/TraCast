@@ -1,0 +1,28 @@
+name: Tests
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'tests/**', 'pyproject.toml', 'requirements-lock.txt', '.github/workflows/tests.yml']
+  pull_request:
+    paths: ['src/**', 'tests/**', 'pyproject.toml', 'requirements-lock.txt', '.github/workflows/tests.yml']
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      FLWR_TELEMETRY_ENABLED: '0'
+      RAY_USAGE_STATS_ENABLED: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: python -m pip install -r requirements-lock.txt
+      - run: python -m pip install -e . --no-deps
+      - run: python -m pip check
+      - run: python -m pytest -q -W error

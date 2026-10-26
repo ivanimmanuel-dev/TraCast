@@ -1,0 +1,5 @@
+{
+  "graph_seed42_test_metrics": true,
+  "graph_seed42_checkpoint_hash": true,
+  "graph_seed42_validation_history": true
+}

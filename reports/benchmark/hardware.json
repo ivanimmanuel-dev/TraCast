@@ -1,0 +1,8 @@
+{
+  "cpu": "AMD Ryzen 7 5825U with Radeon Graphics",
+  "cores": 8,
+  "logical_processors": 16,
+  "windows_reported_physical_memory_bytes": 14861852672,
+  "torch_threads": 4,
+  "trial_execution": "sequential fresh processes"
+}
