@@ -1,5 +1,6 @@
 name: Tests
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths: ['src/**', 'tests/**', 'pyproject.toml', 'requirements-lock.txt', '.github/workflows/tests.yml']
