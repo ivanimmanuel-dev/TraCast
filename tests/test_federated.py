@@ -188,3 +188,37 @@ def test_launcher_checks_runtime_and_failure_status(frame,config,tmp_path,monkey
         runner.execute(job)
     assert json.loads((job/"status.json").read_text())["status"] == "failed"
     assert not (job/"centralized.json").exists()
+
+
+@pytest.mark.parametrize("rule",["balanced","congestion"])
+def test_partition_ranking_uses_training_only(frame,config,rule):
+    from tracast.federated_task import partitions,congestion_scores
+    config=replace(config,partition_rule=rule)
+    groups=partitions(frame,config)
+    changed=frame.copy()
+    changed.iloc[210:,:]=99999
+    assert [list(group.columns) for group in groups]==[list(group.columns) for group in partitions(changed,config)]
+    assert congestion_scores(frame,config)==congestion_scores(changed,config)
+    assert sorted(sensor for group in groups for sensor in group.columns)==sorted(frame.columns)
+    assert all(len(group.columns)==2 for group in groups)
+
+
+def test_pooled_reference_independent_of_sensor_ownership(frame,config,tmp_path,monkeypatch):
+    import tracast.federated as runner
+    monkeypatch.setattr(runner,"load",lambda *args:frame)
+    results=[]
+    for rule in ("balanced","congestion"):
+        settings=replace(config,partition_rule=rule)
+        job=runner.prepare(settings,"constructed-test-fixture",tmp_path/rule)
+        results.append(runner.centralized(settings,job))
+    assert results[0]==results[1]
+
+
+
+def test_histogram_divergence():
+    from tracast.federated_study import js_divergence
+    assert js_divergence([1,0],[1,0])==0
+    assert js_divergence([1,0],[0,1])==pytest.approx(1)
+    assert js_divergence([1,2],[2,1])==pytest.approx(js_divergence([2,1],[1,2]))
+    with pytest.raises(ValueError):
+        js_divergence([0,0],[1,0])

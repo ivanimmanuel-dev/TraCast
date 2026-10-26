@@ -1,0 +1,33 @@
+{
+  "base": {
+    "clients": 3,
+    "sensors_per_client": 4,
+    "rows": 4032,
+    "history": 12,
+    "horizon": 12,
+    "hidden": 32,
+    "batch_size": 64,
+    "rounds": 5,
+    "local_epochs": 1,
+    "lr": 0.001,
+    "seed": 42,
+    "threads": 1,
+    "ray_cpus": 2,
+    "client_cpus": 2,
+    "round_timeout": 180,
+    "partition_rule": "balanced"
+  },
+  "seeds": [
+    7,
+    42,
+    2026
+  ],
+  "balanced_round_budgets": [
+    1,
+    3,
+    5
+  ],
+  "congestion_round_budgets": [
+    5
+  ]
+}

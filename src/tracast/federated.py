@@ -12,7 +12,7 @@ import sys
 
 import numpy as np
 import torch
-from torch.utils.data import ConcatDataset
+from torch.utils.data import ConcatDataset, Subset
 
 from .data import SHA256, load, digest
 from .experiment import code_manifest, seed_all, write_json
@@ -45,6 +45,7 @@ def prepare(config, data, out):
         "git_commit": git.stdout.strip() if git.returncode == 0 else None,
         "git_dirty": bool(dirty.stdout.strip()) if dirty.returncode == 0 else None, "command": sys.argv,
         "versions": {name: version(name) for name in ("flwr", "ray", "numpy", "pandas", "torch", "matplotlib")},
+        "sensor_ids": list(map(str,frame.columns)),
         "task": "shared GRU(1): one sensor per example, disjoint sensor ownership",
         "runtime": "Flower CLI / managed local SuperLink / Ray; one actor slot in the default config",
         "deterministic": {"torch_algorithms": True, "mkldnn": False, "aggregate_order": "client-id ascending"}})
@@ -56,8 +57,23 @@ def prepare(config, data, out):
 
 
 def centralized(config, job):
-    bundles = [load_partition(job, i)[0] for i in range(config.clients)]
-    datasets = {stage: ConcatDataset([data[stage] for data in bundles]) for stage in ("train", "val", "test")}
+    loaded = [load_partition(job,i) for i in range(config.clients)]
+    if config.partition_rule == "contiguous":
+        datasets = {stage:ConcatDataset([data[stage] for data,_ in loaded]) for stage in ("train","val","test")}
+    else:
+        # Keep the pooled reference order unchanged when sensor ownership changes.
+        order=json.loads((job/"manifest.json").read_text())["sensor_ids"]
+        datasets={}
+        for stage in ("train","val","test"):
+            pieces=[]
+            for sensor in order:
+                for data,metadata in loaded:
+                    if sensor in metadata["sensor_ids"]:
+                        local_id=metadata["sensor_ids"].index(sensor)
+                        positions=[i for i,(node,_) in enumerate(data[stage].indices) if node==local_id]
+                        pieces.append(Subset(data[stage],positions))
+                        break
+            datasets[stage]=ConcatDataset(pieces)
     seed_all(config.seed, config.threads)
     model = new_model(config)
     model.load_state_dict(torch.load(job / "initial.pt", map_location="cpu", weights_only=True))

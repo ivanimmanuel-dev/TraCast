@@ -32,14 +32,17 @@ class FederatedConfig:
     ray_cpus: int = 2
     client_cpus: int = 2
     round_timeout: int = 180
+    partition_rule: str = "contiguous"
 
     def validate(self):
         for name in self.__dataclass_fields__:
-            if name == "lr":
+            if name in ("lr", "partition_rule"):
                 continue
             value = getattr(self, name)
             if type(value) is not int or value < (0 if name == "seed" else 1):
                 raise ValueError(f"{name} has an invalid integer value")
+        if self.partition_rule not in ("contiguous", "balanced", "congestion"):
+            raise ValueError("Unknown sensor partition rule")
         if self.clients < 2 or self.clients * self.sensors_per_client > 207:
             raise ValueError("Need at least two nonempty clients within 207 sensors")
         if not 1 <= self.rows <= 34272 or not math.isfinite(self.lr) or self.lr <= 0:
@@ -50,12 +53,42 @@ class FederatedConfig:
             raise ValueError("Seed schedule exceeds NumPy range")
 
 
+def congestion_scores(frame, config):
+    train=split(frame,config.history,config.horizon)["train"].mask(lambda value:value.eq(0))
+    count=train.notna().sum()
+    if (count==0).any():
+        raise ValueError("A sensor has no observed training values")
+    return {str(sensor):float(train[sensor].lt(40).sum()/count[sensor]) for sensor in train.columns}
+
+
 def partitions(frame, config):
     expected = config.clients * config.sensors_per_client
     if frame.shape[1] != expected or not frame.columns.is_unique:
         raise ValueError("Selected sensor count must match the disjoint partitions")
-    return [frame.iloc[:, i * config.sensors_per_client:(i + 1) * config.sensors_per_client].copy()
-            for i in range(config.clients)]
+    if config.partition_rule == "contiguous":
+        return [frame.iloc[:, i * config.sensors_per_client:(i + 1) * config.sensors_per_client].copy()
+                for i in range(config.clients)]
+    scores=congestion_scores(frame,config)
+    ranked=sorted(frame.columns,key=lambda sensor:(scores[str(sensor)],str(sensor)))
+    if config.partition_rule == "balanced":
+        groups=[ranked[i::config.clients] for i in range(config.clients)]
+    elif config.partition_rule == "congestion":
+        groups=[ranked[i*config.sensors_per_client:(i+1)*config.sensors_per_client] for i in range(config.clients)]
+    else:
+        raise ValueError("Unknown sensor partition rule")
+    return [frame.loc[:,sensors].copy() for sensors in groups]
+
+
+def distribution(frame, config):
+    train=split(frame,config.history,config.horizon)["train"]
+    values=train.to_numpy().reshape(-1)
+    values=values[np.isfinite(values)&(values>0)]
+    if not len(values):
+        raise ValueError("No observed client training values")
+    hist,_=np.histogram(values,bins=[0,10,20,30,40,50,60,70,80,np.inf])
+    return {"observed_readings":len(values),"mean_mph":float(values.mean()),
+        "congestion_fraction_below_40":float((values<40).mean()),
+        "speed_histogram":hist.tolist(),"histogram_bins_mph":[0,10,20,30,40,50,60,70,80,"+inf"]}
 
 
 class SensorWindows(Dataset):
@@ -93,6 +126,7 @@ def bundle(frame, config):
                 for name, part in parts.items()}
     metadata = {
         "sensor_ids": list(map(str, frame.columns)),
+        "training_distribution": distribution(frame,config),
         "normalization": {"mean": scaler.mean.tolist(), "std": scaler.std.tolist(), "fit": "local observed train values only"},
         "splits": {name: {"first": str(part.index[0]), "last": str(part.index[-1]), "rows": len(part),
             "examples": len(datasets[name]), "candidate_examples": datasets[name].candidate_count}

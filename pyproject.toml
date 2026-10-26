@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tracast"
-version = "0.2.0"
+version = "0.3.0"
 description = "CPU traffic-speed forecasting on METR-LA"
 requires-python = ">=3.11,<3.12"
 dependencies = ["numpy==1.26.4", "pandas==2.2.3", "tables==3.10.1", "matplotlib==3.9.2", "torch==2.5.1"]
