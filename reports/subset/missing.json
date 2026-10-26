@@ -1,0 +1,366 @@
+{
+  "selected": {
+    "end": "2012-06-27 23:55:00",
+    "missing_fraction": 0.07503391981792717,
+    "nan_count": 0,
+    "per_sensor": {
+      "716331": {
+        "missing_fraction": 0.06512605042016807,
+        "nan": 0,
+        "zero": 2232
+      },
+      "716339": {
+        "missing_fraction": 0.06439659197012138,
+        "nan": 0,
+        "zero": 2207
+      },
+      "717445": {
+        "missing_fraction": 0.06369631185807656,
+        "nan": 0,
+        "zero": 2183
+      },
+      "717446": {
+        "missing_fraction": 0.07186624649859943,
+        "nan": 0,
+        "zero": 2463
+      },
+      "717447": {
+        "missing_fraction": 0.06343370681605975,
+        "nan": 0,
+        "zero": 2174
+      },
+      "717816": {
+        "missing_fraction": 0.06748949579831932,
+        "nan": 0,
+        "zero": 2313
+      },
+      "737529": {
+        "missing_fraction": 0.07831465919701214,
+        "nan": 0,
+        "zero": 2684
+      },
+      "765273": {
+        "missing_fraction": 0.0637546685340803,
+        "nan": 0,
+        "zero": 2185
+      },
+      "765604": {
+        "missing_fraction": 0.070203081232493,
+        "nan": 0,
+        "zero": 2406
+      },
+      "767471": {
+        "missing_fraction": 0.1189017273576097,
+        "nan": 0,
+        "zero": 4075
+      },
+      "767541": {
+        "missing_fraction": 0.06270424836601307,
+        "nan": 0,
+        "zero": 2149
+      },
+      "767542": {
+        "missing_fraction": 0.06270424836601307,
+        "nan": 0,
+        "zero": 2149
+      },
+      "767620": {
+        "missing_fraction": 0.09503384687208216,
+        "nan": 0,
+        "zero": 3257
+      },
+      "773062": {
+        "missing_fraction": 0.06349206349206349,
+        "nan": 0,
+        "zero": 2176
+      },
+      "773869": {
+        "missing_fraction": 0.11213235294117647,
+        "nan": 0,
+        "zero": 3843
+      },
+      "773906": {
+        "missing_fraction": 0.07729341736694678,
+        "nan": 0,
+        "zero": 2649
+      }
+    },
+    "rows": 34272,
+    "sensors": 16,
+    "start": "2012-03-01 00:00:00",
+    "zero_count": 41145
+  },
+  "test": {
+    "end": "2012-06-27 23:55:00",
+    "missing_fraction": 0.1048960612691466,
+    "nan_count": 0,
+    "per_sensor": {
+      "716331": {
+        "missing_fraction": 0.09773887673231219,
+        "nan": 0,
+        "zero": 670
+      },
+      "716339": {
+        "missing_fraction": 0.09832239241429613,
+        "nan": 0,
+        "zero": 674
+      },
+      "717445": {
+        "missing_fraction": 0.09773887673231219,
+        "nan": 0,
+        "zero": 670
+      },
+      "717446": {
+        "missing_fraction": 0.1301239970824216,
+        "nan": 0,
+        "zero": 892
+      },
+      "717447": {
+        "missing_fraction": 0.09773887673231219,
+        "nan": 0,
+        "zero": 670
+      },
+      "717816": {
+        "missing_fraction": 0.0975929978118162,
+        "nan": 0,
+        "zero": 669
+      },
+      "737529": {
+        "missing_fraction": 0.11188913202042305,
+        "nan": 0,
+        "zero": 767
+      },
+      "765273": {
+        "missing_fraction": 0.09715536105032822,
+        "nan": 0,
+        "zero": 666
+      },
+      "765604": {
+        "missing_fraction": 0.10911743253099927,
+        "nan": 0,
+        "zero": 748
+      },
+      "767471": {
+        "missing_fraction": 0.12443471918307805,
+        "nan": 0,
+        "zero": 853
+      },
+      "767541": {
+        "missing_fraction": 0.09715536105032822,
+        "nan": 0,
+        "zero": 666
+      },
+      "767542": {
+        "missing_fraction": 0.09715536105032822,
+        "nan": 0,
+        "zero": 666
+      },
+      "767620": {
+        "missing_fraction": 0.0975929978118162,
+        "nan": 0,
+        "zero": 669
+      },
+      "773062": {
+        "missing_fraction": 0.09773887673231219,
+        "nan": 0,
+        "zero": 670
+      },
+      "773869": {
+        "missing_fraction": 0.09730123997082421,
+        "nan": 0,
+        "zero": 667
+      },
+      "773906": {
+        "missing_fraction": 0.12954048140043764,
+        "nan": 0,
+        "zero": 888
+      }
+    },
+    "rows": 6855,
+    "sensors": 16,
+    "start": "2012-06-04 04:45:00",
+    "zero_count": 11505
+  },
+  "train": {
+    "end": "2012-05-23 07:05:00",
+    "missing_fraction": 0.06591288036681951,
+    "nan_count": 0,
+    "per_sensor": {
+      "716331": {
+        "missing_fraction": 0.056523551479783246,
+        "nan": 0,
+        "zero": 1356
+      },
+      "716339": {
+        "missing_fraction": 0.055606502709462276,
+        "nan": 0,
+        "zero": 1334
+      },
+      "717445": {
+        "missing_fraction": 0.05477282200917049,
+        "nan": 0,
+        "zero": 1314
+      },
+      "717446": {
+        "missing_fraction": 0.0566902876198416,
+        "nan": 0,
+        "zero": 1360
+      },
+      "717447": {
+        "missing_fraction": 0.05477282200917049,
+        "nan": 0,
+        "zero": 1314
+      },
+      "717816": {
+        "missing_fraction": 0.06006669445602334,
+        "nan": 0,
+        "zero": 1441
+      },
+      "737529": {
+        "missing_fraction": 0.06882034180908712,
+        "nan": 0,
+        "zero": 1651
+      },
+      "765273": {
+        "missing_fraction": 0.05577323884952063,
+        "nan": 0,
+        "zero": 1338
+      },
+      "765604": {
+        "missing_fraction": 0.06073363901625677,
+        "nan": 0,
+        "zero": 1457
+      },
+      "767471": {
+        "missing_fraction": 0.12476031679866612,
+        "nan": 0,
+        "zero": 2993
+      },
+      "767541": {
+        "missing_fraction": 0.05427261358899541,
+        "nan": 0,
+        "zero": 1302
+      },
+      "767542": {
+        "missing_fraction": 0.05427261358899541,
+        "nan": 0,
+        "zero": 1302
+      },
+      "767620": {
+        "missing_fraction": 0.10033347228011671,
+        "nan": 0,
+        "zero": 2407
+      },
+      "773062": {
+        "missing_fraction": 0.05481450604418508,
+        "nan": 0,
+        "zero": 1315
+      },
+      "773869": {
+        "missing_fraction": 0.0783659858274281,
+        "nan": 0,
+        "zero": 1880
+      },
+      "773906": {
+        "missing_fraction": 0.06402667778240934,
+        "nan": 0,
+        "zero": 1536
+      }
+    },
+    "rows": 23990,
+    "sensors": 16,
+    "start": "2012-03-01 00:00:00",
+    "zero_count": 25300
+  },
+  "val": {
+    "end": "2012-06-04 04:40:00",
+    "missing_fraction": 0.07915086081120513,
+    "nan_count": 0,
+    "per_sensor": {
+      "716331": {
+        "missing_fraction": 0.06011088415523782,
+        "nan": 0,
+        "zero": 206
+      },
+      "716339": {
+        "missing_fraction": 0.05806828129559381,
+        "nan": 0,
+        "zero": 199
+      },
+      "717445": {
+        "missing_fraction": 0.05806828129559381,
+        "nan": 0,
+        "zero": 199
+      },
+      "717446": {
+        "missing_fraction": 0.06156988619784068,
+        "nan": 0,
+        "zero": 211
+      },
+      "717447": {
+        "missing_fraction": 0.05544207761890867,
+        "nan": 0,
+        "zero": 190
+      },
+      "717816": {
+        "missing_fraction": 0.0592354829296761,
+        "nan": 0,
+        "zero": 203
+      },
+      "737529": {
+        "missing_fraction": 0.07761890866647213,
+        "nan": 0,
+        "zero": 266
+      },
+      "765273": {
+        "missing_fraction": 0.05281587394222352,
+        "nan": 0,
+        "zero": 181
+      },
+      "765604": {
+        "missing_fraction": 0.05865188211263496,
+        "nan": 0,
+        "zero": 201
+      },
+      "767471": {
+        "missing_fraction": 0.06682229355121097,
+        "nan": 0,
+        "zero": 229
+      },
+      "767541": {
+        "missing_fraction": 0.05281587394222352,
+        "nan": 0,
+        "zero": 181
+      },
+      "767542": {
+        "missing_fraction": 0.05281587394222352,
+        "nan": 0,
+        "zero": 181
+      },
+      "767620": {
+        "missing_fraction": 0.05281587394222352,
+        "nan": 0,
+        "zero": 181
+      },
+      "773062": {
+        "missing_fraction": 0.05573387802742924,
+        "nan": 0,
+        "zero": 191
+      },
+      "773869": {
+        "missing_fraction": 0.37817332944266124,
+        "nan": 0,
+        "zero": 1296
+      },
+      "773906": {
+        "missing_fraction": 0.06565509191712868,
+        "nan": 0,
+        "zero": 225
+      }
+    },
+    "rows": 3427,
+    "sensors": 16,
+    "start": "2012-05-23 07:10:00",
+    "zero_count": 4340
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "code": {
+    "configs/smoke.json": "1a44282a746472bebab8c2a92050f0226a0d6da263772497535ab7f4a8ab9ba6",
+    "configs/subset.json": "db542016142132f97e52c8cc7ffb13de571fb76a2f285def4549d543758e605f",
+    "pyproject.toml": "45bd4c461f0f35f3fb99fab4ab76707189b6925d73921f2f96059abcc28c4f1d",
+    "requirements-lock.txt": "35a657d47eccad78269fb3f271be63919413853135cdd0ae034f7fa19b12b278",
+    "src/trafficmind/__init__.py": "799ee7b5c002b65e16ffacbb864f1fb6ec96d28e3da7d74b4e59fcc30ff05114",
+    "src/trafficmind/cli.py": "71355db12362cdd53236bb1dc025e3f7a022622ec4ea3724de20a1f975bc2e2b",
+    "src/trafficmind/data.py": "cf7a009caf311e7a89f07011a9b7be144a4cedf5843d970edfe1f45e2e3a52e2",
+    "src/trafficmind/experiment.py": "334526603c853ff571ead54ea198ecb14b165e17ed5f39e403447fb420afe81a",
+    "src/trafficmind/model.py": "e9ea872351b69b89e13090329eba086d8c714b7937426dd59db96a35e100a81c",
+    "tests/test_pipeline.py": "b7d9b1fb78902e3858c60d33dfae7985b2146d278a2b40b48d92a9d3d704d82a"
+  },
+  "command": [
+    "C:\\Users\\IvanI\\Documents\\Codex\\2026-10-26\\help-me-develop-trafficmind-a-reproducible\\outputs\\TrafficMind\\src\\trafficmind\\cli.py",
+    "run",
+    "--config",
+    "configs/smoke.json",
+    "--out",
+    "runs/smoke-verified"
+  ],
+  "config": {
+    "batch_size": 64,
+    "epochs": 2,
+    "hidden": 32,
+    "history": 12,
+    "horizon": 12,
+    "lr": 0.001,
+    "rows": 2016,
+    "seed": 42,
+    "sensors": 8,
+    "threads": 4
+  },
+  "data_sha256": "64784b76d6fb8ec9bff4b6decafb354da2bb37840468fdccee5044e511277c05",
+  "data_url": "https://huggingface.co/datasets/jimmygao3218/METRLA/resolve/ec9772c0e8dd48b3470a6381dff1888257a9ffe4/metr-la.h5",
+  "deterministic_algorithms": true,
+  "device": "cpu",
+  "git_commit": null,
+  "mkldnn": false,
+  "platform": "Windows-10-10.0.26300-SP0",
+  "protocol": "70/10/20 rows; windows contained in each split; zero/NaN masked; train-only per-sensor scaling",
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "run_id": "4f620eea7f2e328c602478ad423cae49032eb48d1b8bf5ddc1cc6bfcbaf5562e",
+  "selected_values_sha256": "b0db7a872d2b27f2804815f7b645678430f8c76c12353a2f7cb987ead48f06b9",
+  "sensor_ids": [
+    "773869",
+    "767541",
+    "767542",
+    "717447",
+    "717446",
+    "717445",
+    "773062",
+    "767620"
+  ],
+  "splits": {
+    "test": {
+      "end": "2012-03-07 23:55:00",
+      "rows": 404,
+      "start": "2012-03-06 14:20:00",
+      "windows": 381
+    },
+    "train": {
+      "end": "2012-03-05 21:30:00",
+      "rows": 1411,
+      "start": "2012-03-01 00:00:00",
+      "windows": 1388
+    },
+    "val": {
+      "end": "2012-03-06 14:15:00",
+      "rows": 201,
+      "start": "2012-03-05 21:35:00",
+      "windows": 178
+    }
+  },
+  "versions": {
+    "matplotlib": "3.9.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.3",
+    "tables": "3.10.1",
+    "torch": "2.5.1+cpu"
+  }
+}

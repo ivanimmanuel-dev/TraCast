@@ -1,0 +1,12 @@
+{
+  "batch_size": 64,
+  "epochs": 5,
+  "hidden": 32,
+  "history": 12,
+  "horizon": 12,
+  "lr": 0.001,
+  "rows": null,
+  "seed": 42,
+  "sensors": 16,
+  "threads": 4
+}

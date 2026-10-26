@@ -1,0 +1,1 @@
+{"sensors": 8, "rows": 2016, "history": 12, "horizon": 12, "hidden": 32, "batch_size": 64, "epochs": 2, "lr": 0.001, "seed": 42, "threads": 4}
