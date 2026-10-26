@@ -4,9 +4,9 @@ import pandas as pd
 import pytest
 import torch
 
-from trafficmind.data import Scaler, Windows, missing_report, split, validate
-from trafficmind.experiment import Config, evaluate, run, seed_all
-from trafficmind.model import GRU, Metrics
+from tracast.data import Scaler, Windows, missing_report, split, validate
+from tracast.experiment import Config, evaluate, run, seed_all
+from tracast.model import GRU, Metrics
 
 
 @pytest.fixture
@@ -150,7 +150,7 @@ def test_too_short_split(frame):
 
 
 def test_end_to_end_repeats(frame, tmp_path, monkeypatch):
-    import trafficmind.experiment as experiment
+    import tracast.experiment as experiment
     monkeypatch.setattr(experiment, "load", lambda *args: frame.astype("float32"))
     config = Config(sensors=2, history=3, horizon=2, hidden=4, epochs=1, threads=1)
     first = run(config, "test-fixture-only", tmp_path / "first")
@@ -163,7 +163,7 @@ def test_end_to_end_repeats(frame, tmp_path, monkeypatch):
 
 def test_fetch_rejects_corruption(tmp_path, monkeypatch):
     import io
-    import trafficmind.data as data
+    import tracast.data as data
     path = tmp_path / "metr-la.h5"
     monkeypatch.setattr(data.urllib.request, "urlopen", lambda *a, **kw: io.BytesIO(b"not hdf5"))
     with pytest.raises(ValueError, match="checksum mismatch"):
@@ -175,7 +175,7 @@ def test_fetch_rejects_corruption(tmp_path, monkeypatch):
 
 
 def test_load_requires_verified_file(tmp_path):
-    from trafficmind.data import load
+    from tracast.data import load
     path = tmp_path / "bad.h5"
     path.write_bytes(b"not the dataset")
     with pytest.raises(ValueError, match="checksum"):
@@ -183,7 +183,7 @@ def test_load_requires_verified_file(tmp_path):
 
 
 def test_legacy_hdf_frequency_metadata(monkeypatch):
-    import trafficmind.data as data
+    import tracast.data as data
     frame = pd.DataFrame(np.ones((34272, 207), dtype="float32"),
                          index=pd.date_range("2012-03-01", periods=34272, freq="5min"))
     # Emulate the metadata stored by the original old-pandas HDF5 writer.

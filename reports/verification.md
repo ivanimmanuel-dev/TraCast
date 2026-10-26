@@ -6,7 +6,7 @@ Phase one runs on the real checksum-verified METR-LA HDF5 file.
 
 - Windows x64; Python 3.11.9; PyTorch 2.5.1+cpu.
 - Exact installed dependency versions: `requirements-lock.txt`.
-- Packages installed into the workspace's `work/venv` environment; TrafficMind installed editable.
+- Packages installed into the workspace's `work/venv` environment; TraCast installed editable.
 - `python -m pip check`: no broken requirements.
 - CPU-only runs with four threads and no DataLoader workers.
 - Hardware model and installed RAM were not independently read: Windows denied the hardware query. The initial sizing target is the supplied Ryzen 7 / 16 GB laptop.
@@ -47,14 +47,14 @@ The 16-sensor GRU contains 11,136 trainable parameters. Sensor IDs are listed in
 
 ## Commands executed
 
-From the TrafficMind repository directory, using the development environment:
+From the TraCast repository directory, using the development environment:
 
 ```powershell
 ..\..\work\venv\Scripts\python.exe -m pytest -q -W error
-..\..\work\venv\Scripts\python.exe -m trafficmind.cli inspect --out runs/inspection-verified
-..\..\work\venv\Scripts\python.exe -m trafficmind.cli run --config configs/smoke.json --out runs/smoke-verified
-..\..\work\venv\Scripts\python.exe -m trafficmind.cli run --config configs/smoke.json --out runs/smoke-repeat
-..\..\work\venv\Scripts\python.exe -m trafficmind.cli run --config configs/subset.json --out runs/subset
+..\..\work\venv\Scripts\python.exe -m tracast.cli inspect --out runs/inspection-verified
+..\..\work\venv\Scripts\python.exe -m tracast.cli run --config configs/smoke.json --out runs/smoke-verified
+..\..\work\venv\Scripts\python.exe -m tracast.cli run --config configs/smoke.json --out runs/smoke-repeat
+..\..\work\venv\Scripts\python.exe -m tracast.cli run --config configs/subset.json --out runs/subset
 ```
 
 The initial pre-fix smoke and inspection attempts failed while plotting legacy HDF5 frequency metadata. Rebuilding the index from its timestamp values fixed the issue; a regression test covers it. The initial smoke directory is marked failed. Verified reports come only from completed post-fix runs. The raw file was not changed.

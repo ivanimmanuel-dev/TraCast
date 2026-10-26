@@ -8,7 +8,7 @@ from .experiment import Config, plots, run, write_json
 
 
 def main():
-    parser = argparse.ArgumentParser(description="TrafficMind: METR-LA CPU forecasting")
+    parser = argparse.ArgumentParser(description="TraCast: METR-LA CPU forecasting")
     commands = parser.add_subparsers(dest="command", required=True)
     download = commands.add_parser("fetch")
     download.add_argument("--data", default="data/raw/metr-la.h5")

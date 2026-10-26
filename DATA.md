@@ -8,7 +8,7 @@ Original research: Yaguang Li, Rose Yu, Cyrus Shahabi, Yan Liu, *Diffusion Convo
 - Author repository and original distribution instructions: https://github.com/liyaguang/DCRNN
 - Author-linked data folder: https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX
 
-TrafficMind downloads the HDF5 file from the accessible `jimmygao3218/METRLA` mirror, without using its graph pickle or any precomputed splits:
+TraCast downloads the HDF5 file from the accessible `jimmygao3218/METRLA` mirror, without using its graph pickle or any precomputed splits:
 
 - Mirror: https://huggingface.co/datasets/jimmygao3218/METRLA
 - Immutable revision: `ec9772c0e8dd48b3470a6381dff1888257a9ffe4`
@@ -25,7 +25,7 @@ The pinned mirror's dataset card declares **CC BY 4.0**: https://creativecommons
 
 The DCRNN repository has an **MIT software license**, copyright 2017 Yaguang Li. A copy is in [docs/DCRNN-LICENSE.txt](docs/DCRNN-LICENSE.txt), sourced from https://github.com/liyaguang/DCRNN/blob/master/LICENSE . That software license alone does not establish a separate license grant from the original traffic-data provider. The mirror's authority to relicense the underlying data has not been independently established. The original distribution README does not supply separate dataset-specific terms.
 
-TrafficMind keeps raw data local and excluded from Git. This repository does not redistribute the HDF5 file. No project-wide license is selected for the new TrafficMind code yet; the upstream license file applies to its upstream material.
+TraCast keeps raw data local and excluded from Git. This repository does not redistribute the HDF5 file. No project-wide license is selected for the new TraCast code yet; the upstream license file applies to its upstream material.
 
 ## Processing
 

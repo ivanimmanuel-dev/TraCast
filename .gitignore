@@ -8,3 +8,7 @@ runs/*
 !runs/.gitkeep
 *.h5
 *.pt
+
+*.fab
+*.npz
+.flower/

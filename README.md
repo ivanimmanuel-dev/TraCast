@@ -1,4 +1,4 @@
-# TrafficMind
+# TraCast
 
 Traffic-speed forecasting on real METR-LA data. Phase one: persistence and a small PyTorch GRU on CPU.
 
@@ -17,11 +17,11 @@ The lock includes the tested CPU PyTorch build and all installed dependencies. I
 ## Run
 
 ```powershell
-.\.venv\Scripts\python.exe -m trafficmind.cli fetch
-.\.venv\Scripts\python.exe -m trafficmind.cli inspect --out runs/inspect-new
+.\.venv\Scripts\python.exe -m tracast.cli fetch
+.\.venv\Scripts\python.exe -m tracast.cli inspect --out runs/inspect-new
 .\.venv\Scripts\python.exe -m pytest -q -W error
-.\.venv\Scripts\python.exe -m trafficmind.cli run --config configs/smoke.json --out runs/smoke-new
-.\.venv\Scripts\python.exe -m trafficmind.cli run --config configs/subset.json --out runs/subset-new
+.\.venv\Scripts\python.exe -m tracast.cli run --config configs/smoke.json --out runs/smoke-new
+.\.venv\Scripts\python.exe -m tracast.cli run --config configs/subset.json --out runs/subset-new
 ```
 
 Use a new output directory for each run. Existing runs are never overwritten. `fetch` reuses an existing file only after checking its SHA-256. The dataset stays in `data/raw/` and is ignored by Git.
@@ -74,10 +74,10 @@ The run ID hashes config, data checksum, source/tests/config files, and dependen
 
 ```text
 configs/                 smoke and initial subset configs
-src/trafficmind/data.py  download, checks, splits, scaling, windows
-src/trafficmind/model.py GRU and metrics
-src/trafficmind/experiment.py training, evaluation, logs, plots
-src/trafficmind/cli.py   commands
+src/tracast/data.py  download, checks, splits, scaling, windows
+src/tracast/model.py GRU and metrics
+src/tracast/experiment.py training, evaluation, logs, plots
+src/tracast/cli.py   commands
 tests/                  mechanics and regression tests
 reports/                verified results and development notes
 ```
