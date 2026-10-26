@@ -1,0 +1,24 @@
+{
+  "sensors": 16,
+  "rows": 34272,
+  "history": 12,
+  "horizon": 12,
+  "hidden": 32,
+  "embedding": 4,
+  "batch_size": 64,
+  "epochs": 5,
+  "lr": 0.001,
+  "seeds": [
+    7,
+    42,
+    2026
+  ],
+  "threads": 4,
+  "threshold": 0.1,
+  "models": [
+    "gru",
+    "lstm",
+    "graph_gru",
+    "graph_self"
+  ]
+}

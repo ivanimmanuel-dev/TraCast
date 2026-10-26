@@ -115,3 +115,24 @@ def test_process_peak_memory_available():
     result=peak_memory()
     assert result["bytes"] > 0
     assert "process" in result["method"]
+
+
+def test_lstm_forecast_shape_gradients_and_capacity():
+    from tracast.recurrent import LSTM
+    model=LSTM(16,32,12)
+    output=model(torch.randn(4,12,16))
+    assert output.shape==(4,12,16)
+    output.square().mean().backward()
+    assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in model.parameters())
+    assert sum(p.numel() for p in model.parameters())==12736
+
+
+def test_lstm_factory_and_repeated_initialization():
+    from tracast.experiment import seed_all
+    config=BenchmarkConfig()
+    seed_all(42,1)
+    first=model_for("lstm",config,np.zeros((16,16),dtype=np.float32))
+    seed_all(42,1)
+    second=model_for("lstm",config,np.zeros((16,16),dtype=np.float32))
+    x=torch.ones(2,12,16)
+    assert torch.equal(first(x),second(x))
