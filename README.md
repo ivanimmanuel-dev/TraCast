@@ -1,82 +1,97 @@
 # TraCast
 
-Traffic-speed forecasting on real METR-LA with PyTorch and Flower. CPU-first research code: persistence, a GRU baseline, and a three-client FedAvg simulation.
+Traffic-speed forecasting on METR-LA with PyTorch and Flower. Recurrent encoders, directed road-distance features, and federated model averaging under chronological evaluation.
 
-## Setup
+[Research brief (PDF)](reports/research-brief.pdf) · [Technical report](reports/research-report.md) · [Reproduce the experiments](docs/reproducibility.md)
 
-Python 3.11 on Windows x64. From the repository directory:
+## Findings
+
+The centralized benchmark uses 16 sensors, the full available March-June 2012 timeline, and five epochs per learned model. Values are mean (sample SD) over seeds 7, 42, and 2026; errors are mph. Persistence is deterministic and evaluated once.
+
+| Model | MAE (SD) | RMSE (SD) | Parameters |
+|---|---:|---:|---:|
+| Persistence | 4.100 | 8.549 | 0 |
+| GRU | 3.409 (0.032) | 7.179 (0.033) | 11,136 |
+| LSTM | 3.363 (0.007) | 7.091 (0.031) | 12,736 |
+| Graph-GRU | 3.364 (0.036) | 7.107 (0.106) | 15,760 |
+| Graph-GRU (self only) | 3.368 (0.023) | 7.073 (0.047) | 15,760 |
+
+- Graph-GRU minus GRU mean MAE: -0.0453 mph, with 42% more parameters.
+- Removing graph neighbors changed mean MAE by 0.0043 mph, with mixed seed-level effects. Most of the gain remained in the self-only projection.
+- LSTM reached nearly the same mean error as Graph-GRU with fewer parameters and lower seed dispersion in this configuration.
+- Five training epochs averaged 11.1 s for GRU, 10.9 s for LSTM, and 12.7 s for Graph-GRU on a Ryzen 7 5825U. Fresh-process peak memory was about 320 MiB, including data loading.
+
+![Forecast horizon errors](reports/figures/forecast-horizons.png)
+
+[Per-seed results, timings, and counts](reports/benchmark/results.json) · [Graph ablation and protocol](reports/benchmark/report.md)
+
+## Architecture
+
+```mermaid
+flowchart TD
+    D["METR-LA HDF5<br/>34,272 timestamps x 207 sensors"] --> V["Checksum + schema validation"]
+    T["Published DCRNN distances<br/>pinned revision + sensor IDs"] --> A["Directed Gaussian weights<br/>connected 16-sensor subset"]
+    V --> S["Chronological 70/10/20 split"]
+    A --> S
+    S --> N["Per-sensor training statistics<br/>causal fill + masked targets"]
+    N --> W["12 input steps -> 12 forecast steps"]
+    W --> R["Persistence / GRU / LSTM"]
+    W --> G["Own speed + incoming/outgoing means<br/>shared Linear(3,4) + ReLU"]
+    A --> G
+    G --> H["GRU encoder + forecast head"]
+    R --> E["Validation checkpoint selection<br/>test MAE/RMSE by horizon"]
+    H --> E
+```
+
+The graph contains 85 directed non-self distance relationships. Its weights and subset selection use topology only. The Graph-GRU spatial layer is trained jointly with the recurrent encoder. The self-only ablation removes neighbor inputs and retains the same architecture and parameter count. [Graph source and hashes](DATA.md#sensor-distance-graph).
+
+## Federated learning
+
+The expanded Flower study used 12 sensors, 14 days, 3 clients, and 3 seeds. At five rounds, balanced partitions scored MAE 3.774 mph versus 3.750 for the matched pooled reference. Congestion-grouped clients scored 3.836 mph. Training histogram divergence was 0.0169 versus 0.0307 bits. The five-round parameter payload was 721,152 bytes. Round budgets of 1/3/5 and all per-seed results are recorded.
+
+The Flower `ClientApp`, `ServerApp`, and official `FedAvg` strategy run through the local CLI/SuperLink and Ray runtime. Clients hold disjoint sensor subsets. A shared univariate GRU keeps parameter meanings consistent across clients. Per-sensor normalization uses local training values; global scores pool error sums and valid target counts.
+
+The centralized reference uses the same initial weights, normalized examples, masks, and exposure. Client partitions represent simulated data ownership. They do not represent cities or independent organizations, and the simulation applies neither differential privacy nor secure aggregation.
+
+[Round-budget and heterogeneity study](reports/federated-study/findings.md) · [Original Flower baseline](reports/federated-smoke/report.md)
+
+## Run
+
+Python 3.11, Windows x64, CPU PyTorch. From the repository directory:
 
 ```powershell
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
 .\.venv\Scripts\python.exe -m pip install -e . --no-deps
-.\.venv\Scripts\python.exe -m pip check
 .\.venv\Scripts\python.exe -m tracast.cli fetch
 .\.venv\Scripts\python.exe -m pytest -q -W error
+
+# Three-seed GRU/LSTM/Graph-GRU benchmark and graph ablation
+.\.venv\Scripts\python.exe -m tracast.benchmark --config configs/benchmark.json --out runs/benchmark-new
+
+# Flower round budgets and client-distribution study
+.\.venv\Scripts\python.exe -m tracast.federated_study --config configs/federated-study.json --out runs/study-new
 ```
 
-The lock includes the CPU build of PyTorch, Flower 1.42.0, Ray 2.55.1, and the test dependencies. It preserves the Phase 1 NumPy, pandas, PyTables, matplotlib, and PyTorch versions. The original environment lock is retained in `reports/phase1-requirements-lock.txt`.
+The benchmark downloads and validates topology files automatically. Use unused output paths. The measured budget for the model benchmark is a few minutes; the sequential Flower study takes roughly ten minutes on this machine. [Environment, timing definitions, smoke commands, and report regeneration](docs/reproducibility.md).
 
-For the already-installed development environment, use `..\..\work\flwr-venv\Scripts\python.exe` in place of `.\.venv\Scripts\python.exe`.
+## Evaluation contract
 
-## Three-round Flower smoke run
+- Split rows before making windows. Inputs and targets remain within one chronological partition.
+- Fit means/scales only on observed training readings; forward-fill within a split and use the training mean for leading gaps.
+- Treat zero/NaN targets as missing. Compute MAE/RMSE from valid forecast/sensor pairs, with counts at every horizon.
+- Select checkpoints by validation MAE. Report test results after selection.
+- Preserve configurations, source/data hashes, sensor IDs, scalers, graph weights, convergence, timing definitions, and model hashes.
 
-```powershell
-.\.venv\Scripts\python.exe -m tracast.federated --config configs/federated-smoke.json --out runs/fl-new-a
-.\.venv\Scripts\python.exe -m tracast.federated --config configs/federated-smoke.json --out runs/fl-new-b
-.\.venv\Scripts\python.exe -m tracast.compare_runs runs/fl-new-a runs/fl-new-b
-```
+[Dataset provenance and citation](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
 
-Each run executes the genuine Flower `ClientApp`, `ServerApp`, and `flwr.serverapp.strategy.FedAvg` through `flwr run --stream`, using a managed local SuperLink and Ray. It then trains and evaluates the matched centralized GRU. No handwritten replacement for Flower's aggregation is used.
+## Reports
 
-The smoke config selects the first six sensors and seven days of observations, assigns two disjoint sensors to each of three simulated clients, and runs three rounds with one local epoch per client. All clients participate every round. One Ray actor slot and one PyTorch thread per client keep memory and CPU use small; Ray's object-store limit is 128 MiB. The client IDs describe sensor partitions only.
+| Study | Records |
+|---|---|
+| Recurrent encoders and graph ablation | [Report](reports/benchmark/report.md), [summary](reports/benchmark/summary.json), [repeatability](reports/benchmark/repeatability.json) |
+| Federated budgets and heterogeneity | [Findings](reports/federated-study/findings.md), [summary](reports/federated-study/summary.json) |
+| Original centralized baseline | [Phase 1 report](reports/verification.md) |
+| Original Flower baseline | [Report](reports/federated-smoke/report.md), [exact repeats](reports/federated-smoke/determinism.json) |
 
-The launcher disables runtime dependency installation so workers use the locked environment. It stores Flower's local files inside the run directory. The managed local SuperLink stays available between runs. Run this project in a dedicated environment/session; a previously running local SuperLink may have different dependency settings. Ray's Windows support is experimental; this Windows configuration was executed successfully.
-
-Use a new output directory for every run. A failed Flower process or missing federated output marks the run failed and stops the comparison.
-
-## Model and comparison
-
-The federated task reuses the existing GRU as `GRU(sensors=1)`, with one sensor per example and shared weights across sensors. This avoids averaging input/output channel weights that refer to different sensor IDs on different clients. It models each sensor's history without cross-sensor features.
-
-The centralized reference uses the same six sensors, per-sensor train-only scalers, windows, masks, model shape, initial tensors, batch size, optimizer settings, and total example exposure. Its three pooled epoch blocks match three federated rounds. Adam resets at each local fit and centralized block. FedAvg weights client models by usable training-window counts. Exact optimizer-step counts differ because each client has its own final partial batch.
-
-These results are separate from the Phase 1 multivariate GRU results. See [the federated protocol and report](reports/federated-smoke/report.md) for architectural decisions, executed results, resource/communication definitions, and limitations.
-
-## Temporal evaluation
-
-Rows split chronologically into 70% training, 10% validation, and 20% test before making sequences. All client partitions share the same time grid and boundaries. Windows stay within their split. Inputs use 12 five-minute readings; predictions cover the next 12 steps.
-
-Each sensor's mean and population standard deviation are fitted using observed training values only and retained locally. Inputs forward-fill within a split, then use the training mean for leading gaps. Zero/NaN targets are masked. Training windows with no observed future targets are excluded; validation and test preserve every window and score valid targets only.
-
-Every round evaluates validation data. The lowest validation MAE selects a checkpoint; clients evaluate its test predictions only after selection. Global and per-horizon MAE/RMSE pool absolute errors, squared errors, and valid target counts. Client RMSEs are never averaged.
-
-## Outputs
-
-A completed federated run contains:
-
-- `manifest.json`, `config.json`, `clients.json`: source/data/partition hashes, versions, partitions, time boundaries, normalization, and sample counts.
-- `rounds.json`: client training statistics, validation metrics at every horizon, model hashes, and parameter communication estimates for every round.
-- `federated.json`: selected round, global/client test metrics, and communication totals.
-- `centralized-history.json`, `centralized.json`: matched reference training and selected test results, plus persistence.
-- `initial.pt`, `round-*.pt`, `best-fedavg.pt`, `best-centralized.pt`: local checkpoints.
-- `convergence.png`, `horizon-metrics.png`: validation convergence and selected-model test curves.
-- `flower.log`, `launcher.json`, `status.json`: actual runtime logs, launch settings, and completion/failure state.
-
-The run ID hashes config, raw-data checksum, source/tests/config files, and the dependency lock. Repeats compare numerical records, run IDs, partition hashes, and every checkpoint tensor. Framework run IDs and timestamps are expected to differ.
-
-## Phase 1
-
-```powershell
-.\.venv\Scripts\python.exe -m tracast.cli inspect --out runs/inspect-new
-.\.venv\Scripts\python.exe -m tracast.cli run --config configs/smoke.json --out runs/phase1-smoke-new
-.\.venv\Scripts\python.exe -m tracast.cli run --config configs/subset.json --out runs/phase1-subset-new
-```
-
-The original implementation and reports are retained under the `phase1-verified` Git tag. The current package retains its behavior and tests. The original real-data smoke metrics were rerun and matched exactly. Historical JSON manifests remain verbatim execution records.
-
-- [Phase 1 protocol](docs/phase1-protocol.md)
-- [Phase 1 verification and results](reports/verification.md)
-- [Data provenance, citation, and license notes](DATA.md)
-
-Raw HDF5 files, client partitions, run directories, Flower bundles, and checkpoints are ignored by Git. Reports contain derived metrics and plots. GNN and sensor-failure experiments are outside this phase.
+The original implementations and results remain under `phase1-verified` and `flower-verified`. Current reports keep those historical results separate from the topology-selected benchmark. Raw data, topology CSVs, checkpoints, client partitions, and local Flower state stay out of Git. Sensor-failure experiments have not been added.

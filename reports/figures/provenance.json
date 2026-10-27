@@ -1,0 +1,5 @@
+{
+  "source": "reports/benchmark/summary.json",
+  "sha256": "517923b45cfdb8c160eada72aa638805bcea453adf1ec233334f91b169b67e09",
+  "uncertainty": "Sample SD across three training seeds"
+}

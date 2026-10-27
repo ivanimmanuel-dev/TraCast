@@ -12,7 +12,7 @@
     "tests/test_pipeline.py": "b7d9b1fb78902e3858c60d33dfae7985b2146d278a2b40b48d92a9d3d704d82a"
   },
   "command": [
-    "C:\\Users\\IvanI\\Documents\\Codex\\2026-10-26\\help-me-develop-trafficmind-a-reproducible\\outputs\\TrafficMind\\src\\trafficmind\\cli.py",
+    "$REPO\\src\\trafficmind\\cli.py",
     "run",
     "--config",
     "configs/subset.json",

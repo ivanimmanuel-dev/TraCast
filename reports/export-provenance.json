@@ -1,0 +1,157 @@
+{
+  "reports/benchmark/manifest.json": {
+    "export_sha256": "de2224fc3f0cb86878a3dfdcf47dc2a6559d1c46ab2bd32661c122cdc50a2233",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "be5934d081bb7e1111767d0d4b336bc66b94cebee91f719a583c38836eca1467"
+  },
+  "reports/federated-smoke/flower.log": {
+    "export_sha256": "0bda9b732eb5ff9e1a0a593bb44934628fb2f60f41ae3d6e3da3aa8e4cc1d130",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "9275aba70a653db25e61d4ed7b6db5914bfd69fff5210b11ad7bc626f431054b"
+  },
+  "reports/federated-smoke/launcher.json": {
+    "export_sha256": "546564e97ef362f6cbf0cda5390f6b7a7ef55aee75df3c1d6e11a45c1fc49bfc",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "9e46479755920e25ea3b469706e3f13b3cc82bde4f82dcf4b0ab10117240275b"
+  },
+  "reports/federated-smoke/manifest.json": {
+    "export_sha256": "630302da233b3572308369162eee125c67f688b7acc61e2721efc06705559ceb",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "f065bd3039155a7571d76499c9b2e54020f6e45e5360aa13058c79b66f522eb3"
+  },
+  "reports/federated-study/cases/b1-s2026/flower.log": {
+    "export_sha256": "d47d86996504efca0323995dcc2d82e2c4d0e67e40f712a27231f35641a3a0df",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "25c51b5fe36e0a026fe8f81550b0d2d322bb2cdefa45301319e55e6429853cd5"
+  },
+  "reports/federated-study/cases/b1-s2026/manifest.json": {
+    "export_sha256": "58775bf089a58861c1acbf9ebc79e42a221be978b925eb0b02c14662dba1f338",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "bc22512a2b04085cdaa9f216e07c439b9db9aa0a521192659d5643bd093b4d20"
+  },
+  "reports/federated-study/cases/b1-s42/flower.log": {
+    "export_sha256": "955dd1ed6224228a9e1a8e7140f16ab20b48cc209a629232cb52597efa384e69",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "5379d4bbe7bb4715862d7e5d05436c7a71b24746c23394fddbdcd8163449fc56"
+  },
+  "reports/federated-study/cases/b1-s42/manifest.json": {
+    "export_sha256": "8592ff6a113b68b2572ae3a8f7a2c9b2f8b84588816c3bbfaddbdf1b34b16eb5",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "ee119f02083b2f43c8337d4be0e3ed363ddf15d10d44134a769e12f49bf1e04b"
+  },
+  "reports/federated-study/cases/b1-s7/flower.log": {
+    "export_sha256": "69fec094718535b6660f8936c6ef6e57d3c5e15c51182baeaadde6778fdc47e0",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "c9c6b480554f0b94f402fa5634e6be6fc3494ffbd4284ac28b8a7f09a2949ad9"
+  },
+  "reports/federated-study/cases/b1-s7/manifest.json": {
+    "export_sha256": "a28f29dc0c60b5da0dee9120edf64df12d3033585f70b67d677f4fb3c86332a4",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "80014ea8b7f969f917cafa1312b4fbe0f0108c04a3892f9b605731c94f043be1"
+  },
+  "reports/federated-study/cases/b3-s2026/flower.log": {
+    "export_sha256": "bd0a90537ec4f8ad4e7e38712eb62a466c2a9f62b7c6173eff8e5b542c015771",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "c86d7b2e9862a2ebd49f25ff71516fdddf553a504501819f68076fe89e724cad"
+  },
+  "reports/federated-study/cases/b3-s2026/manifest.json": {
+    "export_sha256": "6cb220260025d38bcf7586a7bcf011c4e94506d9c8e527cf67754581722be6a7",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "68fdb2b7cfa59076cffc7d039f4514a0581949f4ad03f925df4162e68f5f1e70"
+  },
+  "reports/federated-study/cases/b3-s42/flower.log": {
+    "export_sha256": "05fe173c1cfe7b5f2c84ac691d909b438d0c50fa8e92ca68036fce5abd80e0ac",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "cf9260d773fb949ddb8038fb4bd3690cf17d146f88c5306736acac91a9e5ce61"
+  },
+  "reports/federated-study/cases/b3-s42/manifest.json": {
+    "export_sha256": "90fa705043cba333480d5022a384426be46ad751664af40d14321c5b9e6a538b",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "90bd5bbe42f69d821c85bac9f300e16cd41f1d8c7261625c2dc575966644539b"
+  },
+  "reports/federated-study/cases/b3-s7/flower.log": {
+    "export_sha256": "1f113f6ddfcca16117743389af22040b364a9c4548c93f5fd72331085bccb838",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "83f8c2e4bf9c1ccb4f660aa600c6d8added1498c7d77ddbd2fb7917510a1d033"
+  },
+  "reports/federated-study/cases/b3-s7/manifest.json": {
+    "export_sha256": "4ac54200b8a7057f51d540f31537766f33b6cb7a924c8e4694caa8f07c699f3d",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "55d8c3d4b6967cdf5f4b7e2921d5fa4ee1ce990a38b83d54914953a130c7f325"
+  },
+  "reports/federated-study/cases/b5-s2026/flower.log": {
+    "export_sha256": "68f533b9acffa8d44170867c3842bde8e4c5d191168660c76ab82cf5481c4344",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "dc68223ad9728f59772c562cecc3b08bb5efe9f6165341e6feecc1673d7bd5f8"
+  },
+  "reports/federated-study/cases/b5-s2026/manifest.json": {
+    "export_sha256": "7c6ccd37ed2458011fe7d525ee911a00cee820958c3ffdd846d083aee8872ae9",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "50238633127838c83c5df51cedca40478d31c37b39ec71203803cda2390e455f"
+  },
+  "reports/federated-study/cases/b5-s42/flower.log": {
+    "export_sha256": "54166c4fcdfbce2c1fa08d8a5d01c0fc4ff148a1ca4346cb897c2298b9fd7670",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "3b3131e7f79e213364adf525c52eb65cbda6546ddfe5991cc983a3a64841b4aa"
+  },
+  "reports/federated-study/cases/b5-s42/manifest.json": {
+    "export_sha256": "1fdf5366b53a7f97a8227edbd1a3fdc1b37d91e546abdcdae9697dcb77d876a9",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "203efa49c3fa118300ca4687dd65eb6d9e281ad6f9f95471f785565303fac34b"
+  },
+  "reports/federated-study/cases/b5-s7/flower.log": {
+    "export_sha256": "06a6093eacaaefc135710059de723751f6a4b92c8c3fdaacdf21db42eab1975c",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "f40ab5fb9d58a0a9818187eae9408e5684301f9c9422587c9b9f7f06320170aa"
+  },
+  "reports/federated-study/cases/b5-s7/manifest.json": {
+    "export_sha256": "28e47a69a1dde861eeae883c6499a1bf59acd056d0fd4123d3917a2b35ced482",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "214401df6be95add3334ce0595a12335b5c35e161b94e3c7f39e7c7ac286013c"
+  },
+  "reports/federated-study/cases/c5-s2026/flower.log": {
+    "export_sha256": "175691bb910620ab4db47a9b1a068b20250f58558742cb8381ff1e0b18bb6189",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "5f86452805ee4d3e1e10bcb7a99fcff91509c5c67341e83712456c2eab5e3582"
+  },
+  "reports/federated-study/cases/c5-s2026/manifest.json": {
+    "export_sha256": "5acdeb2050575c46ebb0ac207a87536489885c97fb778214c409043c33acfc76",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "28e17295483107cb12fdb7266cf7d2ead6a13d40cfa1e91df76f9b5db3af02d2"
+  },
+  "reports/federated-study/cases/c5-s42/flower.log": {
+    "export_sha256": "1192f97fefefee2a30c4823103ee4bc2607bd4ad9113cf4d2c018227b9d6feb6",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "c01c1f7d906120155b872156938351557a87cffeecea37b4793cdf2aed0fc5f3"
+  },
+  "reports/federated-study/cases/c5-s42/manifest.json": {
+    "export_sha256": "de17d707313841fc789b669d7fcb62369bfeb376e7c1a8104372f5b815081b29",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "70775edd22a3f5ada0324b38826804a2c73b6042c0a54c3fc66c85ad2ab20ee3"
+  },
+  "reports/federated-study/cases/c5-s7/flower.log": {
+    "export_sha256": "83eaccf20a6097372c510d7749c1643b9772d309b78451325b175ab57251fe4f",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "621625561b1fd4676a028a1905aa0a4a8ffa129a3486836cb393fea7c4d244f0"
+  },
+  "reports/federated-study/cases/c5-s7/manifest.json": {
+    "export_sha256": "5bc0d5815a93491457446033a72aaadcec875cf36e845e02283a61f6d19fbfa8",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "8f39cb8b25019770231efbc4086583bec2183810fcad40ac8d20b4704ea18952"
+  },
+  "reports/graph-pilot/manifest.json": {
+    "export_sha256": "08126c5b291a0dc1a8c8d4c2752d619c37d93f51200232777112ea455f7896a8",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "3dd14e1d0c8582e244d8bc28079c10438c4ae511e97e0cf5bb45d4d005b66db9"
+  },
+  "reports/smoke/manifest.json": {
+    "export_sha256": "d18d40c8e303bf22f6f8a57feb564aa3fc160b95f57505b7a1b2391aee441151",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "3b16d9046ede24aaddc685086dc29034332f5c7d85112f635a90ba194e382752"
+  },
+  "reports/subset/manifest.json": {
+    "export_sha256": "e8e306b9c88fb54210154e637b7f2b58b4751ee120eb469de9aeb10f2c879d22",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "b0d4a7b13b7b10cf42da253188ced068832cba60cbea3c6be6a32492842d1b74"
+  }
+}

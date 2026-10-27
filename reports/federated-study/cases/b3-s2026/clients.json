@@ -1,0 +1,512 @@
+[
+  {
+    "client_id": 0,
+    "missing": {
+      "test": {
+        "end": "2012-03-14 23:55:00",
+        "missing_fraction": 0.02509293680297398,
+        "nan_count": 0,
+        "per_sensor": {
+          "767471": {
+            "missing_fraction": 0.08302354399008674,
+            "nan": 0,
+            "zero": 67
+          },
+          "767541": {
+            "missing_fraction": 0.0037174721189591076,
+            "nan": 0,
+            "zero": 3
+          },
+          "773062": {
+            "missing_fraction": 0.0037174721189591076,
+            "nan": 0,
+            "zero": 3
+          },
+          "773869": {
+            "missing_fraction": 0.009913258983890954,
+            "nan": 0,
+            "zero": 8
+          }
+        },
+        "rows": 807,
+        "sensors": 4,
+        "start": "2012-03-12 04:45:00",
+        "zero_count": 81
+      },
+      "train": {
+        "end": "2012-03-10 19:05:00",
+        "missing_fraction": 0.06653082919914954,
+        "nan_count": 0,
+        "per_sensor": {
+          "767471": {
+            "missing_fraction": 0.08362863217576187,
+            "nan": 0,
+            "zero": 236
+          },
+          "767541": {
+            "missing_fraction": 0.05634301913536499,
+            "nan": 0,
+            "zero": 159
+          },
+          "773062": {
+            "missing_fraction": 0.058114812189936214,
+            "nan": 0,
+            "zero": 164
+          },
+          "773869": {
+            "missing_fraction": 0.06803685329553508,
+            "nan": 0,
+            "zero": 192
+          }
+        },
+        "rows": 2822,
+        "sensors": 4,
+        "start": "2012-03-01 00:00:00",
+        "zero_count": 751
+      },
+      "val": {
+        "end": "2012-03-12 04:40:00",
+        "missing_fraction": 0.03225806451612903,
+        "nan_count": 0,
+        "per_sensor": {
+          "767471": {
+            "missing_fraction": 0.03970223325062035,
+            "nan": 0,
+            "zero": 16
+          },
+          "767541": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          },
+          "773062": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          },
+          "773869": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          }
+        },
+        "rows": 403,
+        "sensors": 4,
+        "start": "2012-03-10 19:10:00",
+        "zero_count": 52
+      }
+    },
+    "normalization": {
+      "fit": "local observed train values only",
+      "mean": [
+        64.35765075683594,
+        63.24425506591797,
+        62.09823989868164,
+        58.4296875
+      ],
+      "std": [
+        3.5007598400115967,
+        3.311546564102173,
+        11.762495040893555,
+        11.345073699951172
+      ]
+    },
+    "sensor_ids": [
+      "767541",
+      "767471",
+      "773869",
+      "773062"
+    ],
+    "splits": {
+      "test": {
+        "candidate_examples": 3136,
+        "examples": 3136,
+        "first": "2012-03-12 04:45:00",
+        "last": "2012-03-14 23:55:00",
+        "rows": 807
+      },
+      "train": {
+        "candidate_examples": 11196,
+        "examples": 10779,
+        "first": "2012-03-01 00:00:00",
+        "last": "2012-03-10 19:05:00",
+        "rows": 2822
+      },
+      "val": {
+        "candidate_examples": 1520,
+        "examples": 1520,
+        "first": "2012-03-10 19:10:00",
+        "last": "2012-03-12 04:40:00",
+        "rows": 403
+      }
+    },
+    "training_distribution": {
+      "congestion_fraction_below_40": 0.05058365758754864,
+      "histogram_bins_mph": [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        "+inf"
+      ],
+      "mean_mph": 62.025108337402344,
+      "observed_readings": 10537,
+      "speed_histogram": [
+        4,
+        107,
+        148,
+        274,
+        114,
+        1013,
+        8848,
+        29,
+        0
+      ]
+    }
+  },
+  {
+    "client_id": 1,
+    "missing": {
+      "test": {
+        "end": "2012-03-14 23:55:00",
+        "missing_fraction": 0.010532837670384139,
+        "nan_count": 0,
+        "per_sensor": {
+          "717447": {
+            "missing_fraction": 0.0037174721189591076,
+            "nan": 0,
+            "zero": 3
+          },
+          "717816": {
+            "missing_fraction": 0.0037174721189591076,
+            "nan": 0,
+            "zero": 3
+          },
+          "737529": {
+            "missing_fraction": 0.02973977695167286,
+            "nan": 0,
+            "zero": 24
+          },
+          "767620": {
+            "missing_fraction": 0.004956629491945477,
+            "nan": 0,
+            "zero": 4
+          }
+        },
+        "rows": 807,
+        "sensors": 4,
+        "start": "2012-03-12 04:45:00",
+        "zero_count": 34
+      },
+      "train": {
+        "end": "2012-03-10 19:05:00",
+        "missing_fraction": 0.07069454287739192,
+        "nan_count": 0,
+        "per_sensor": {
+          "717447": {
+            "missing_fraction": 0.058114812189936214,
+            "nan": 0,
+            "zero": 164
+          },
+          "717816": {
+            "missing_fraction": 0.09142452161587526,
+            "nan": 0,
+            "zero": 258
+          },
+          "737529": {
+            "missing_fraction": 0.07689581856839121,
+            "nan": 0,
+            "zero": 217
+          },
+          "767620": {
+            "missing_fraction": 0.05634301913536499,
+            "nan": 0,
+            "zero": 159
+          }
+        },
+        "rows": 2822,
+        "sensors": 4,
+        "start": "2012-03-01 00:00:00",
+        "zero_count": 798
+      },
+      "val": {
+        "end": "2012-03-12 04:40:00",
+        "missing_fraction": 0.02977667493796526,
+        "nan_count": 0,
+        "per_sensor": {
+          "717447": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          },
+          "717816": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          },
+          "737529": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          },
+          "767620": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          }
+        },
+        "rows": 403,
+        "sensors": 4,
+        "start": "2012-03-10 19:10:00",
+        "zero_count": 48
+      }
+    },
+    "normalization": {
+      "fit": "local observed train values only",
+      "mean": [
+        63.02839660644531,
+        60.98072052001953,
+        52.73971176147461,
+        55.84632110595703
+      ],
+      "std": [
+        3.220226287841797,
+        7.852320671081543,
+        8.846518516540527,
+        19.738262176513672
+      ]
+    },
+    "sensor_ids": [
+      "767620",
+      "737529",
+      "717447",
+      "717816"
+    ],
+    "splits": {
+      "test": {
+        "candidate_examples": 3136,
+        "examples": 3136,
+        "first": "2012-03-12 04:45:00",
+        "last": "2012-03-14 23:55:00",
+        "rows": 807
+      },
+      "train": {
+        "candidate_examples": 11196,
+        "examples": 10730,
+        "first": "2012-03-01 00:00:00",
+        "last": "2012-03-10 19:05:00",
+        "rows": 2822
+      },
+      "val": {
+        "candidate_examples": 1520,
+        "examples": 1520,
+        "first": "2012-03-10 19:10:00",
+        "last": "2012-03-12 04:40:00",
+        "rows": 403
+      }
+    },
+    "training_distribution": {
+      "congestion_fraction_below_40": 0.0759771210676835,
+      "histogram_bins_mph": [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        "+inf"
+      ],
+      "mean_mph": 58.15743637084961,
+      "observed_readings": 10490,
+      "speed_histogram": [
+        121,
+        278,
+        200,
+        198,
+        383,
+        2832,
+        6464,
+        14,
+        0
+      ]
+    }
+  },
+  {
+    "client_id": 2,
+    "missing": {
+      "test": {
+        "end": "2012-03-14 23:55:00",
+        "missing_fraction": 0.0037174721189591076,
+        "nan_count": 0,
+        "per_sensor": {
+          "717445": {
+            "missing_fraction": 0.0037174721189591076,
+            "nan": 0,
+            "zero": 3
+          },
+          "717446": {
+            "missing_fraction": 0.0037174721189591076,
+            "nan": 0,
+            "zero": 3
+          },
+          "765604": {
+            "missing_fraction": 0.0037174721189591076,
+            "nan": 0,
+            "zero": 3
+          },
+          "767542": {
+            "missing_fraction": 0.0037174721189591076,
+            "nan": 0,
+            "zero": 3
+          }
+        },
+        "rows": 807,
+        "sensors": 4,
+        "start": "2012-03-12 04:45:00",
+        "zero_count": 12
+      },
+      "train": {
+        "end": "2012-03-10 19:05:00",
+        "missing_fraction": 0.058026222537207656,
+        "nan_count": 0,
+        "per_sensor": {
+          "717445": {
+            "missing_fraction": 0.058114812189936214,
+            "nan": 0,
+            "zero": 164
+          },
+          "717446": {
+            "missing_fraction": 0.06130403968816442,
+            "nan": 0,
+            "zero": 173
+          },
+          "765604": {
+            "missing_fraction": 0.05634301913536499,
+            "nan": 0,
+            "zero": 159
+          },
+          "767542": {
+            "missing_fraction": 0.05634301913536499,
+            "nan": 0,
+            "zero": 159
+          }
+        },
+        "rows": 2822,
+        "sensors": 4,
+        "start": "2012-03-01 00:00:00",
+        "zero_count": 655
+      },
+      "val": {
+        "end": "2012-03-12 04:40:00",
+        "missing_fraction": 0.02977667493796526,
+        "nan_count": 0,
+        "per_sensor": {
+          "717445": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          },
+          "717446": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          },
+          "765604": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          },
+          "767542": {
+            "missing_fraction": 0.02977667493796526,
+            "nan": 0,
+            "zero": 12
+          }
+        },
+        "rows": 403,
+        "sensors": 4,
+        "start": "2012-03-10 19:10:00",
+        "zero_count": 48
+      }
+    },
+    "normalization": {
+      "fit": "local observed train values only",
+      "mean": [
+        61.45181655883789,
+        64.11662292480469,
+        57.03617477416992,
+        48.940216064453125
+      ],
+      "std": [
+        3.5877623558044434,
+        10.739516258239746,
+        10.193841934204102,
+        15.119915962219238
+      ]
+    },
+    "sensor_ids": [
+      "765604",
+      "767542",
+      "717445",
+      "717446"
+    ],
+    "splits": {
+      "test": {
+        "candidate_examples": 3136,
+        "examples": 3136,
+        "first": "2012-03-12 04:45:00",
+        "last": "2012-03-14 23:55:00",
+        "rows": 807
+      },
+      "train": {
+        "candidate_examples": 11196,
+        "examples": 10788,
+        "first": "2012-03-01 00:00:00",
+        "last": "2012-03-10 19:05:00",
+        "rows": 2822
+      },
+      "val": {
+        "candidate_examples": 1520,
+        "examples": 1520,
+        "first": "2012-03-10 19:10:00",
+        "last": "2012-03-12 04:40:00",
+        "rows": 403
+      }
+    },
+    "training_distribution": {
+      "congestion_fraction_below_40": 0.13006677325308003,
+      "histogram_bins_mph": [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        "+inf"
+      ],
+      "mean_mph": 57.89838409423828,
+      "observed_readings": 10633,
+      "speed_histogram": [
+        1,
+        82,
+        408,
+        892,
+        656,
+        1910,
+        6678,
+        6,
+        0
+      ]
+    }
+  }
+]

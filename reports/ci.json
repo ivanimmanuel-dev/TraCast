@@ -1,0 +1,11 @@
+{
+  "conclusion": "success",
+  "headSha": "63654d9f8f97223306f9c071bddeeb038f880860",
+  "status": "completed",
+  "url": "https://github.com/ivanimmanuel-dev/TraCast/actions/runs/40423562137",
+  "tests": "71 passed in 10.90s",
+  "clean_dependency_install": true,
+  "pip_check": "No broken requirements found",
+  "runner": "windows-latest",
+  "python": "3.11"
+}

@@ -26,7 +26,7 @@
     "tests/test_pipeline.py": "508fb8a09e70ee10d3ee559523951ef8771e3ac8c3f545df76fe05490202a229"
   },
   "command": [
-    "C:\\Users\\IvanI\\Documents\\Codex\\2026-10-26\\help-me-develop-trafficmind-a-reproducible\\outputs\\TraCast\\src\\tracast\\benchmark.py",
+    "$REPO\\src\\tracast\\benchmark.py",
     "--config",
     "configs/graph-pilot.json",
     "--out",

@@ -1,18 +1,34 @@
 """Build the research report and two-page brief from committed experiment records."""
+
 from pathlib import Path
 import json
 
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image, KeepTogether
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle,
+    PageBreak,
+    Image,
+    KeepTogether,
+)
 from reportlab.graphics.shapes import Drawing, Rect, String, Line, Polygon
 from reportlab.pdfgen.canvas import Canvas
 
-ROOT=Path(__file__).resolve().parents[1]
-REPORTS=ROOT/"reports"
-LABELS={"persistence":"Persistence","gru":"GRU","lstm":"LSTM","graph_gru":"Graph-GRU","graph_self":"Graph-GRU, self only"}
-ORDER=["persistence","gru","lstm","graph_gru","graph_self"]
+ROOT = Path(__file__).resolve().parents[1]
+REPORTS = ROOT / "reports"
+LABELS = {
+    "persistence": "Persistence",
+    "gru": "GRU",
+    "lstm": "LSTM",
+    "graph_gru": "Graph-GRU",
+    "graph_self": "Graph-GRU, self only",
+}
+ORDER = ["persistence", "gru", "lstm", "graph_gru", "graph_self"]
 
 
 def load(path):
@@ -20,31 +36,59 @@ def load(path):
 
 
 def value(item, places=3):
-    suffix=f" ({item['sd']:.{places}f})" if item['sd'] is not None else ""
-    return f"{item['mean']:.{places}f}"+suffix
+    suffix = f" ({item['sd']:.{places}f})" if item["sd"] is not None else ""
+    return f"{item['mean']:.{places}f}" + suffix
 
 
 def main():
-    summary=load(REPORTS/"benchmark/summary.json")
-    models=summary["models"]
-    results=load(REPORTS/"benchmark/results.json")
-    protocol=load(REPORTS/"benchmark/protocol.json")
-    manifest=load(REPORTS/"benchmark/manifest.json")
-    baseline=load(REPORTS/"federated-smoke/federated.json")
-    central=load(REPORTS/"federated-smoke/centralized.json")
-    table="\n".join(f"| {LABELS[n]} | {value(models[n]['mae'])} | {value(models[n]['rmse'])} | {models[n]['parameter_count']:,} | {value(models[n]['train_seconds'],2)} | {value(models[n]['inference_ms_per_window'],4)} |" for n in ORDER)
-    graph_delta=models["graph_gru"]["mae"]["mean"]-models["graph_self"]["mae"]["mean"]
-    ablation=[r["test"]["mae"]-next(s["test"]["mae"] for s in results if s["seed"]==r["seed"] and s["model"]=="graph_self") for r in results if r["model"]=="graph_gru"]
-    study_path=REPORTS/"federated-study/summary.json"
+    summary = load(REPORTS / "benchmark/summary.json")
+    models = summary["models"]
+    results = load(REPORTS / "benchmark/results.json")
+    protocol = load(REPORTS / "benchmark/protocol.json")
+    manifest = load(REPORTS / "benchmark/manifest.json")
+    baseline = load(REPORTS / "federated-smoke/federated.json")
+    central = load(REPORTS / "federated-smoke/centralized.json")
+    table = "\n".join(
+        f"| {LABELS[n]} | {value(models[n]['mae'])} | {value(models[n]['rmse'])} | {models[n]['parameter_count']:,} | {value(models[n]['train_seconds'],2)} | {value(models[n]['inference_ms_per_window'],4)} |"
+        for n in ORDER
+    )
+    graph_delta = (
+        models["graph_gru"]["mae"]["mean"] - models["graph_self"]["mae"]["mean"]
+    )
+    ablation = [
+        r["test"]["mae"]
+        - next(
+            s["test"]["mae"]
+            for s in results
+            if s["seed"] == r["seed"] and s["model"] == "graph_self"
+        )
+        for r in results
+        if r["model"] == "graph_gru"
+    ]
+    study_path = REPORTS / "federated-study/summary.json"
     if study_path.exists():
-        study=load(study_path)
-        fl_text=(REPORTS/"federated-study/findings.md").read_text(encoding="utf-8")
+        study = load(study_path)
+        fl_text = (
+            (REPORTS / "federated-study/findings.md")
+            .read_text(encoding="utf-8")
+            .split("\n", 1)[1]
+            .replace("\n## ", "\n### ")
+        )
+        for name in (
+            "tradeoffs.png",
+            "summary.json",
+            "cases.json",
+            "config.json",
+            "cases",
+        ):
+            fl_text = fl_text.replace(f"({name})", f"(federated-study/{name})")
+        fl_text = fl_text.replace("(../research-report.md)", "(research-report.md)")
     else:
-        study=None
-        fl_text=f"""The executed Flower baseline used six sensors, seven days, three clients, three rounds, one local epoch per client, and seed 42. Its shared univariate GRU had 3,756 parameters. FedAvg test MAE/RMSE were {baseline['test']['mae']:.6f}/{baseline['test']['rmse']:.6f} mph, versus {central['test']['mae']:.6f}/{central['test']['rmse']:.6f} for its matched centralized reference. Persistence scored {central['persistence_test']['mae']:.6f}/{central['persistence_test']['rmse']:.6f} mph. The parameter payload estimate was {baseline['communication']['total_parameter_bytes']:,} bytes, including validation and selected-model test downloads. Two complete CLI runs matched in all checkpoint tensors and numerical records.
+        study = None
+        fl_text = f"""The executed Flower baseline used six sensors, seven days, three clients, three rounds, one local epoch per client, and seed 42. Its shared univariate GRU had 3,756 parameters. FedAvg test MAE/RMSE were {baseline['test']['mae']:.6f}/{baseline['test']['rmse']:.6f} mph, versus {central['test']['mae']:.6f}/{central['test']['rmse']:.6f} for its matched centralized reference. Persistence scored {central['persistence_test']['mae']:.6f}/{central['persistence_test']['rmse']:.6f} mph. The parameter payload estimate was {baseline['communication']['total_parameter_bytes']:,} bytes, including validation and selected-model test downloads. Two complete CLI runs matched in all checkpoint tensors and numerical records.
 
 [Baseline protocol and runtime transcript](federated-smoke/report.md)."""
-    report=f"""# TraCast: recurrent encoders, road-distance graph features, and federated traffic forecasting
+    report = f"""# TraCast: recurrent encoders, road-distance graph features, and federated traffic forecasting
 
 Technical report - October 2026
 
@@ -133,54 +177,214 @@ The benchmark and Flower runs use separate output directories and never overwrit
 5. Beutel, D. J. et al. (2020). Flower: A Friendly Federated Learning Research Framework. https://arxiv.org/abs/2007.14390
 6. Flower 1.42.0 ClientApp, ServerApp and FedAvg documentation. https://flower.ai/docs/framework/tutorial-quickstart-pytorch.html
 """
-    (REPORTS/"research-report.md").write_bytes(report.encode())
-    (REPORTS/"benchmark/report.md").write_bytes(("# Centralized model benchmark\n\n"+report[report.index("## 3. Data"):report.index("## 7. Federated")].replace("benchmark/","")+"\n[Full research report](../research-report.md)\n").encode())
-    styles=getSampleStyleSheet()
-    styles.add(ParagraphStyle(name="BodySmall",fontName="Helvetica",fontSize=9,leading=12,spaceAfter=6))
-    styles.add(ParagraphStyle(name="SectionSmall",fontName="Helvetica-Bold",fontSize=11,leading=14,textColor=colors.HexColor("#176b87"),spaceBefore=9,spaceAfter=5))
-    styles.add(ParagraphStyle(name="CaptionSmall",fontName="Helvetica",fontSize=8,leading=10,textColor=colors.HexColor("#536471"),spaceAfter=6))
-    body=lambda text:Paragraph(text,styles["BodySmall"])
-    heading=lambda text:Paragraph(text,styles["SectionSmall"])
-    story=[Paragraph("TraCast",styles["Title"]),body("<b>Traffic-speed forecasting with recurrent encoders, road-distance graphs, and Flower</b>"),
-        body("ivanimmanuel-dev / TraCast &nbsp; | &nbsp; Research brief - October 2026"),heading("Research question"),
-        body("How much do recurrent encoder choice, published sensor relationships, and federated model averaging change traffic forecasts under controlled training budgets?"),heading("Centralized benchmark")]
-    rows=[["Model","MAE (SD)","RMSE (SD)","Parameters"]]+[[LABELS[n],value(models[n]["mae"]),value(models[n]["rmse"]),f"{models[n]['parameter_count']:,}"] for n in ORDER]
-    t=Table(rows,colWidths=[156,113,113,96],hAlign="LEFT")
-    t.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,0),colors.HexColor("#e7f1f4")),("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),("FONTSIZE",(0,0),(-1,-1),8.5),("BOTTOMPADDING",(0,0),(-1,-1),7),("TOPPADDING",(0,0),(-1,-1),7),("LINEBELOW",(0,0),(-1,0),.6,colors.HexColor("#176b87")),("ALIGN",(1,1),(-1,-1),"RIGHT")]))
-    story+=[t,Paragraph("Errors in mph; three training seeds on one fixed test period. Persistence is deterministic and evaluated once.",styles["CaptionSmall"]),
-        body(f"LSTM and Graph-GRU reached nearly equal mean MAE. Graph-GRU improved over GRU by {models['gru']['mae']['mean']-models['graph_gru']['mae']['mean']:.4f} mph, while removing graph neighbors changed mean MAE by only {abs(graph_delta):.4f} mph. The edge effect changed sign across seeds."),heading("Data and evaluation"),
-        body("METR-LA contains 34,272 five-minute timestamps and 207 sensors. The benchmark uses 16 topology-selected sensors across the full available date range, March 1-June 27, 2012: 548,352 speed entries before masking."),
-        body("Rows split chronologically 70/10/20 before making sequences. Twelve input steps predict the next twelve steps. Means and scales use observed training values only. Inputs forward-fill within their split; zero/NaN targets remain masked. Validation MAE selects checkpoints."),heading("Graph-GRU architecture")]
-    drawing=Drawing(478,62)
-    boxes=[(0,64,"Own speed +","in/out means"),(76,110,"Shared Linear(3,4)","ReLU per node"),(198,104,"Flatten 16 nodes","GRU hidden 32"),(314,164,"Linear forecast head","12 steps x 16 sensors")]
-    for x,w,a,b in boxes:
-        drawing.add(Rect(x,10,w,44,rx=4,ry=4,fillColor=colors.HexColor("#eef5f7"),strokeColor=colors.HexColor("#176b87"),strokeWidth=.6))
-        drawing.add(String(x+w/2,36,a,textAnchor="middle",fontName="Helvetica",fontSize=7.5))
-        drawing.add(String(x+w/2,23,b,textAnchor="middle",fontName="Helvetica",fontSize=7.5))
+    (REPORTS / "research-report.md").write_bytes(report.encode())
+    (REPORTS / "benchmark/report.md").write_bytes(
+        (
+            "# Centralized model benchmark\n\n"
+            + report[
+                report.index("## 3. Data") : report.index("## 7. Federated")
+            ].replace("benchmark/", "")
+            + "\n[Full research report](../research-report.md)\n"
+        ).encode()
+    )
+    styles = getSampleStyleSheet()
+    styles.add(
+        ParagraphStyle(
+            name="BodySmall", fontName="Helvetica", fontSize=9, leading=12, spaceAfter=6
+        )
+    )
+    styles.add(
+        ParagraphStyle(
+            name="SectionSmall",
+            fontName="Helvetica-Bold",
+            fontSize=11,
+            leading=14,
+            textColor=colors.HexColor("#176b87"),
+            spaceBefore=9,
+            spaceAfter=5,
+        )
+    )
+    styles.add(
+        ParagraphStyle(
+            name="CaptionSmall",
+            fontName="Helvetica",
+            fontSize=8,
+            leading=10,
+            textColor=colors.HexColor("#536471"),
+            spaceAfter=6,
+        )
+    )
+    body = lambda text: Paragraph(text, styles["BodySmall"])
+    heading = lambda text: Paragraph(text, styles["SectionSmall"])
+    story = [
+        Paragraph("TraCast", styles["Title"]),
+        body(
+            "<b>Traffic-speed forecasting with recurrent encoders, road-distance graphs, and Flower</b>"
+        ),
+        body(
+            "ivanimmanuel-dev / TraCast &nbsp; | &nbsp; Research brief - October 2026"
+        ),
+        heading("Research question"),
+        body(
+            "How much do recurrent encoder choice, published sensor relationships, and federated model averaging change traffic forecasts under controlled training budgets?"
+        ),
+        heading("Centralized benchmark"),
+    ]
+    rows = [["Model", "MAE (SD)", "RMSE (SD)", "Parameters"]] + [
+        [
+            LABELS[n],
+            value(models[n]["mae"]),
+            value(models[n]["rmse"]),
+            f"{models[n]['parameter_count']:,}",
+        ]
+        for n in ORDER
+    ]
+    t = Table(rows, colWidths=[156, 113, 113, 96], hAlign="LEFT")
+    t.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e7f1f4")),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 8.5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+                ("TOPPADDING", (0, 0), (-1, -1), 7),
+                ("LINEBELOW", (0, 0), (-1, 0), 0.6, colors.HexColor("#176b87")),
+                ("ALIGN", (1, 1), (-1, -1), "RIGHT"),
+            ]
+        )
+    )
+    story += [
+        t,
+        Paragraph(
+            "Errors in mph; three training seeds on one fixed test period. Persistence is deterministic and evaluated once.",
+            styles["CaptionSmall"],
+        ),
+        body(
+            f"LSTM and Graph-GRU reached nearly equal mean MAE. Graph-GRU improved over GRU by {models['gru']['mae']['mean']-models['graph_gru']['mae']['mean']:.4f} mph, while removing graph neighbors changed mean MAE by only {abs(graph_delta):.4f} mph. The edge effect changed sign across seeds."
+        ),
+        heading("Data and evaluation"),
+        body(
+            "METR-LA contains 34,272 five-minute timestamps and 207 sensors. The benchmark uses 16 topology-selected sensors across the full available date range, March 1-June 27, 2012: 548,352 speed entries before masking."
+        ),
+        body(
+            "Rows split chronologically 70/10/20 before making sequences. Twelve input steps predict the next twelve steps. Means and scales use observed training values only. Inputs forward-fill within their split; zero/NaN targets remain masked. Validation MAE selects checkpoints."
+        ),
+        heading("Graph-GRU architecture"),
+    ]
+    drawing = Drawing(478, 62)
+    boxes = [
+        (0, 64, "Own speed +", "in/out means"),
+        (76, 110, "Shared Linear(3,4)", "ReLU per node"),
+        (198, 104, "Flatten 16 nodes", "GRU hidden 32"),
+        (314, 164, "Linear forecast head", "12 steps x 16 sensors"),
+    ]
+    for x, w, a, b in boxes:
+        drawing.add(
+            Rect(
+                x,
+                10,
+                w,
+                44,
+                rx=4,
+                ry=4,
+                fillColor=colors.HexColor("#eef5f7"),
+                strokeColor=colors.HexColor("#176b87"),
+                strokeWidth=0.6,
+            )
+        )
+        drawing.add(
+            String(
+                x + w / 2,
+                36,
+                a,
+                textAnchor="middle",
+                fontName="Helvetica",
+                fontSize=7.5,
+            )
+        )
+        drawing.add(
+            String(
+                x + w / 2,
+                23,
+                b,
+                textAnchor="middle",
+                fontName="Helvetica",
+                fontSize=7.5,
+            )
+        )
         if x:
-            drawing.add(Line(x-10,32,x-2,32,strokeColor=colors.HexColor("#176b87")))
-            drawing.add(Polygon([x-2,32,x-6,35,x-6,29],fillColor=colors.HexColor("#176b87"),strokeColor=None))
-    story+=[drawing,body("The graph comes from the DCRNN author's distance table. Its Gaussian kernel, sensor IDs, and file hashes are recorded. The selected graph has 85 directed non-self relationships; no speed correlation or held-out targets determine its edges."),PageBreak(),heading("Forecast horizon errors"),
-        Image(str(REPORTS/"benchmark/horizons.png"),width=478,height=159),heading("Federated forecasting")]
+            drawing.add(
+                Line(x - 10, 32, x - 2, 32, strokeColor=colors.HexColor("#176b87"))
+            )
+            drawing.add(
+                Polygon(
+                    [x - 2, 32, x - 6, 35, x - 6, 29],
+                    fillColor=colors.HexColor("#176b87"),
+                    strokeColor=None,
+                )
+            )
+    story += [
+        drawing,
+        body(
+            "The graph comes from the DCRNN author's distance table. Its Gaussian kernel, sensor IDs, and file hashes are recorded. The selected graph has 85 directed non-self relationships; no speed correlation or held-out targets determine its edges."
+        ),
+        PageBreak(),
+        heading("Forecast horizon errors"),
+        Image(str(REPORTS / "figures/forecast-horizons.png"), width=478, height=182),
+        heading("Federated forecasting"),
+    ]
     if study:
         story.append(body(study["brief_findings"]))
     else:
-        story.append(body(f"The executed baseline used three logical clients holding two disjoint sensors each, seven days of data, and three Flower FedAvg rounds with one local epoch per round. Test MAE/RMSE were {baseline['test']['mae']:.3f}/{baseline['test']['rmse']:.3f} mph for FedAvg and {central['test']['mae']:.3f}/{central['test']['rmse']:.3f} for its matched pooled reference. Estimated parameter payload: {baseline['communication']['total_parameter_bytes']:,} bytes."))
-    story+=[body("The federated task shares a univariate GRU across sensors. Local training-only scalers, masks, time boundaries, and initial weights match its pooled reference. Model updates use sample-count weighting; errors pool by valid target count. These client partitions are simulated on one host, with no differential privacy or secure aggregation."),heading("Execution and reproducibility"),
-        body(f"Five epochs per learned model, seeds 7/42/2026, batch size 64, hidden width 32. Training updates averaged {models['gru']['train_seconds']['mean']:.1f} s for GRU, {models['lstm']['train_seconds']['mean']:.1f} s for LSTM, and {models['graph_gru']['train_seconds']['mean']:.1f} s for Graph-GRU. Whole-process peak memory was about 320 MiB on a Ryzen 7 5825U with four PyTorch threads."),
-        body("Configs, source/data hashes, normalization statistics, convergence logs, horizon metrics, timings, model hashes, and regression tests accompany the reports. Historical baseline results remain unchanged. Commands fetch checksum-verified inputs and use pinned Python/PyTorch/Flower dependencies."),heading("Interpretation"),
-        body("The encoder comparison favors LSTM's smaller parameter count at nearly the same mean error as Graph-GRU. The graph ablation shows a small, mixed seed-level edge contribution. Three seeds on one test block describe initialization variation, not uncertainty across future traffic periods. Communication estimates cover tensor values; runtime overhead and real-network costs are separate."),heading("Code and evidence"),
-        body('<link href="https://github.com/ivanimmanuel-dev/TraCast">github.com/ivanimmanuel-dev/TraCast</link><br/>Full methods, raw metric tables, topology provenance, experiment configurations, and figures: reports/research-report.md and DATA.md.'),
-        Paragraph("References: Li et al., ICLR 2018 (METR-LA/DCRNN); Cho et al., EMNLP 2014 (GRU); Hochreiter and Schmidhuber, Neural Computation 1997 (LSTM); McMahan et al., AISTATS 2017 (FedAvg); Flower 1.42.0.",styles["CaptionSmall"])]
-    def footer(canvas,doc):
-        canvas.setFont("Helvetica",8)
+        story.append(
+            body(
+                f"The executed baseline used three logical clients holding two disjoint sensors each, seven days of data, and three Flower FedAvg rounds with one local epoch per round. Test MAE/RMSE were {baseline['test']['mae']:.3f}/{baseline['test']['rmse']:.3f} mph for FedAvg and {central['test']['mae']:.3f}/{central['test']['rmse']:.3f} for its matched pooled reference. Estimated parameter payload: {baseline['communication']['total_parameter_bytes']:,} bytes."
+            )
+        )
+    story += [
+        body(
+            "The federated task shares a univariate GRU across sensors. Local training-only scalers, masks, time boundaries, and initial weights match its pooled reference. Model updates use sample-count weighting; errors pool by valid target count. These client partitions are simulated on one host, with no differential privacy or secure aggregation."
+        ),
+        heading("Execution and reproducibility"),
+        body(
+            f"Five epochs per learned model, seeds 7/42/2026, batch size 64, hidden width 32. Training updates averaged {models['gru']['train_seconds']['mean']:.1f} s for GRU, {models['lstm']['train_seconds']['mean']:.1f} s for LSTM, and {models['graph_gru']['train_seconds']['mean']:.1f} s for Graph-GRU. Whole-process peak memory was about 320 MiB on a Ryzen 7 5825U with four PyTorch threads."
+        ),
+        body(
+            "Configs, source/data hashes, normalization statistics, convergence logs, horizon metrics, timings, model hashes, and regression tests accompany the reports. Historical baseline results remain unchanged. Commands fetch checksum-verified inputs and use pinned Python/PyTorch/Flower dependencies."
+        ),
+        heading("Interpretation"),
+        body(
+            "The encoder comparison favors LSTM's smaller parameter count at nearly the same mean error as Graph-GRU. The graph ablation shows a small, mixed seed-level edge contribution. Three seeds on one test block describe initialization variation, not uncertainty across future traffic periods. Communication estimates cover tensor values; runtime overhead and real-network costs are separate."
+        ),
+        heading("Code and evidence"),
+        body(
+            '<link href="https://github.com/ivanimmanuel-dev/TraCast">github.com/ivanimmanuel-dev/TraCast</link><br/>Full methods, raw metric tables, topology provenance, experiment configurations, and figures: reports/research-report.md and DATA.md.'
+        ),
+        Paragraph(
+            "References: Li et al., ICLR 2018 (METR-LA/DCRNN); Cho et al., EMNLP 2014 (GRU); Hochreiter and Schmidhuber, Neural Computation 1997 (LSTM); McMahan et al., AISTATS 2017 (FedAvg); Flower 1.42.0.",
+            styles["CaptionSmall"],
+        ),
+    ]
+
+    def footer(canvas, doc):
+        canvas.setFont("Helvetica", 8)
         canvas.setFillColor(colors.HexColor("#536471"))
-        canvas.drawString(36,24,"TraCast | Research brief | October 2026")
-        canvas.drawRightString(576,24,str(doc.page))
-    doc=SimpleDocTemplate(str(REPORTS/"research-brief.pdf"),pagesize=(612,792),leftMargin=36,rightMargin=36,topMargin=30,bottomMargin=38,title="TraCast research brief",author="ivanimmanuel-dev")
-    doc.build(story,onFirstPage=footer,onLaterPages=footer)
-    print(REPORTS/"research-brief.pdf")
+        canvas.drawString(36, 24, "TraCast | Research brief | October 2026")
+        canvas.drawRightString(576, 24, str(doc.page))
+
+    doc = SimpleDocTemplate(
+        str(REPORTS / "research-brief.pdf"),
+        pagesize=(612, 792),
+        leftMargin=36,
+        rightMargin=36,
+        topMargin=30,
+        bottomMargin=38,
+        title="TraCast research brief",
+        author="ivanimmanuel-dev",
+    )
+    doc.build(story, onFirstPage=footer, onLaterPages=footer)
+    print(REPORTS / "research-brief.pdf")
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()

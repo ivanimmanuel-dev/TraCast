@@ -1,0 +1,133 @@
+
+Flower configuration not found. Created default configuration at $REPO\runs\fl-study\c5-s2026\.flower\config.toml
+
+Flower App configuration warnings in '$REPO\pyproject.toml':
+- Recommended property "license" missing in [project]
+Using SuperLink: local (127.0.0.1:39091)
+Successfully started run 13779136528877974528
+INFO :      Starting logstream for run_id `13779136528877974528`
+INFO :      Starting Flower Simulation
+WARNING :   Since flwr 1.32, default simulated SuperNodes changed from 10 to 2.
+INFO :      Federation `@none/default` (3 simulated SuperNodes)
+INFO :      To change federation size, use the following command:
+INFO :      	flwr federation simulation-config @none/default <superlink> --num-supernodes <N>
+Successfully installed tracast to $REPO\runs\fl-study\b1-s7\.flower\apps\ivanimmanuel-dev.tracast.0.3.0.06c4246f.
+INFO :      Starting LoggedFedAvg strategy:
+INFO :      	├── Number of rounds: 5
+INFO :      	├── ArrayRecord (0.02 MB)
+INFO :      	├── ConfigRecord (train): {'job-dir': $REPO\runs\fl-study\c5-s2026}
+INFO :      	├── ConfigRecord (evaluate): {'job-dir': $REPO\runs\fl-study\c5-s2026, 'stage': val}
+INFO :      	├──> Sampling:
+INFO :      	│	├──Fraction: train (1.00) | evaluate ( 1.00)
+INFO :      	│	├──Minimum nodes: train (3) | evaluate (3)
+INFO :      	│	└──Minimum available nodes: 3
+INFO :      	└──> Keys in records:
+INFO :      		├── Weighted by: 'num-examples'
+INFO :      		├── ArrayRecord key: 'arrays'
+INFO :      		└── ConfigRecord key: 'config'
+INFO :
+INFO :
+INFO :      [ROUND 1/5]
+INFO :      configure_train: Sampled 3 nodes (out of 3)
+(raylet) Stack (most recent call first):
+(raylet)   File "$PYTHON_ENV\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config
+(raylet)   File "Windows fatal exception: access violation
+(raylet)
+(raylet)   File "$PYTHON_ENV\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect
+(raylet)   File "$PYTHON_ENV\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown
+(raylet)   File "$PYTHON_ENV\Lib\site-packages\ray\_private\worker.py", line "$PYTHON_ENV\Lib\site-packages\ray\_private\worker.py"2132 in , line 1143 in shutdown
+(raylet) wrapper
+(raylet)   File   File "$PYTHON_ENV\Lib\site-packages\ray\_private\worker.py", line 1143 in wrapper"
+(raylet)   File "$PYTHON_ENV\Lib\site-packages\ray\_private\client_mode_hook.py", line 107 in wrapper
+(raylet) $PYTHON_ENV\Lib\site-packages\ray\_private\client_mode_hook.py", line 107 in wrapper
+INFO :      aggregate_train: Received 3 results and 0 failures
+INFO :      	└──> Aggregated MetricRecord: {'train-normalized-mae': 0.4889317228611287, 'target-count': 376902, 'num-examples': 32297, 'optimizer-steps': 506, 'processed-examples': 32297}
+INFO :      configure_evaluate: Sampled 3 nodes (out of 3)
+INFO :      aggregate_evaluate: Received 3 results and 0 failures
+round 1: validation MAE=2.211124, RMSE=3.767692 mph
+INFO :      	└──> Aggregated MetricRecord: {'mae': 2.2111240769844827, 'rmse': 3.7676922008331455}
+INFO :
+INFO :      [ROUND 2/5]
+INFO :      configure_train: Sampled 3 nodes (out of 3)
+INFO :      aggregate_train: Received 3 results and 0 failures
+INFO :      	└──> Aggregated MetricRecord: {'train-normalized-mae': 0.41324969903106284, 'target-count': 376902, 'num-examples': 32297, 'optimizer-steps': 506, 'processed-examples': 32297}
+INFO :      configure_evaluate: Sampled 3 nodes (out of 3)
+INFO :      aggregate_evaluate: Received 3 results and 0 failures
+round 2: validation MAE=2.157279, RMSE=3.751796 mph
+INFO :      	└──> Aggregated MetricRecord: {'mae': 2.1572793380628363, 'rmse': 3.7517960183168677}
+INFO :
+INFO :      [ROUND 3/5]
+INFO :      configure_train: Sampled 3 nodes (out of 3)
+INFO :      aggregate_train: Received 3 results and 0 failures
+INFO :      	└──> Aggregated MetricRecord: {'train-normalized-mae': 0.4092161241914078, 'target-count': 376902, 'num-examples': 32297, 'optimizer-steps': 506, 'processed-examples': 32297}
+INFO :      configure_evaluate: Sampled 3 nodes (out of 3)
+INFO :      aggregate_evaluate: Received 3 results and 0 failures
+round 3: validation MAE=2.137305, RMSE=3.758626 mph
+INFO :      	└──> Aggregated MetricRecord: {'mae': 2.1373054612327755, 'rmse': 3.7586256964632523}
+INFO :
+INFO :      [ROUND 4/5]
+INFO :      configure_train: Sampled 3 nodes (out of 3)
+INFO :      aggregate_train: Received 3 results and 0 failures
+INFO :      	└──> Aggregated MetricRecord: {'train-normalized-mae': 0.4075321830861027, 'target-count': 376902, 'num-examples': 32297, 'optimizer-steps': 506, 'processed-examples': 32297}
+INFO :      configure_evaluate: Sampled 3 nodes (out of 3)
+INFO :      aggregate_evaluate: Received 3 results and 0 failures
+round 4: validation MAE=2.163430, RMSE=3.749030 mph
+INFO :      	└──> Aggregated MetricRecord: {'mae': 2.1634303899501592, 'rmse': 3.749029720909515}
+INFO :
+INFO :      [ROUND 5/5]
+INFO :      configure_train: Sampled 3 nodes (out of 3)
+INFO :      aggregate_train: Received 3 results and 0 failures
+INFO :      	└──> Aggregated MetricRecord: {'train-normalized-mae': 0.4070175303984039, 'target-count': 376902, 'num-examples': 32297, 'optimizer-steps': 506, 'processed-examples': 32297}
+INFO :      configure_evaluate: Sampled 3 nodes (out of 3)
+INFO :      aggregate_evaluate: Received 3 results and 0 failures
+round 5: validation MAE=2.145896, RMSE=3.746038 mph
+INFO :      	└──> Aggregated MetricRecord: {'mae': 2.1458958862915107, 'rmse': 3.7460375017876166}
+INFO :
+INFO :      Strategy execution finished in 29.86s
+INFO :
+INFO :      Final results:
+INFO :
+INFO :      	Global Arrays:
+INFO :      		ArrayRecord (0.015 MB)
+INFO :
+INFO :      	Aggregated ClientApp-side Train Metrics:
+INFO :      	{ 1: { 'num-examples': '32297',
+INFO :      	       'optimizer-steps': '506',
+INFO :      	       'processed-examples': '32297',
+INFO :      	       'target-count': '376902',
+INFO :      	       'train-normalized-mae': '4.8893e-01'},
+INFO :      	  2: { 'num-examples': '32297',
+INFO :      	       'optimizer-steps': '506',
+INFO :      	       'processed-examples': '32297',
+INFO :      	       'target-count': '376902',
+INFO :      	       'train-normalized-mae': '4.1325e-01'},
+INFO :      	  3: { 'num-examples': '32297',
+INFO :      	       'optimizer-steps': '506',
+INFO :      	       'processed-examples': '32297',
+INFO :      	       'target-count': '376902',
+INFO :      	       'train-normalized-mae': '4.0922e-01'},
+INFO :      	  4: { 'num-examples': '32297',
+INFO :      	       'optimizer-steps': '506',
+INFO :      	       'processed-examples': '32297',
+INFO :      	       'target-count': '376902',
+INFO :      	       'train-normalized-mae': '4.0753e-01'},
+INFO :      	  5: { 'num-examples': '32297',
+INFO :      	       'optimizer-steps': '506',
+INFO :      	       'processed-examples': '32297',
+INFO :      	       'target-count': '376902',
+INFO :      	       'train-normalized-mae': '4.0702e-01'}}
+INFO :
+INFO :      	Aggregated ClientApp-side Evaluate Metrics:
+INFO :      	{ 1: {'mae': '2.2111e+00', 'rmse': '3.7677e+00'},
+INFO :      	  2: {'mae': '2.1573e+00', 'rmse': '3.7518e+00'},
+INFO :      	  3: {'mae': '2.1373e+00', 'rmse': '3.7586e+00'},
+INFO :      	  4: {'mae': '2.1634e+00', 'rmse': '3.7490e+00'},
+INFO :      	  5: {'mae': '2.1459e+00', 'rmse': '3.7460e+00'}}
+INFO :
+INFO :      	ServerApp-side Evaluate Metrics:
+INFO :      	{}
+INFO :
+(raylet) Stack (most recent call first):
+(raylet)   File "$PYTHON_ENV\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config
+(raylet)   File $PYTHON_ENV\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect
+INFO :

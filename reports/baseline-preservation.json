@@ -1,0 +1,32 @@
+{
+  "baseline_tag": "flower-verified",
+  "checked_files": [
+    "reports/federated-smoke/centralized-history.json",
+    "reports/federated-smoke/centralized.json",
+    "reports/federated-smoke/clients.json",
+    "reports/federated-smoke/config.json",
+    "reports/federated-smoke/convergence.png",
+    "reports/federated-smoke/determinism.json",
+    "reports/federated-smoke/federated.json",
+    "reports/federated-smoke/horizon-metrics.png",
+    "reports/federated-smoke/initial.json",
+    "reports/federated-smoke/phase1-regression.json",
+    "reports/federated-smoke/rounds.json",
+    "reports/federated-smoke/status.json",
+    "reports/smoke/config.json",
+    "reports/smoke/history.json",
+    "reports/smoke/metrics.json",
+    "reports/smoke/missing.json",
+    "reports/smoke/scaler.json",
+    "reports/smoke/status.json",
+    "reports/smoke/training_eda.png",
+    "reports/subset/config.json",
+    "reports/subset/history.json",
+    "reports/subset/metrics.json",
+    "reports/subset/missing.json",
+    "reports/subset/scaler.json",
+    "reports/subset/status.json",
+    "reports/subset/training_eda.png"
+  ],
+  "all_equal": true
+}

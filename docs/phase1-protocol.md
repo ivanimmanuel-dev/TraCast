@@ -32,7 +32,7 @@ The environment created during development is outside the repository. To use tha
 
 The pinned HDF5 file contains 34,272 rows and 207 sensor columns, March 1, 2012 00:00 through June 27, 2012 23:55, at five-minute intervals. Values are traffic speeds in mph. Timestamps have no timezone metadata; the loader preserves the recorded clock without guessing a timezone.
 
-Download provenance, checksum, citation, and license details are in [DATA.md](DATA.md). The loader checks the checksum before reading HDF5, validates the complete frame, then selects the first N sensor columns in file order. Sensor IDs are logged. It rejects duplicate or unordered timestamps, gaps, duplicate IDs, nonnumeric values, negative speeds, and infinities. The old HDF5 frequency attribute is rebuilt from the actual timestamps for current pandas compatibility.
+Download provenance, checksum, citation, and license details are in [DATA.md](../DATA.md). The loader checks the checksum before reading HDF5, validates the complete frame, then selects the first N sensor columns in file order. Sensor IDs are logged. It rejects duplicate or unordered timestamps, gaps, duplicate IDs, nonnumeric values, negative speeds, and infinities. The old HDF5 frequency attribute is rebuilt from the actual timestamps for current pandas compatibility.
 
 ## Experiment protocol
 
@@ -82,6 +82,6 @@ tests/                  mechanics and regression tests
 reports/                verified results and development notes
 ```
 
-Tests use small constructed arrays to check mechanics. Research results in `reports/` come from the checksum-verified METR-LA file. Read [reports/verification.md](reports/verification.md) for executed checks, measured results, and remaining work.
+Tests use small constructed arrays to check mechanics. Research results in `reports/` come from the checksum-verified METR-LA file. Read [reports/verification.md](../reports/verification.md) for executed checks, measured results, and remaining work.
 
 This page describes Phase 1. The current Flower experiment is documented in the main README.

@@ -17,7 +17,7 @@ TraCast downloads the HDF5 file from the accessible `jimmygao3218/METRLA` mirror
 - SHA-256: `64784b76d6fb8ec9bff4b6decafb354da2bb37840468fdccee5044e511277c05`
 - Bytes downloaded and verified on October 26, 2026: `57038056`
 
-The downloaded bytes match the mirror's published content hash. The original author-linked Google Drive copy was not independently downloaded and compared. The mirror's schema, dates, and sensor count match METR-LA. No claim is made that this independently establishes the original data's chain of custody.
+The downloaded bytes match the mirror's published content hash. Schema, dates, and sensor count match METR-LA. The author-linked Google Drive copy was not downloaded for a byte comparison.
 
 ## License and attribution
 

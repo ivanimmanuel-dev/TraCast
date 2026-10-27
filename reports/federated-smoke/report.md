@@ -26,7 +26,7 @@ Each client has a separate local partition file. ClientApp handlers read that pa
 
 ## Time boundaries and normalization
 
-The smoke run uses the first 2,016 timestamps (March 1â€“7, 2012). All clients use identical row boundaries:
+The smoke run uses the first 2,016 timestamps (March 1–7, 2012). All clients use identical row boundaries:
 
 | Split | First timestamp | Last timestamp | Rows per sensor |
 | --- | --- | --- | ---: |
