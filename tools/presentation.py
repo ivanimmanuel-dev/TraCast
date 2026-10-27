@@ -126,12 +126,26 @@ def main():
         if study.exists()
         else "The three-client Flower baseline completed twice with identical checkpoint tensors and metrics. Its three-round FedAvg MAE was 4.430 mph against 4.071 for the matched centralized reference."
     )
+    federated_bullet = ""
+    ci_line = ""
+    if study.exists():
+        conditions = json.loads(study.read_text())["conditions"]
+        first, last = conditions["balanced-1"], conditions["balanced-5"]
+        federated_bullet = (f"- In the separate 12-sensor Flower study, mean MAE fell from "
+            f"{first['fedavg_mae']['mean']:.3f} to {last['fedavg_mae']['mean']:.3f} mph "
+            "over 1 to 5 rounds, at four times the estimated parameter payload.\n")
+    receipt = ROOT / "reports/ci.json"
+    if receipt.exists():
+        ci = json.loads(receipt.read_text())
+        if ci["conclusion"] == "success":
+            ci_line = f"[{ci['tests'].split()[0]} tests passing on a clean Windows runner]({ci['url']}).\n"
     text = f"""# TraCast
 
 Traffic-speed forecasting on METR-LA with PyTorch and Flower. Recurrent encoders, directed road-distance features, and federated model averaging under chronological evaluation.
 
 [Research brief (PDF)](reports/research-brief.pdf) \u00b7 [Technical report](reports/research-report.md) \u00b7 [Reproduce the experiments](docs/reproducibility.md)
 
+{ci_line}
 ## Findings
 
 The centralized benchmark uses 16 sensors, the full available March-June 2012 timeline, and five epochs per learned model. Values are mean (sample SD) over seeds 7, 42, and 2026; errors are mph. Persistence is deterministic and evaluated once.
@@ -145,6 +159,7 @@ The centralized benchmark uses 16 sensors, the full available March-June 2012 ti
 - LSTM reached nearly the same mean error as Graph-GRU with fewer parameters and lower seed dispersion in this configuration.
 - Five training epochs averaged {models['gru']['train_seconds']['mean']:.1f} s for GRU, {models['lstm']['train_seconds']['mean']:.1f} s for LSTM, and {models['graph_gru']['train_seconds']['mean']:.1f} s for Graph-GRU on a Ryzen 7 5825U. Fresh-process peak memory was about 320 MiB, including data loading.
 
+{federated_bullet}
 ![Forecast horizon errors](reports/figures/forecast-horizons.png)
 
 [Per-seed results, timings, and counts](reports/benchmark/results.json) \u00b7 [Graph ablation and protocol](reports/benchmark/report.md)

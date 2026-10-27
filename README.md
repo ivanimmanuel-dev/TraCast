@@ -4,6 +4,8 @@ Traffic-speed forecasting on METR-LA with PyTorch and Flower. Recurrent encoders
 
 [Research brief (PDF)](reports/research-brief.pdf) · [Technical report](reports/research-report.md) · [Reproduce the experiments](docs/reproducibility.md)
 
+[71 tests passing on a clean Windows runner](https://github.com/ivanimmanuel-dev/TraCast/actions/runs/40427570956).
+
 ## Findings
 
 The centralized benchmark uses 16 sensors, the full available March-June 2012 timeline, and five epochs per learned model. Values are mean (sample SD) over seeds 7, 42, and 2026; errors are mph. Persistence is deterministic and evaluated once.
@@ -20,6 +22,8 @@ The centralized benchmark uses 16 sensors, the full available March-June 2012 ti
 - Removing graph neighbors changed mean MAE by 0.0043 mph, with mixed seed-level effects. Most of the gain remained in the self-only projection.
 - LSTM reached nearly the same mean error as Graph-GRU with fewer parameters and lower seed dispersion in this configuration.
 - Five training epochs averaged 11.1 s for GRU, 10.9 s for LSTM, and 12.7 s for Graph-GRU on a Ryzen 7 5825U. Fresh-process peak memory was about 320 MiB, including data loading.
+
+- In the separate 12-sensor Flower study, mean MAE fell from 4.047 to 3.774 mph over 1 to 5 rounds, at four times the estimated parameter payload.
 
 ![Forecast horizon errors](reports/figures/forecast-horizons.png)
 
