@@ -1,5 +1,5 @@
 {
-  "baseline_tag": "flower-verified",
+  "baseline_commit": "e578adeb8e84a014a578e91fc0f8358083b99abc",
   "checked_files": [
     "reports/federated-smoke/centralized-history.json",
     "reports/federated-smoke/centralized.json",
