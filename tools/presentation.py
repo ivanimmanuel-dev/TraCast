@@ -133,19 +133,23 @@ def main():
     )
     text = rf"""# TraCast
 
-Traffic-speed forecasting on METR-LA. PyTorch recurrent models, directed road-distance features, and Flower federated learning, sized for a CPU laptop.
+TraCast predicts traffic speeds for the next 5–60 minutes using the previous hour of sensor readings. It uses METR-LA, which contains speed measurements from 207 road sensors in Los Angeles.
+
+The experiments compare GRU and LSTM recurrent neural networks, test whether readings from neighboring sensors improve forecasts, and compare federated training with centralized training. The code runs on a CPU laptop.
 
 [Research brief](reports/research-brief.pdf) · [Technical report](reports/research-report.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
 
 ## Results
 
-Sixteen topology-selected sensors, March–June 2012, five training epochs. Errors are mph, reported as mean (sample SD) over seeds 7, 42, and 2026. Persistence is evaluated once.
+The model comparison uses 16 sensors selected from the published road-distance graph and all available readings from March through June 2012. Each learned model trains for five epochs with three random seeds: 7, 42, and 2026.
+
+MAE is the mean absolute forecast error. RMSE is the root mean squared error, which gives larger errors more weight. Both are reported in mph. Parentheses show the sample standard deviation across the three training runs. The persistence baseline repeats the latest available speed at every forecast horizon and is evaluated once.
 
 | Model | MAE (SD) | RMSE (SD) | Parameters |
 |---|---:|---:|---:|
 {table}
 
-LSTM nearly matches Graph-GRU's mean MAE with fewer parameters. Removing graph neighbors changes mean MAE by {abs(models['graph_gru']['mae']['mean']-models['graph_self']['mae']['mean']):.4f} mph, with mixed effects across seeds. The self-only projection retains most of the improvement over GRU.
+LSTM and Graph-GRU reach nearly the same mean MAE, while LSTM uses fewer parameters. The self-only version of Graph-GRU keeps the same architecture but excludes readings from neighboring sensors. Removing those readings changes mean MAE by only {abs(models['graph_gru']['mae']['mean']-models['graph_self']['mae']['mean']):.4f} mph; it helps in one seed and hurts in two. Most of Graph-GRU's improvement over the smaller GRU remains without the neighbor readings.
 
 Five epochs averaged {models['gru']['train_seconds']['mean']:.1f} s for GRU, {models['lstm']['train_seconds']['mean']:.1f} s for LSTM, and {models['graph_gru']['train_seconds']['mean']:.1f} s for Graph-GRU on a Ryzen 7 5825U. Whole-process peak memory was about 320 MiB.
 
@@ -155,21 +159,23 @@ Five epochs averaged {models['gru']['train_seconds']['mean']:.1f} s for GRU, {mo
 
 ## Federated learning
 
-Three simulated clients hold disjoint sensor subsets and share a univariate GRU. Flower's `ClientApp`, `ServerApp`, and `FedAvg` run through a local SuperLink and Ray. Each sensor uses its own training-only normalization; evaluation pools error sums and valid target counts across clients.
+The Flower simulation assigns a different set of sensors to each of three clients. During each round, every client trains a copy of the same GRU on its own readings. The server then averages their model weights, weighted by each client's number of training examples. Each example contains readings from one sensor.
 
-The twelve-sensor, fourteen-day study uses three seeds and one local epoch per round:
+The centralized comparison trains the same model on the combined client datasets. Both methods start from the same weights, use the same sensor normalization and missing-value masks, and process the same total number of training examples. All three simulated clients run on one machine.
 
-| Partition | Rounds | FedAvg MAE | Pooled GRU MAE | Parameter payload |
+This study uses twelve sensors, fourteen days of readings, and three random seeds. Each client trains for one local epoch per round. Sensors are ranked by the share of training readings below 40 mph. Balanced groups spread these ranks across clients; congestion-grouped clients receive consecutive blocks of ranks.
+
+| Sensor grouping | Rounds | Federated MAE | Centralized MAE | Model weights transferred |
 |---|---:|---:|---:|---:|
 {federated_rows}
 
-One to five rounds reduces balanced-partition MAE by 0.273 mph at four times the parameter payload. The pooled reference shares initial weights, examples, scalers, masks, and total exposure. Partial batches yield different optimizer-step counts. Payload estimates count model tensors; client ownership is simulated on one host.
+Increasing training from one to five rounds reduces mean MAE by 0.273 mph for the balanced groups and transfers four times as many model-weight bytes. The byte estimates include weights sent for training, validation, and final test evaluation; they exclude message and transport overhead.
 
 [Round convergence, RMSE, client counts, and partition controls](reports/federated-study/findings.md)
 
 ## Run
 
-Python 3.11, Windows x64, CPU PyTorch. From the repository directory:
+The tested environment uses Python 3.11 and CPU PyTorch on Windows x64. Run these commands from the repository directory:
 
 ```powershell
 py -3.11 -m venv .venv
@@ -185,7 +191,7 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m tracast.federated --config configs/federated-smoke.json --out runs/flower-smoke
 ```
 
-For the full comparisons:
+Run the complete model comparison and federated study with:
 
 ```powershell
 .\.venv\Scripts\python.exe -m tracast.benchmark --config configs/benchmark.json --out runs/benchmark
@@ -210,7 +216,9 @@ flowchart TD
     H --> E
 ```
 
-Windows stay within their chronological split. Zero/NaN targets are masked. The graph's 16 sensors and 85 directed relationships are selected from topology alone. The self-only ablation keeps the same architecture and parameter count while removing neighbor inputs.
+The pipeline assigns the earliest 70% of readings to training, the next 10% to validation, and the final 20% to testing. Every input and forecast sequence stays within one split. Normalization uses observed training readings only, and zero or missing target readings are excluded from the loss and error metrics.
+
+The graph contains 16 sensors and 85 directed relationships derived from published distance data. Sensor selection and graph weights use those distances independently of the traffic-speed measurements. Validation MAE selects the saved model before it is evaluated on the test period.
 
 ## Reports
 
@@ -221,7 +229,7 @@ Windows stay within their chronological split. Zero/NaN targets are masked. The 
 | Centralized GRU baseline | [Results](reports/centralized-baseline.md) |
 | Three-client Flower baseline | [Results](reports/federated-smoke/report.md), [exact repeats](reports/federated-smoke/determinism.json) |
 
-The studies use sensor subsets and one fixed test period. Seed SD measures training variation on those dates. Raw data and checkpoints remain local; committed records include configurations, source/data hashes, scalers, histories, and horizon counts.
+The studies cover sensor subsets and a fixed test period. Variation across seeds measures how training changes on those dates. The repository includes the configurations, file hashes, normalization statistics, training histories, and forecast metrics needed to inspect each result. Raw datasets and model checkpoints remain local.
 """
     (ROOT / "README.md").write_bytes(text.encode())
 

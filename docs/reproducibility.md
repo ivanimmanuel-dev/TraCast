@@ -2,7 +2,7 @@
 
 ## Environment
 
-Python 3.11 on Windows x64. Recorded experiments used Python 3.11.9, PyTorch 2.5.1+cpu, Flower 1.42.0, and Ray 2.55.1. The runtime and test dependencies are pinned in `requirements-lock.txt`.
+The tested environment uses Python 3.11 on Windows x64. Recorded experiments used Python 3.11.9, PyTorch 2.5.1+cpu, Flower 1.42.0, and Ray 2.55.1. The runtime and test dependencies are pinned in `requirements-lock.txt`.
 
 Run from the repository directory:
 
