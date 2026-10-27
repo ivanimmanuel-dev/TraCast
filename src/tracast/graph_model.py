@@ -1,4 +1,5 @@
 """One-hop directed neighbor aggregation followed by the existing GRU encoder."""
+
 import torch
 from torch import nn
 

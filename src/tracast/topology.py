@@ -1,4 +1,5 @@
 """Pinned METR-LA road-distance graph from the DCRNN author repository."""
+
 from collections import deque
 from pathlib import Path
 import urllib.request
@@ -28,7 +29,10 @@ def fetch(directory):
         partial = path.with_suffix(path.suffix + ".partial")
         try:
             url = f"https://raw.githubusercontent.com/liyaguang/DCRNN/{REVISION}/data/sensor_graph/{name}"
-            with urllib.request.urlopen(url, timeout=90) as response, partial.open("wb") as target:
+            with (
+                urllib.request.urlopen(url, timeout=90) as response,
+                partial.open("wb") as target,
+            ):
                 while chunk := response.read(1024 * 1024):
                     target.write(chunk)
             if digest(partial) != expected:
@@ -48,7 +52,7 @@ def validate_alignment(columns, sensor_ids):
     return {sensor: columns.index(sensor) for sensor in sensor_ids}
 
 
-def adjacency(distances, sensor_ids, threshold=.1):
+def adjacency(distances, sensor_ids, threshold=0.1):
     if not 0 < threshold < 1:
         raise ValueError("Graph threshold must be between zero and one")
     if set(distances.columns) != {"from", "to", "cost"}:
@@ -60,7 +64,9 @@ def adjacency(distances, sensor_ids, threshold=.1):
     costs = distances["cost"].to_numpy(dtype=float)
     if not np.isfinite(costs).all() or (costs < 0).any():
         raise ValueError("Distances must be finite and nonnegative")
-    selected = distances[distances["from"].isin(sensor_ids) & distances["to"].isin(sensor_ids)]
+    selected = distances[
+        distances["from"].isin(sensor_ids) & distances["to"].isin(sensor_ids)
+    ]
     if selected.duplicated(["from", "to"]).any():
         raise ValueError("Duplicate directed distance pairs")
     scale = float(selected["cost"].to_numpy(dtype=float).std(ddof=0))
@@ -69,16 +75,23 @@ def adjacency(distances, sensor_ids, threshold=.1):
     index = {sensor: i for i, sensor in enumerate(sensor_ids)}
     weights = np.zeros((len(sensor_ids), len(sensor_ids)), dtype=np.float32)
     for start, end, cost in selected.itertuples(index=False, name=None):
-        value = np.exp(-(float(cost) / scale) ** 2)
+        value = np.exp(-((float(cost) / scale) ** 2))
         if start != end and value >= threshold:
             weights[index[start], index[end]] = value
-    return weights, {"distance_std": scale, "threshold": threshold,
-                     "source_pairs": len(distances), "aligned_pairs": len(selected),
-                     "directed_edges": int(np.count_nonzero(weights)), "self_edges": "excluded; own value is a separate feature"}
+    return weights, {
+        "distance_std": scale,
+        "threshold": threshold,
+        "source_pairs": len(distances),
+        "aligned_pairs": len(selected),
+        "directed_edges": int(np.count_nonzero(weights)),
+        "self_edges": "excluded; own value is a separate feature",
+    }
 
 
 def connected_subset(weights, sensor_ids, count):
-    if weights.shape != (len(sensor_ids), len(sensor_ids)) or not 1 <= count <= len(sensor_ids):
+    if weights.shape != (len(sensor_ids), len(sensor_ids)) or not 1 <= count <= len(
+        sensor_ids
+    ):
         raise ValueError("Invalid graph shape or subset size")
     # Traverse real edges in either direction. Stronger connections precede ties by ID.
     undirected = np.maximum(weights, weights.T)
@@ -96,24 +109,37 @@ def connected_subset(weights, sensor_ids, count):
     return [sensor_ids[i] for i in chosen], weights[np.ix_(chosen, chosen)].copy()
 
 
-def load(directory, columns, count, threshold=.1):
+def load(directory, columns, count, threshold=0.1):
     directory = Path(directory)
     for name, expected in FILES.items():
         if digest(directory / name) != expected:
             raise ValueError(f"Topology checksum mismatch: {name}")
     ids = (directory / "graph_sensor_ids.txt").read_text().strip().split(",")
     validate_alignment(columns, ids)
-    distances = pd.read_csv(directory / "distances_la_2012.csv", dtype={"from": str, "to": str})
+    distances = pd.read_csv(
+        directory / "distances_la_2012.csv", dtype={"from": str, "to": str}
+    )
     weights, metadata = adjacency(distances, ids, threshold)
     chosen, subgraph = connected_subset(weights, ids, count)
-    locations = pd.read_csv(directory / "graph_sensor_locations.csv", dtype={"sensor_id": str})
+    locations = pd.read_csv(
+        directory / "graph_sensor_locations.csv", dtype={"sensor_id": str}
+    )
     if locations.sensor_id.duplicated().any() or set(locations.sensor_id) != set(ids):
         raise ValueError("Sensor location IDs differ")
-    coordinates = locations.set_index("sensor_id").loc[chosen, ["latitude", "longitude"]]
+    coordinates = locations.set_index("sensor_id").loc[
+        chosen, ["latitude", "longitude"]
+    ]
     if not np.isfinite(coordinates.to_numpy()).all():
         raise ValueError("Nonfinite sensor coordinates")
-    metadata.update({"revision": REVISION, "files": FILES, "sensor_ids": chosen,
-        "subset_rule": "BFS from first canonical sensor; union of directions; descending weight then sensor ID",
-        "subset_directed_edges": int(np.count_nonzero(subgraph)), "adjacency": subgraph.tolist(),
-        "locations": coordinates.to_dict(orient="index")})
+    metadata.update(
+        {
+            "revision": REVISION,
+            "files": FILES,
+            "sensor_ids": chosen,
+            "subset_rule": "BFS from first canonical sensor; union of directions; descending weight then sensor ID",
+            "subset_directed_edges": int(np.count_nonzero(subgraph)),
+            "adjacency": subgraph.tolist(),
+            "locations": coordinates.to_dict(orient="index"),
+        }
+    )
     return chosen, subgraph, metadata
