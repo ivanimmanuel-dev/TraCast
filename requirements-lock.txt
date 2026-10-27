@@ -80,7 +80,6 @@ threadpoolctl==3.7.0
 tomli==2.5.0
 tomli_w==1.2.0
 torch==2.5.1+cpu
-trafficmind==0.1.0
 typer==0.20.1
 typing-inspection==0.4.4
 typing_extensions==4.16.0
