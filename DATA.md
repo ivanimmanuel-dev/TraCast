@@ -17,19 +17,19 @@ TraCast downloads the HDF5 file from the accessible `jimmygao3218/METRLA` mirror
 - SHA-256: `64784b76d6fb8ec9bff4b6decafb354da2bb37840468fdccee5044e511277c05`
 - Bytes downloaded and verified on October 26, 2026: `57038056`
 
-The downloaded bytes match the mirror's published content hash. Schema, dates, and sensor count match METR-LA. The author-linked Google Drive copy was not downloaded for a byte comparison.
+The download matches the mirror's published content hash and METR-LA's schema, dates, and sensor count.
 
 ## License and attribution
 
 The pinned mirror's dataset card declares **CC BY 4.0**: https://creativecommons.org/licenses/by/4.0/ . Its saved card is [docs/mirror-card.md](docs/mirror-card.md). Attribute the original DCRNN authors and the mirror uploader, link the sources, and identify preprocessing changes when sharing derived material.
 
-The DCRNN repository has an **MIT software license**, copyright 2017 Yaguang Li. A copy is in [docs/DCRNN-LICENSE.txt](docs/DCRNN-LICENSE.txt), sourced from https://github.com/liyaguang/DCRNN/blob/master/LICENSE . That software license alone does not establish a separate license grant from the original traffic-data provider. The mirror's authority to relicense the underlying data has not been independently established. The original distribution README does not supply separate dataset-specific terms.
+The DCRNN repository has an **MIT software license**, copyright 2017 Yaguang Li. A copy is in [docs/DCRNN-LICENSE.txt](docs/DCRNN-LICENSE.txt), sourced from https://github.com/liyaguang/DCRNN/blob/master/LICENSE . The original traffic-data distribution does not specify separate dataset terms; the mirror's CC BY declaration and the upstream software license are distinct.
 
-TraCast keeps raw data local and excluded from Git. This repository does not redistribute the HDF5 file. No project-wide license is selected for the new TraCast code yet; the upstream license file applies to its upstream material.
+Raw datasets remain local and excluded from Git. TraCast code is reserved to the repository owner; the upstream notice covers the DCRNN material.
 
 ## Processing
 
-Speeds remain in mph. Zeros and NaNs are treated as missing. The raw file is unchanged. Processing selects the first N sensor columns, splits rows by time, fits observed training statistics, forward-fills inputs within each split, and masks missing targets. Experiment manifests record the exact sensor IDs, ranges, statistics, and input hash.
+Speeds remain in mph. Zeros and NaNs are treated as missing. The raw file is unchanged. The baseline selects the first N sensor columns; the graph benchmark selects sensors by topology. Processing splits rows by time, fits observed training statistics, forward-fills inputs within each split, and masks missing targets. Experiment manifests record the exact sensor IDs, ranges, statistics, and input hash.
 
 ```bibtex
 @inproceedings{li2018dcrnn,

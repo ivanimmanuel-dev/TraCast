@@ -181,9 +181,11 @@ def test_official_fedavg_weighting_order_and_bytes(config, tmp_path):
 
 
 def test_failed_or_duplicate_clients_stop():
-    ok = lambda i: SimpleNamespace(
-        has_error=lambda: False, content={"metrics": {"client-id": i}}
-    )
+    def ok(i):
+        return SimpleNamespace(
+            has_error=lambda: False, content={"metrics": {"client-id": i}}
+        )
+
     with pytest.raises(RuntimeError):
         checked_replies([ok(0), ok(1)], 3)
     with pytest.raises(RuntimeError):
@@ -321,3 +323,108 @@ def test_histogram_divergence():
     assert js_divergence([1, 2], [2, 1]) == pytest.approx(js_divergence([2, 1], [1, 2]))
     with pytest.raises(ValueError):
         js_divergence([0, 0], [1, 0])
+
+
+@pytest.mark.parametrize(
+    "first,second",
+    [
+        ([1, 2], [1]),
+        ([[1, 2]], [[1, 2]]),
+        ([float("nan")], [1]),
+        ([float("inf")], [1]),
+        ([-1, 2], [1, 2]),
+    ],
+)
+def test_histogram_rejects_invalid_counts(first, second):
+    from tracast.federated_study import js_divergence
+
+    with pytest.raises(ValueError):
+        js_divergence(first, second)
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"seeds": [7, 7]},
+        {"seeds": [True, 42]},
+        {"seeds": [-1, 42]},
+        {"balanced_round_budgets": []},
+        {"balanced_round_budgets": [2, 2]},
+        {"balanced_round_budgets": [False, 2]},
+        {"congestion_round_budgets": [5]},
+    ],
+)
+def test_study_rejects_settings_before_creating_runs(config, tmp_path, changes):
+    from dataclasses import asdict
+    from tracast.federated_study import run
+
+    settings = {
+        "base": asdict(config),
+        "seeds": [7, 42],
+        "balanced_round_budgets": [1, 2],
+        "congestion_round_budgets": [2],
+    } | changes
+    out = tmp_path / "study"
+    with pytest.raises(ValueError):
+        run(settings, "unused", out)
+    assert not out.exists()
+
+
+def test_study_uses_configured_budgets_and_checks_controls(config, tmp_path):
+    from copy import deepcopy
+    from dataclasses import asdict
+    from tracast.federated_study import aggregate, plot, validate_settings
+
+    settings = {
+        "base": asdict(config),
+        "seeds": [7, 42],
+        "balanced_round_budgets": [1, 2],
+        "congestion_round_budgets": [1, 2],
+    }
+    validate_settings(settings)
+    cases = []
+    for seed in settings["seeds"]:
+        for rule in ("balanced", "congestion"):
+            for budget in (1, 2):
+                cases.append(
+                    {
+                        "case_id": f"{rule[0]}{budget}-s{seed}",
+                        "seed": seed,
+                        "partition_rule": rule,
+                        "round_budget": budget,
+                        "config": asdict(config),
+                        "fedavg": {
+                            "test": {"mae": 4.0, "rmse": 8.0},
+                            "communication": {"total_parameter_bytes": 100 * budget},
+                        },
+                        "centralized": {
+                            "test": {"mae": 3.0, "rmse": 7.0},
+                            "persistence_test": {"mae": 5.0},
+                            "state_sha256": str(seed),
+                        },
+                        "heterogeneity": {"mean_js_bits": 0.1},
+                        "wall_seconds": 1.0,
+                        "rounds": [
+                            {
+                                "state_sha256": f"{seed}-{i}",
+                                "validation": {"mae": 4.0 / i},
+                            }
+                            for i in range(1, budget + 1)
+                        ],
+                    }
+                )
+    summary = aggregate(cases)
+    assert len(summary["centralized_reference_identical"]) == 4
+    assert all(summary["round_prefix_identical"].values())
+    assert "At 2 rounds" in summary["brief_findings"]
+    plot(tmp_path, cases, summary)
+    assert (tmp_path / "tradeoffs.png").stat().st_size > 0
+
+    changed = deepcopy(cases)
+    changed[-1]["centralized"]["state_sha256"] = "different-model"
+    with pytest.raises(ValueError, match="reproducibility"):
+        aggregate(changed)
+    changed = deepcopy(cases)
+    changed[0]["rounds"][0]["state_sha256"] = "different-prefix"
+    with pytest.raises(ValueError, match="reproducibility"):
+        aggregate(changed)

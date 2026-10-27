@@ -1,4 +1,5 @@
 """Small constructed arrays test mechanics, never research results."""
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -11,11 +12,16 @@ from tracast.model import GRU, Metrics
 
 @pytest.fixture
 def frame():
-    return pd.DataFrame({"a": np.arange(300, dtype=float) + 1, "b": np.full(300, 50.)},
-                        index=pd.date_range("2012-03-01", periods=300, freq="5min"))
+    return pd.DataFrame(
+        {"a": np.arange(300, dtype=float) + 1, "b": np.full(300, 50.0)},
+        index=pd.date_range("2012-03-01", periods=300, freq="5min"),
+    )
 
 
-@pytest.mark.parametrize("kind", ["duplicate", "reverse", "gap", "negative", "infinity", "text", "sensor", "nat"])
+@pytest.mark.parametrize(
+    "kind",
+    ["duplicate", "reverse", "gap", "negative", "infinity", "text", "sensor", "nat"],
+)
 def test_schema_rejects_bad_data(frame, kind):
     if kind == "duplicate":
         frame.index = [frame.index[0]] * len(frame)
@@ -100,12 +106,12 @@ def test_missing_targets_stay_masked(frame):
 def test_metrics_count_weighting():
     scores = Metrics(2)
     target = torch.zeros(2, 2, 1)
-    pred = torch.tensor([[[1.], [3.]], [[2.], [100.]]])
+    pred = torch.tensor([[[1.0], [3.0]], [[2.0], [100.0]]])
     mask = torch.tensor([[[True], [True]], [[True], [False]]])
     scores.update(pred[:1], target[:1], mask[:1])
     scores.update(pred[1:], target[1:], mask[1:])
     result = scores.result()
-    assert result["mae"] == 2.
+    assert result["mae"] == 2.0
     assert result["rmse"] == pytest.approx(np.sqrt(14 / 3))
     assert result["per_horizon"][1]["count"] == 1
 
@@ -119,10 +125,12 @@ def test_persistence_is_last_observation(frame):
     scaler = Scaler().fit(frame)
     ds = Windows(frame, scaler)
     loader = torch.utils.data.DataLoader(ds, batch_size=17)
-    result = evaluate(None, loader, torch.from_numpy(scaler.mean), torch.from_numpy(scaler.std), 12)
+    result = evaluate(
+        None, loader, torch.from_numpy(scaler.mean), torch.from_numpy(scaler.std), 12
+    )
     # Sensor a rises by one each step; sensor b is constant.
     assert result["mae"] == pytest.approx(3.25, abs=1e-5)
-    assert result["per_horizon"][-1]["mae"] == pytest.approx(6., abs=1e-5)
+    assert result["per_horizon"][-1]["mae"] == pytest.approx(6.0, abs=1e-5)
 
 
 def test_gru_backward_and_seed():
@@ -132,13 +140,17 @@ def test_gru_backward_and_seed():
     result = first(x)
     assert result.shape == (4, 3, 2)
     result.square().mean().backward()
-    assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in first.parameters())
+    assert all(
+        p.grad is not None and torch.isfinite(p.grad).all() for p in first.parameters()
+    )
     seed_all(42, 1)
     second = GRU(2, 8, 3)
     assert torch.equal(result, second(x))
 
 
-@pytest.mark.parametrize("changes", [{"epochs": 0}, {"history": -1}, {"lr": float("nan")}, {"rows": 0}])
+@pytest.mark.parametrize(
+    "changes", [{"epochs": 0}, {"history": -1}, {"lr": float("nan")}, {"rows": 0}]
+)
 def test_config_validation(changes):
     with pytest.raises(ValueError):
         Config(**changes).validate()
@@ -151,12 +163,15 @@ def test_too_short_split(frame):
 
 def test_end_to_end_repeats(frame, tmp_path, monkeypatch):
     import tracast.experiment as experiment
+
     monkeypatch.setattr(experiment, "load", lambda *args: frame.astype("float32"))
     config = Config(sensors=2, history=3, horizon=2, hidden=4, epochs=1, threads=1)
     first = run(config, "test-fixture-only", tmp_path / "first")
     second = run(config, "test-fixture-only", tmp_path / "second")
     assert first == second
-    assert (tmp_path / "first/status.json").read_text() == (tmp_path / "second/status.json").read_text()
+    assert (tmp_path / "first/status.json").read_text() == (
+        tmp_path / "second/status.json"
+    ).read_text()
     with pytest.raises(FileExistsError):
         run(config, "test-fixture-only", tmp_path / "first")
 
@@ -164,8 +179,11 @@ def test_end_to_end_repeats(frame, tmp_path, monkeypatch):
 def test_fetch_rejects_corruption(tmp_path, monkeypatch):
     import io
     import tracast.data as data
+
     path = tmp_path / "metr-la.h5"
-    monkeypatch.setattr(data.urllib.request, "urlopen", lambda *a, **kw: io.BytesIO(b"not hdf5"))
+    monkeypatch.setattr(
+        data.urllib.request, "urlopen", lambda *a, **kw: io.BytesIO(b"not hdf5")
+    )
     with pytest.raises(ValueError, match="checksum mismatch"):
         data.fetch(path)
     assert not path.exists() and not path.with_suffix(".partial").exists()
@@ -176,6 +194,7 @@ def test_fetch_rejects_corruption(tmp_path, monkeypatch):
 
 def test_load_requires_verified_file(tmp_path):
     from tracast.data import load
+
     path = tmp_path / "bad.h5"
     path.write_bytes(b"not the dataset")
     with pytest.raises(ValueError, match="checksum"):
@@ -184,8 +203,11 @@ def test_load_requires_verified_file(tmp_path):
 
 def test_legacy_hdf_frequency_metadata(monkeypatch):
     import tracast.data as data
-    frame = pd.DataFrame(np.ones((34272, 207), dtype="float32"),
-                         index=pd.date_range("2012-03-01", periods=34272, freq="5min"))
+
+    frame = pd.DataFrame(
+        np.ones((34272, 207), dtype="float32"),
+        index=pd.date_range("2012-03-01", periods=34272, freq="5min"),
+    )
     # Emulate the metadata stored by the original old-pandas HDF5 writer.
     frame.index._data._freq = b"legacy serialized pandas offset"
     monkeypatch.setattr(data, "digest", lambda path: data.SHA256)

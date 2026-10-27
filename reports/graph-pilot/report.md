@@ -10,4 +10,4 @@ The pilot uses 16 sensors selected by breadth-first traversal of the published D
 
 The Graph-GRU computes directed incoming and outgoing distance-weighted means, combines them with each sensor's own normalized speed through a shared learned projection, and passes the resulting features to a GRU. The graph scale uses published distances among the 207 aligned sensors; no speed correlation or held-out target is used to construct the graph. Missing-value handling, chronological splits, and training-only normalization reuse the existing pipeline.
 
-All 65 tests passed, including graph-direction, sensor-alignment, node-permutation, gradient, and changed-connection tests. The one-epoch pilot checks execution and cost. Its learned models remain behind persistence. The larger benchmark fixes its configuration before training and reports all selected seeds.
+After one epoch, both learned models trail persistence. The [full benchmark](../benchmark/report.md) uses five epochs, the complete date range, three seeds, LSTM, and a self-only graph ablation.

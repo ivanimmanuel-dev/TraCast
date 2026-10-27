@@ -111,7 +111,7 @@ def distribution(frame, config):
 
 
 class SensorWindows(Dataset):
-    """One sensor per example; reuse Phase 1 windows without materializing them."""
+    """One sensor per example, sliced lazily from chronological windows."""
 
     def __init__(self, frame, scaler, history, horizon, training=False):
         self.windows = []

@@ -1,6 +1,6 @@
 # Federated round budgets and client heterogeneity
 
-Twelve completed local Flower experiments: 12 sensors, 14 days, three clients with four disjoint sensors each, and seeds 7/42/2026. The model is the existing shared univariate GRU, with 3,756 float32 parameters. Every round contains one local epoch and all three clients participate. The official ClientApp, ServerApp, and FedAvg run through the Flower 1.42.0 CLI/SuperLink and Ray runtime.
+Twelve completed local Flower experiments: 12 sensors, 14 days, three clients with four disjoint sensors each, and seeds 7/42/2026. The model is a shared univariate GRU, with 3,756 float32 parameters. Every round contains one local epoch and all three clients participate. The official ClientApp, ServerApp, and FedAvg run through the Flower 1.42.0 CLI/SuperLink and Ray runtime.
 
 ## Results
 
@@ -23,9 +23,9 @@ Congestion-grouped clients had +0.0616 mph higher mean MAE than balanced clients
 
 Both rules use the same first twelve sensors in canonical traffic-file order and the first 4,032 timestamps. The same 70/10/20 chronological row boundaries apply to every client and case. Per-sensor normalization and zero/NaN target masks use the existing pipeline.
 
-Sensors are ranked by their fraction of observed **training** speeds below 40 mph. The balanced rule interleaves rank positions across three clients; the congestion rule assigns consecutive rank blocks. Neither uses validation/test readings or geography. These labels describe simulated sensor ownership, not cities or organizations. Balanced groups are not assumed to be IID.
+Sensors are ranked by their fraction of observed **training** speeds below 40 mph. The balanced rule interleaves rank positions across three clients; the congestion rule assigns consecutive rank blocks. Ranking uses training readings only. The groups describe simulated sensor ownership; their training distributions are measured below.
 
-The observed training-speed histogram bins are 0/10/20/.../80/+inf mph, excluding missing readings. Mean client-to-pooled Jensen-Shannon divergence was 0.016882 bits for balanced ownership and 0.030693 bits for congestion grouping. This descriptive statistic is calculated from training data and is constant across seeds; it is not averaged as three independent data samples.
+The observed training-speed histogram bins are 0/10/20/.../80/+inf mph, excluding missing readings. Mean client-to-pooled Jensen-Shannon divergence was 0.016882 bits for balanced ownership and 0.030693 bits for congestion grouping. This training-data statistic is constant across seeds.
 
 | Rule | Client | Sensor IDs | Usable train windows | Observed training fraction below 40 mph |
 |---|---:|---|---:|---:|
@@ -42,7 +42,7 @@ The pooled reference uses the same shared univariate architecture, initial model
 
 ## Reproducibility checks
 
-The pooled reference's complete numerical output and state hash match exactly across balanced and congestion ownership for every seed. Global model-state hashes from the one- and three-round cases match the corresponding prefixes of the five-round cases. [summary.json](summary.json) records all checks. Seed-42 LSTM and Graph-GRU repeats for the separate centralized benchmark also matched their test metrics, validation histories, and checkpoint hashes.
+The pooled reference's complete numerical output and state hash match exactly across balanced and congestion ownership for every seed. Global model-state hashes from the one- and three-round cases match the corresponding prefixes of the five-round cases. [summary.json](summary.json) records all checks.
 
 All twelve cases completed. Their total measured wall time was 687.0 seconds (11.45 minutes), including launch overhead, simulation, selected test scoring, the pooled reference, and plots. Cases ran sequentially with one client actor active, two reserved Ray CPUs, one PyTorch thread, and a 128 MiB Ray object-store cap. Whole-study peak RAM was not measured.
 
@@ -63,17 +63,17 @@ All twelve cases completed. Their total measured wall time was 687.0 seconds (11
 | b5-s2026 | 4 | 3.780410 | 7.531418 | 3.802187 | 67.6 |
 | c5-s2026 | 3 | 3.830434 | 7.510014 | 3.802187 | 62.0 |
 
-Each [case directory](cases) contains config, source/data/dependency hashes, client metadata, all round metrics, selected test scores, pooled histories, status, and the runtime transcript. Log coloring and trailing whitespace are removed for readability. Raw partitions, model checkpoints, and local Flower service state stay outside Git.
+Each [case directory](cases) contains config, source/data/dependency hashes, client metadata, all round metrics, selected test scores, pooled histories, status, and the runtime transcript. Raw partitions, model checkpoints, and local Flower service state stay outside Git.
 
 ## Communication definition
 
 A model contains 15,024 bytes of float32 tensor values. Each round has three training downloads, three uploads, and three validation downloads: 135,216 bytes. Selected-model test evaluation adds 45,072 bytes. Total payload is therefore (3 x rounds + 1) x 3 x 15,024: 180,288 / 450,720 / 721,152 bytes for 1 / 3 / 5 rounds.
 
-These estimates exclude array headers, metrics, config, message framing, app packaging, transport overhead, latency, and energy. They describe parameter payload rather than measured network traffic. All scoring pools absolute errors, squared errors, and valid target counts; client RMSEs are not averaged.
+These estimates exclude array headers, metrics, config, message framing, app packaging, transport overhead, latency, and energy. Forecasting scores pool absolute errors, squared errors, and valid target counts across clients.
 
-## Scope
+## Interpretation
 
-Three seeds describe initialization and local-shuffle variation on one test block. The fourteen-day slice, twelve sensors, predefined congestion threshold, and short round budgets limit the conclusion to this setup. The selected model is univariate, so it is separate from the full-date-range multivariate graph benchmark. No federated graph partitioning, client dropout, differential privacy, secure aggregation, or sensor-failure experiment is included.
+Three seeds describe initialization and local-shuffle variation on one test block. The fourteen-day slice, twelve sensors, predefined congestion threshold, and short round budgets limit the conclusion to this setup. The selected model is univariate, so it is separate from the full-date-range multivariate graph benchmark. Client ownership is simulated on a shared host, using standard FedAvg.
 
 ```powershell
 .\.venv\Scripts\python.exe -m tracast.federated_study --config configs/federated-study.json --out runs/federated-study-new

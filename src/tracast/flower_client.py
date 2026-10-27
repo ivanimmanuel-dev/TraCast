@@ -1,11 +1,18 @@
 """Flower Message API client: only its own prepared sensor partition is read."""
+
 import json
 from pathlib import Path
 
 from flwr.app import ArrayRecord, Context, Message, MetricRecord, RecordDict
 from flwr.clientapp import ClientApp
 
-from .federated_task import FederatedConfig, load_partition, new_model, score, train_epochs
+from .federated_task import (
+    FederatedConfig,
+    load_partition,
+    new_model,
+    score,
+    train_epochs,
+)
 from .experiment import seed_all
 
 app = ClientApp()
@@ -29,9 +36,19 @@ def setup(msg, context):
 def train(msg: Message, context: Context):
     client_id, config, model, datasets, settings = setup(msg, context)
     round_id = int(settings["server-round"])
-    metrics = train_epochs(model, datasets["train"], config, config.seed + 10000 * round_id + client_id)
+    metrics = train_epochs(
+        model, datasets["train"], config, config.seed + 10000 * round_id + client_id
+    )
     metrics.update({"num-examples": len(datasets["train"]), "client-id": client_id})
-    return Message(content=RecordDict({"arrays": ArrayRecord(model.state_dict()), "metrics": MetricRecord(metrics)}), reply_to=msg)
+    return Message(
+        content=RecordDict(
+            {
+                "arrays": ArrayRecord(model.state_dict()),
+                "metrics": MetricRecord(metrics),
+            }
+        ),
+        reply_to=msg,
+    )
 
 
 @app.evaluate()

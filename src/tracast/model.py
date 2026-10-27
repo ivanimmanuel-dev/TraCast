@@ -33,9 +33,16 @@ class Metrics:
     def result(self):
         if (self.count == 0).any():
             raise ValueError("No observed targets for a forecast horizon")
-        return {"mae": (self.absolute.sum() / self.count.sum()).item(),
-                "rmse": (self.squared.sum() / self.count.sum()).sqrt().item(),
-                "per_horizon": [{"minutes": 5 * (i + 1), "count": int(self.count[i]),
+        return {
+            "mae": (self.absolute.sum() / self.count.sum()).item(),
+            "rmse": (self.squared.sum() / self.count.sum()).sqrt().item(),
+            "per_horizon": [
+                {
+                    "minutes": 5 * (i + 1),
+                    "count": int(self.count[i]),
                     "mae": (self.absolute[i] / self.count[i]).item(),
-                    "rmse": (self.squared[i] / self.count[i]).sqrt().item()}
-                    for i in range(len(self.count))]}
+                    "rmse": (self.squared[i] / self.count[i]).sqrt().item(),
+                }
+                for i in range(len(self.count))
+            ],
+        }

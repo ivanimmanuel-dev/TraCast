@@ -12,7 +12,6 @@ def main():
     workspace = ROOT.parents[1]
     aliases = [
         (ROOT, "$REPO"),
-        (ROOT.parent / "TrafficMind", "$REPO"),
         (workspace / "work" / "flwr-venv", "$PYTHON_ENV"),
         (workspace / "work" / "venv", "$PYTHON_ENV"),
     ]

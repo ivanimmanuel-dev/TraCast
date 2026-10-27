@@ -1,4 +1,4 @@
-"""Round-budget and training-distribution study using the existing Flower apps."""
+"""Compare Flower round budgets and training-distribution partitions."""
 
 import argparse
 from dataclasses import asdict, replace
@@ -16,7 +16,16 @@ from .experiment import write_json
 def js_divergence(first, second):
     first = np.asarray(first, dtype=float)
     second = np.asarray(second, dtype=float)
-    if (first < 0).any() or (second < 0).any() or not first.sum() or not second.sum():
+    if (
+        first.ndim != 1
+        or first.shape != second.shape
+        or not np.isfinite(first).all()
+        or not np.isfinite(second).all()
+        or (first < 0).any()
+        or (second < 0).any()
+        or not first.sum()
+        or not second.sum()
+    ):
         raise ValueError("Invalid distribution counts")
     first, second = first / first.sum(), second / second.sum()
     middle = (first + second) / 2
@@ -83,19 +92,33 @@ def aggregate(cases):
     reference_checks = {}
     prefix_checks = {}
     for seed in sorted(set(c["seed"] for c in cases)):
-        balanced = next(
-            c
-            for c in cases
-            if c["seed"] == seed
-            and c["partition_rule"] == "balanced"
-            and c["round_budget"] == 5
+        balanced = max(
+            (
+                c
+                for c in cases
+                if c["seed"] == seed and c["partition_rule"] == "balanced"
+            ),
+            key=lambda c: c["round_budget"],
         )
-        grouped = next(
+        grouped_cases = [
             c
             for c in cases
             if c["seed"] == seed and c["partition_rule"] == "congestion"
-        )
-        reference_checks[str(seed)] = balanced["centralized"] == grouped["centralized"]
+        ]
+        for grouped in grouped_cases:
+            reference = next(
+                c
+                for c in cases
+                if c["seed"] == seed
+                and c["partition_rule"] == "balanced"
+                and c["round_budget"] == grouped["round_budget"]
+            )
+            key = (
+                str(seed)
+                if len(grouped_cases) == 1
+                else f"{seed}-{grouped['round_budget']}"
+            )
+            reference_checks[key] = reference["centralized"] == grouped["centralized"]
         for short in [
             c for c in cases if c["seed"] == seed and c["partition_rule"] == "balanced"
         ]:
@@ -106,8 +129,24 @@ def aggregate(cases):
             ]
     if not all(reference_checks.values()) or not all(prefix_checks.values()):
         raise ValueError("Reference or round-prefix reproducibility check failed")
-    b, g = conditions["balanced-5"], conditions["congestion-5"]
-    brief = f"The expanded Flower study used {cases[0]['config']['clients']*cases[0]['config']['sensors_per_client']} sensors, {cases[0]['config']['rows']/288:g} days, {cases[0]['config']['clients']} clients, and {len(reference_checks)} seeds. At five rounds, balanced partitions scored MAE {b['fedavg_mae']['mean']:.3f} mph versus {b['centralized_mae']['mean']:.3f} for the matched pooled reference. Congestion-grouped clients scored {g['fedavg_mae']['mean']:.3f} mph. Training histogram divergence was {b['mean_training_js_bits']:.4f} versus {g['mean_training_js_bits']:.4f} bits. The five-round parameter payload was {b['parameter_bytes']:,} bytes. Round budgets of 1/3/5 and all per-seed results are recorded."
+    budget = max(
+        c["round_budget"] for c in cases if c["partition_rule"] == "congestion"
+    )
+    b, g = conditions[f"balanced-{budget}"], conditions[f"congestion-{budget}"]
+    config = cases[0]["config"]
+    budgets = sorted(
+        {c["round_budget"] for c in cases if c["partition_rule"] == "balanced"}
+    )
+    brief = (
+        f"The Flower study used {config['clients'] * config['sensors_per_client']} sensors, "
+        f"{config['rows'] / 288:g} days, {config['clients']} clients, and {len(b['seeds'])} seeds. "
+        f"At {budget} rounds, balanced partitions scored MAE {b['fedavg_mae']['mean']:.3f} mph "
+        f"versus {b['centralized_mae']['mean']:.3f} for the pooled reference. "
+        f"Congestion-grouped clients scored {g['fedavg_mae']['mean']:.3f} mph. "
+        f"Training histogram divergence was {b['mean_training_js_bits']:.4f} versus "
+        f"{g['mean_training_js_bits']:.4f} bits. Estimated model parameter payload: "
+        f"{b['parameter_bytes']:,} bytes. Balanced round budgets: {'/'.join(map(str, budgets))}."
+    )
     return {
         "conditions": conditions,
         "centralized_reference_identical": reference_checks,
@@ -140,14 +179,21 @@ def plot(out, cases, summary):
         capsize=4,
         label="Balanced",
     )
-    grouped = summary["conditions"]["congestion-5"]
+    grouped = sorted(
+        (
+            c
+            for c in summary["conditions"].values()
+            if c["partition_rule"] == "congestion"
+        ),
+        key=lambda c: c["round_budget"],
+    )
     axes[0].errorbar(
-        [grouped["parameter_bytes"] / 1024],
-        [grouped["fedavg_mae"]["mean"]],
-        yerr=[grouped["fedavg_mae"]["sd"] or 0],
-        fmt="s",
+        [c["parameter_bytes"] / 1024 for c in grouped],
+        [c["fedavg_mae"]["mean"] for c in grouped],
+        yerr=[c["fedavg_mae"]["sd"] or 0 for c in grouped],
+        fmt="s--",
         capsize=4,
-        label="Congestion grouped, 5 rounds",
+        label="Congestion grouped",
     )
     for c in balanced:
         axes[0].annotate(
@@ -161,33 +207,63 @@ def plot(out, cases, summary):
         title="Accuracy and communication budget",
     )
     axes[0].legend(fontsize=8)
+    budget = max(c["round_budget"] for c in grouped)
     for rule, label in [("balanced", "Balanced"), ("congestion", "Congestion grouped")]:
         selected = [
-            c for c in cases if c["partition_rule"] == rule and c["round_budget"] == 5
+            c
+            for c in cases
+            if c["partition_rule"] == rule and c["round_budget"] == budget
         ]
         values = np.array(
             [[r["validation"]["mae"] for r in c["rounds"]] for c in selected]
         )
         mean, sd = values.mean(axis=0), values.std(axis=0, ddof=1)
-        axes[1].plot(range(1, 6), mean, label=label)
-        axes[1].fill_between(range(1, 6), mean - sd, mean + sd, alpha=0.15)
+        axes[1].plot(range(1, budget + 1), mean, label=label)
+        axes[1].fill_between(range(1, budget + 1), mean - sd, mean + sd, alpha=0.15)
     axes[1].set(
         xlabel="Communication round",
         ylabel="Validation MAE (mph)",
         title="Validation convergence, mean and seed SD",
     )
-    axes[1].set_xticks(range(1, 6))
+    axes[1].set_xticks(range(1, budget + 1))
     axes[1].legend(fontsize=8)
     fig.savefig(out / "tradeoffs.png", dpi=150)
     plt.close(fig)
 
 
-def run(settings, data, out):
+def validate_settings(settings):
     base = FederatedConfig(**settings["base"])
     base.validate()
     seeds = settings["seeds"]
-    if len(seeds) < 2 or len(set(seeds)) != len(seeds):
-        raise ValueError("The study needs multiple distinct seeds")
+    if (
+        not isinstance(seeds, list)
+        or len(seeds) < 2
+        or any(type(seed) is not int for seed in seeds)
+        or len(set(seeds)) != len(seeds)
+    ):
+        raise ValueError("The study needs multiple distinct integer seeds")
+    budgets = {}
+    for rule in ("balanced", "congestion"):
+        values = settings[f"{rule}_round_budgets"]
+        if (
+            not isinstance(values, list)
+            or not values
+            or any(type(value) is not int or value < 1 for value in values)
+            or len(set(values)) != len(values)
+        ):
+            raise ValueError(f"{rule} round budgets must be distinct positive integers")
+        budgets[rule] = values
+        for seed in seeds:
+            for budget in values:
+                replace(base, seed=seed, rounds=budget, partition_rule=rule).validate()
+    if not set(budgets["congestion"]) <= set(budgets["balanced"]):
+        raise ValueError("Each congestion budget needs a matching balanced reference")
+    return base
+
+
+def run(settings, data, out):
+    base = validate_settings(settings)
+    seeds = settings["seeds"]
     out = Path(out).resolve()
     out.mkdir(parents=True, exist_ok=False)
     write_json(out / "config.json", settings)

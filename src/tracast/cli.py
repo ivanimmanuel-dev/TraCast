@@ -33,11 +33,21 @@ def main():
         report = missing_report(frame)
         write_json(out / "missing.json", report)
         plots(split(frame)["train"].iloc[:, :16], out)
-        print(json.dumps({key: val for key, val in report.items() if key != "per_sensor"}, indent=2))
+        print(
+            json.dumps(
+                {key: val for key, val in report.items() if key != "per_sensor"},
+                indent=2,
+            )
+        )
     else:
         config = Config(**json.loads(Path(args.config).read_text(encoding="utf-8")))
         results = run(config, args.data, args.out)
-        print(json.dumps({name: results[name]["test"] for name in ("persistence", "gru")}, indent=2))
+        print(
+            json.dumps(
+                {name: results[name]["test"] for name in ("persistence", "gru")},
+                indent=2,
+            )
+        )
 
 
 if __name__ == "__main__":
