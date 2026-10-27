@@ -2,7 +2,7 @@
 
 ## Origin and distribution
 
-Original research: Yaguang Li, Rose Yu, Cyrus Shahabi, Yan Liu, *Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting*, ICLR 2018.
+METR-LA was distributed with *Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting* by Yaguang Li, Rose Yu, Cyrus Shahabi, and Yan Liu (ICLR 2018).
 
 - Paper: https://arxiv.org/abs/1707.01926
 - Author repository and original distribution instructions: https://github.com/liyaguang/DCRNN
@@ -21,9 +21,9 @@ The download matches the mirror's published content hash and METR-LA's schema, d
 
 ## License and attribution
 
-The pinned mirror's dataset card declares **CC BY 4.0**: https://creativecommons.org/licenses/by/4.0/ . Its saved card is [docs/mirror-card.md](docs/mirror-card.md). Attribute the original DCRNN authors and the mirror uploader, link the sources, and identify preprocessing changes when sharing derived material.
+The pinned mirror's dataset card declares **CC BY 4.0**: [license terms](https://creativecommons.org/licenses/by/4.0/). Its saved card is [docs/mirror-card.md](docs/mirror-card.md). Attribute the original DCRNN authors and the mirror uploader, link the sources, and identify preprocessing changes when sharing derived material.
 
-The DCRNN repository has an **MIT software license**, copyright 2017 Yaguang Li. A copy is in [docs/DCRNN-LICENSE.txt](docs/DCRNN-LICENSE.txt), sourced from https://github.com/liyaguang/DCRNN/blob/master/LICENSE . The original traffic-data distribution does not specify separate dataset terms; the mirror's CC BY declaration and the upstream software license are distinct.
+The DCRNN repository has an **MIT software license**, copyright 2017 Yaguang Li. A copy is in [docs/DCRNN-LICENSE.txt](docs/DCRNN-LICENSE.txt), taken from the [upstream license](https://github.com/liyaguang/DCRNN/blob/master/LICENSE). The original traffic-data distribution does not specify separate dataset terms; the mirror's CC BY declaration and the upstream software license are distinct.
 
 Raw datasets remain local and excluded from Git. TraCast code is reserved to the repository owner; the upstream notice covers the DCRNN material.
 
@@ -39,7 +39,6 @@ Speeds remain in mph. Zeros and NaNs are treated as missing. The raw file is unc
   year={2018}
 }
 ```
-
 
 ## Sensor-distance graph
 

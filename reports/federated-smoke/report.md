@@ -1,6 +1,6 @@
 # Three-client Flower baseline
 
-Executed October 26, 2026 on Windows x64, Python 3.11.9, PyTorch 2.5.1+cpu, Flower 1.42.0, and Ray 2.55.1.
+The experiment ran on October 26, 2026 using Windows x64, Python 3.11.9, PyTorch 2.5.1+cpu, Flower 1.42.0, and Ray 2.55.1.
 
 ## Evaluation protocol
 
@@ -36,11 +36,11 @@ The smoke run uses the first 2,016 timestamps (March 1–7, 2012). All clients u
 
 Sensor scalers remain separate and are fitted only from local observed training values. No validation/test observations or other clients' values influence a sensor's mean or scale. No global statistics are estimated or averaged by Flower. The centralized reference uses exactly the same per-sensor statistics, including leading-gap fallback and missing masks. Predictions are converted back to mph per example before evaluation.
 
-All-missing training target windows are removed, producing 2,764 usable examples per client instead of 2,776 candidates. Validation/test retain all windows and mask their missing targets. These are overlapping rolling-origin forecasts; target occurrences at different forecast horizons are counted separately. Client sample counts count usable sensor-window examples.
+All-missing training target windows are removed, producing 2,764 usable examples per client instead of 2,776 candidates. Validation/test retain all windows and mask their missing targets. These are overlapping rolling-origin forecasts; target occurrences at different forecast horizons are counted separately. Client sample counts include usable examples, with one sensor per example.
 
 ## Flower execution and training comparison
 
-The application uses current `flwr.clientapp.ClientApp`, `flwr.serverapp.ServerApp`, `flwr.app.Message`/records, and `flwr.serverapp.strategy.FedAvg`. The runner invokes the official `flwr run --stream` CLI, with three simulated SuperNodes and the Ray backend. ClientApp train/evaluate handlers run in Flower actors; the ServerApp calls the actual FedAvg strategy. Its logging subclass sorts replies by client ID and delegates model aggregation to `super().aggregate_train`.
+The simulation uses Flower 1.42.0's `flwr.clientapp.ClientApp`, `flwr.serverapp.ServerApp`, `flwr.app.Message` records, and `flwr.serverapp.strategy.FedAvg`. The runner invokes the official `flwr run --stream` CLI, with three simulated SuperNodes and the Ray backend. ClientApp train/evaluate handlers run in Flower actors; the ServerApp runs the FedAvg strategy. Its logging subclass sorts replies by client ID and delegates model aggregation to `super().aggregate_train`.
 
 All three clients must return successful replies in every round. Duplicate/missing clients or failed replies stop the run. FedAvg uses the number of usable local training examples as the model weight. This is standard example-count weighting; it is distinct from weighting by observed target counts. Validation scores pool additive errors/counts across clients, with no averaging of local RMSEs.
 
@@ -64,7 +64,7 @@ Training loss is MAE in normalized units. Validation metrics are mph. Cumulative
 
 ## Measured test results
 
-Pooled across all valid sensor/forecast pairs and the 12 forecast horizons, in mph:
+The table reports errors in mph across all valid sensor/forecast pairs and all twelve forecast horizons.
 
 | Model | MAE | RMSE |
 | --- | ---: | ---: |

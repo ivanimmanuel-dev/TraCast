@@ -28,5 +28,8 @@
     "reports/subset/status.json",
     "reports/subset/training_eda.png"
   ],
-  "all_equal": true
+  "all_equal": true,
+  "file_renames": {
+    "reports/federated-smoke/phase1-regression.json": "reports/federated-smoke/centralized-regression.json"
+  }
 }

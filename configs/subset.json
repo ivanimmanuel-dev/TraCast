@@ -1,1 +1,12 @@
-{"sensors": 16, "rows": null, "history": 12, "horizon": 12, "hidden": 32, "batch_size": 64, "epochs": 5, "lr": 0.001, "seed": 42, "threads": 4}
+{
+  "sensors": 16,
+  "rows": null,
+  "history": 12,
+  "horizon": 12,
+  "hidden": 32,
+  "batch_size": 64,
+  "epochs": 5,
+  "lr": 0.001,
+  "seed": 42,
+  "threads": 4
+}

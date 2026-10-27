@@ -1,10 +1,10 @@
 # Centralized GRU baseline
 
-Persistence and a multivariate GRU on the first sensor columns in METR-LA file order. Both runs use seed 42, 12 input steps, 12 forecast steps, batch size 64, and four CPU threads. These sensor subsets differ from the topology-selected benchmark.
+This experiment compares persistence with a GRU that receives several sensors as input, selecting the first sensor columns in METR-LA file order. Both runs use seed 42, 12 input steps, 12 forecast steps, batch size 64, and four CPU threads. These sensor subsets differ from the topology-selected benchmark.
 
 ## Results
 
-Test errors in mph, pooled over valid sensor/forecast pairs across all twelve horizons.
+The table reports test errors in mph over valid sensor/forecast pairs across all twelve horizons.
 
 | Configuration | Model | MAE | RMSE |
 |---|---|---:|---:|

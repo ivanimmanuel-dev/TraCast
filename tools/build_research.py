@@ -96,13 +96,13 @@ Traffic forecasts depend on both temporal patterns and relationships between sen
 
 The checksum-verified HDF5 contains 34,272 five-minute timestamps and 207 sensors, from March 1 through June 27, 2012: 7,094,304 speed entries. The benchmark selects 16 sensors, giving 548,352 speed entries before missing-value masking. Raw timestamps are retained without assigning an undocumented timezone. Numeric columns, unique sensor IDs, increasing timestamps, five-minute spacing, finite nonnegative observations, and file hashes are checked before selection.
 
-Rows split 70/10/20 before sequence construction. Training spans March 1 00:00 to May 23 07:05, validation May 23 07:10 to June 4 04:40, and test June 4 04:45 to June 27 23:55. These contain 23,967, 3,404, and 6,832 windows respectively. Every window stays within its split. Twelve input time steps predict the next twelve steps, covering 5-60 minute forecast horizons.
+The earliest 70% of rows are used for training, the next 10% for validation, and the final 20% for testing. Sequences are constructed after this split. Training spans March 1 00:00 to May 23 07:05, validation May 23 07:10 to June 4 04:40, and test June 4 04:45 to June 27 23:55. These contain 23,967, 3,404, and 6,832 windows respectively. Every window stays within its split. Twelve input time steps predict the next twelve steps, covering 5-60 minute forecast horizons.
 
 Zero and NaN readings are missing. Inputs forward-fill within their split and use the sensor's training mean for leading gaps. A mean and population standard deviation are fitted to each sensor's observed training readings; constant sensors use a scale of one. Missing targets contribute to neither loss nor scores. The same windows, statistics, masks, and batch ordering are used across model architectures for a given seed. The zero-as-missing convention can exclude genuine stopped traffic.
 
 ## 4. Distance graph and architecture
 
-The author-distributed distance table is pinned to revision `{protocol['graph']['revision']}` and checked by SHA-256. Endpoints outside the canonical 207 METR-LA sensors are excluded. Their aligned finite distance costs set a population standard deviation s. For a supplied directed cost D[i,j], W[i,j] = exp(-(D[i,j]/s)^2), retaining values at least 0.1 and removing self pairs. No speed correlation, validation score, or test target enters graph construction.
+The author-distributed distance table is pinned to revision `{protocol['graph']['revision']}` and checked by SHA-256. Endpoints outside the canonical 207 METR-LA sensors are excluded. The finite costs between these aligned sensors determine the population standard deviation s used by the kernel. For a supplied directed cost D[i,j], W[i,j] = exp(-(D[i,j]/s)^2), retaining values at least 0.1 and removing self pairs. No speed correlation, validation score, or test target enters graph construction.
 
 A breadth-first traversal from the first canonical sensor selects a connected 16-sensor subset using the union of edge directions, with stronger weights first and ID tie-breaking. Its induced graph contains {protocol['graph']['subset_directed_edges']} directed relationships. Full IDs, coordinates, weights, source hashes, and the kernel scale are in [protocol.json](benchmark/protocol.json). The figure joins supplied sensor coordinates to show directed distance relationships.
 
@@ -168,7 +168,7 @@ The benchmark and Flower runs use separate output directories and never overwrit
     (REPORTS / "research-report.md").write_bytes(report.encode())
     (REPORTS / "benchmark/report.md").write_text(
         "# Centralized model benchmark\n\n"
-        "Sixteen topology-selected METR-LA sensors, the full March–June 2012 timeline, "
+        "The benchmark uses sixteen sensors selected from the METR-LA distance graph, the full March–June 2012 timeline, "
         "seeds 7/42/2026, and five epochs per learned model. Each trial runs in a fresh CPU process.\n\n"
         "The [technical report](../research-report.md#3-data-and-preprocessing) describes preprocessing, "
         "graph construction, architecture, training, and interpretation.\n\n"
@@ -270,7 +270,7 @@ The benchmark and Flower runs use separate output directories and never overwrit
             "METR-LA contains 34,272 five-minute timestamps and 207 sensors. The benchmark uses 16 topology-selected sensors across the full available date range, March 1-June 27, 2012: 548,352 speed entries before masking."
         ),
         body(
-            "Rows split chronologically 70/10/20 before making sequences. Twelve input steps predict the next twelve steps. Means and scales use observed training values only. Inputs forward-fill within their split; zero/NaN targets remain masked. Validation MAE selects checkpoints."
+            "The pipeline splits rows chronologically into 70% training, 10% validation, and 20% test data before making sequences. Twelve input steps predict the next twelve steps. Means and scales use observed training values only. Inputs forward-fill within their split; zero/NaN targets remain masked. Validation MAE selects checkpoints."
         ),
         heading("Graph-GRU architecture"),
     ]
@@ -340,7 +340,7 @@ The benchmark and Flower runs use separate output directories and never overwrit
     g = study["conditions"]["congestion-5"]
     story.append(
         body(
-            f"Twelve sensors, fourteen days, three clients, and three seeds. At five rounds, "
+            f"The federated study uses twelve sensors, fourteen days, three clients, and three seeds. At five rounds, "
             f"balanced partitions reached MAE {b['fedavg_mae']['mean']:.3f} mph against "
             f"{b['centralized_mae']['mean']:.3f} for pooled training. Congestion-grouped clients "
             f"reached {g['fedavg_mae']['mean']:.3f} mph. Increasing the balanced budget from "
@@ -354,7 +354,7 @@ The benchmark and Flower runs use separate output directories and never overwrit
         ),
         heading("Execution and reproducibility"),
         body(
-            f"Five epochs per learned model, seeds 7/42/2026, batch size 64, hidden width 32. Training updates averaged {models['gru']['train_seconds']['mean']:.1f} s for GRU, {models['lstm']['train_seconds']['mean']:.1f} s for LSTM, and {models['graph_gru']['train_seconds']['mean']:.1f} s for Graph-GRU. Whole-process peak memory was about 320 MiB on a Ryzen 7 5825U with four PyTorch threads."
+            f"Each learned model trains for five epochs with seeds 7/42/2026, batch size 64, and hidden width 32. Training updates averaged {models['gru']['train_seconds']['mean']:.1f} s for GRU, {models['lstm']['train_seconds']['mean']:.1f} s for LSTM, and {models['graph_gru']['train_seconds']['mean']:.1f} s for Graph-GRU. Whole-process peak memory was about 320 MiB on a Ryzen 7 5825U with four PyTorch threads."
         ),
         body(
             "Configs, source/data hashes, normalization statistics, convergence logs, horizon metrics, timings, model hashes, and regression tests accompany the reports. Commands fetch checksum-verified inputs and use pinned Python/PyTorch/Flower dependencies."
@@ -365,7 +365,7 @@ The benchmark and Flower runs use separate output directories and never overwrit
         ),
         heading("Code and evidence"),
         body(
-            '<link href="https://github.com/ivanimmanuel-dev/TraCast">github.com/ivanimmanuel-dev/TraCast</link><br/>Full methods, raw metric tables, topology provenance, experiment configurations, and figures: reports/research-report.md and DATA.md.'
+            '<link href="https://github.com/ivanimmanuel-dev/TraCast">github.com/ivanimmanuel-dev/TraCast</link><br/>The full methods, metric tables, configurations, and figures are in reports/research-report.md. DATA.md documents the dataset and graph sources.'
         ),
         Paragraph(
             "References: Li et al., ICLR 2018 (METR-LA/DCRNN); Cho et al., EMNLP 2014 (GRU); Hochreiter and Schmidhuber, Neural Computation 1997 (LSTM); McMahan et al., AISTATS 2017 (FedAvg); Flower 1.42.0.",

@@ -6,12 +6,17 @@ build-backend = "setuptools.build_meta"
 name = "tracast"
 version = "0.3.0"
 description = "CPU traffic-speed forecasting on METR-LA"
+readme = "README.md"
 requires-python = ">=3.11,<3.12"
 dependencies = ["numpy==1.26.4", "pandas==2.2.3", "tables==3.10.1", "matplotlib==3.9.2", "torch==2.5.1"]
 
 [project.optional-dependencies]
 test = ["pytest==8.3.3"]
 federated = ["flwr[simulation]==1.42.0"]
+
+[project.urls]
+Repository = "https://github.com/ivanimmanuel-dev/TraCast"
+Documentation = "https://github.com/ivanimmanuel-dev/TraCast/blob/main/docs/reproducibility.md"
 
 [project.scripts]
 tracast = "tracast.cli:main"

@@ -1,6 +1,6 @@
 # Centralized model benchmark
 
-Sixteen topology-selected METR-LA sensors, the full March–June 2012 timeline, seeds 7/42/2026, and five epochs per learned model. Each trial runs in a fresh CPU process.
+The benchmark uses sixteen sensors selected from the METR-LA distance graph, the full March–June 2012 timeline, seeds 7/42/2026, and five epochs per learned model. Each trial runs in a fresh CPU process.
 
 The [technical report](../research-report.md#3-data-and-preprocessing) describes preprocessing, graph construction, architecture, training, and interpretation.
 

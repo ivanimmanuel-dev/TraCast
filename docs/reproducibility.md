@@ -52,7 +52,7 @@ Compare test metrics, validation histories, and `state_sha256`. The recorded Gra
 
 ## Flower simulation
 
-Three clients, two sensors each, seven days, three rounds, one local epoch per round:
+This configuration assigns two sensors to each of three clients and uses seven days of readings. It trains for three rounds, with one local epoch per round:
 
 ```powershell
 .\.venv\Scripts\python.exe -m tracast.federated --config configs/federated-smoke.json --out runs/flower-a
@@ -106,3 +106,29 @@ Communication excludes serialization, metrics, configuration, and transport over
 ```
 
 These commands read the committed experiment records and rebuild the README, figures, technical report, and two-page PDF. They do not train models. `tools/export_records.py` replaces local paths with `$REPO` and `$PYTHON_ENV` when exporting records; the export receipt retains before/after hashes. Historical manifests identify the source content and dependency lock used by each measured run.
+
+## Configurations
+
+| Configuration | Experiment |
+|---|---|
+| [smoke.json](../configs/smoke.json) | Runs the eight-sensor GRU for two epochs on seven days. |
+| [subset.json](../configs/subset.json) | Runs the sixteen-sensor GRU for five epochs over the full timeline. |
+| [graph-pilot.json](../configs/graph-pilot.json) | Compares GRU and Graph-GRU after one epoch on seven days. |
+| [benchmark.json](../configs/benchmark.json) | Compares recurrent models and the graph ablation over three seeds. |
+| [federated-smoke.json](../configs/federated-smoke.json) | Runs three Flower rounds and a matched centralized GRU. |
+| [federated-study.json](../configs/federated-study.json) | Compares round budgets and client sensor groupings over three seeds. |
+
+## Source map
+
+| Files | Responsibility |
+|---|---|
+| [data.py](../src/tracast/data.py) | Fetches and validates METR-LA, splits timestamps, fits scalers, and creates sequences. |
+| [model.py](../src/tracast/model.py), [recurrent.py](../src/tracast/recurrent.py) | Define the GRU, LSTM, and forecast-error accumulator. |
+| [topology.py](../src/tracast/topology.py), [graph_model.py](../src/tracast/graph_model.py) | Build the distance graph and combine neighbor readings with the GRU. |
+| [experiment.py](../src/tracast/experiment.py), [benchmark.py](../src/tracast/benchmark.py) | Train and evaluate centralized models and record their results. |
+| [federated_task.py](../src/tracast/federated_task.py) | Defines sensor ownership, local datasets, shared training, and pooled metrics. |
+| [flower_client.py](../src/tracast/flower_client.py), [flower_server.py](../src/tracast/flower_server.py) | Handle Flower messages, aggregate updates, and record each round. |
+| [federated.py](../src/tracast/federated.py), [federated_study.py](../src/tracast/federated_study.py) | Launch simulations and compare round budgets and sensor groupings. |
+| [compare_runs.py](../src/tracast/compare_runs.py) | Compares repeated federated runs, including saved checkpoint tensors. |
+
+The [report index](../reports/README.md) explains the committed result files and how the studies differ.

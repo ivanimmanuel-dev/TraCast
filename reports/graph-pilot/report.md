@@ -1,6 +1,6 @@
 # Graph-GRU pilot
 
-The pilot uses 16 sensors selected by breadth-first traversal of the published DCRNN distance graph, the first seven days of METR-LA, seed 42, and one training epoch. The selected graph has 85 directed non-self edges. Sensor IDs, distance-kernel scale, adjacency weights, file hashes, and split ranges are recorded in `protocol.json`.
+The pilot uses 16 sensors selected by breadth-first traversal of the published DCRNN distance graph, the first seven days of METR-LA, seed 42, and one training epoch. The selected graph has 85 directed non-self edges. Sensor IDs, distance-kernel scale, adjacency weights, file hashes, and split ranges are recorded in [protocol.json](protocol.json).
 
 | Model | Test MAE (mph) | Training updates (s) | Parameters | Peak process memory (MiB) |
 |---|---:|---:|---:|---:|

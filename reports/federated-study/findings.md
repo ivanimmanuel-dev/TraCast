@@ -1,10 +1,10 @@
 # Federated round budgets and client heterogeneity
 
-Twelve completed local Flower experiments: 12 sensors, 14 days, three clients with four disjoint sensors each, and seeds 7/42/2026. The model is a shared univariate GRU, with 3,756 float32 parameters. Every round contains one local epoch and all three clients participate. The official ClientApp, ServerApp, and FedAvg run through the Flower 1.42.0 CLI/SuperLink and Ray runtime.
+This study runs twelve local Flower experiments using twelve sensors, fourteen days of readings, and seeds 7, 42, and 2026. Each of the three clients holds four sensors, and no sensor belongs to two clients. The model is a shared univariate GRU, with 3,756 float32 parameters. Every round contains one local epoch and all three clients participate. The official ClientApp, ServerApp, and FedAvg run through the Flower 1.42.0 CLI/SuperLink and Ray runtime.
 
 ## Results
 
-Mean (sample SD) across the three seeds; errors in mph. Checkpoints are selected by validation MAE within each round budget.
+The table reports mean errors in mph, with the sample standard deviation across the three seeds in parentheses. The pooled comparison trains on the combined client datasets. Checkpoints are selected by validation MAE within each round budget.
 
 | Client partition | Rounds | FedAvg MAE | FedAvg RMSE | Pooled MAE | Pooled RMSE | Parameter bytes |
 |---|---:|---:|---:|---:|---:|---:|
@@ -36,7 +36,7 @@ The observed training-speed histogram bins are 0/10/20/.../80/+inf mph, excludin
 | congestion | 1 | 737529, 767542, 773869, 717447 | 10,780 | 0.0573 |
 | congestion | 2 | 717445, 773062, 717816, 717446 | 10,736 | 0.1984 |
 
-Client sample counts mean usable sensor-window examples. A window with no observed target contributes to neither local training nor its FedAvg example weight. Validation/test retain every candidate window and pool errors only over valid targets.
+Each training example contains one sensor's input sequence and forecast targets. Client sample counts include only examples with at least one observed target. A window with no observed target contributes to neither local training nor its FedAvg example weight. Validation/test retain every candidate window and pool errors only over valid targets.
 
 The pooled reference uses the same shared univariate architecture, initial model, scalers, masks, and total example exposure. Its dataset follows canonical sensor order regardless of client assignment. Adam resets at each local fit and each pooled epoch block; no optimizer state is federated. Partial batches create different total optimizer-step counts, which are stored in the case records.
 

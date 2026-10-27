@@ -222,6 +222,8 @@ The graph contains 16 sensors and 85 directed relationships derived from publish
 
 ## Reports
 
+The [report index](reports/README.md) explains the study directories, result files, and provenance records.
+
 | Experiment | Results |
 |---|---|
 | Recurrent encoders and graph ablation | [Methods](reports/benchmark/report.md), [summary](reports/benchmark/summary.json), [exact repeats](reports/benchmark/repeatability.json) |

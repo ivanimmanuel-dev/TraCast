@@ -1,1 +1,17 @@
-{"clients":3,"sensors_per_client":2,"rows":2016,"history":12,"horizon":12,"hidden":32,"batch_size":64,"rounds":3,"local_epochs":1,"lr":0.001,"seed":42,"threads":1,"ray_cpus":2,"client_cpus":2,"round_timeout":180}
+{
+  "clients": 3,
+  "sensors_per_client": 2,
+  "rows": 2016,
+  "history": 12,
+  "horizon": 12,
+  "hidden": 32,
+  "batch_size": 64,
+  "rounds": 3,
+  "local_epochs": 1,
+  "lr": 0.001,
+  "seed": 42,
+  "threads": 1,
+  "ray_cpus": 2,
+  "client_cpus": 2,
+  "round_timeout": 180
+}
