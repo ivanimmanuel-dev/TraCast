@@ -1,9 +1,9 @@
 {
   "conclusion": "success",
-  "headSha": "d8a929110ee5f9a179b16c9b155cd75fae7d7c5c",
+  "headSha": "bf191e5ca08e852d6fe060633b97edff5e9392d7",
   "status": "completed",
-  "url": "https://github.com/ivanimmanuel-dev/TraCast/actions/runs/40427570956",
-  "tests": "71 passed in 42.31s",
+  "url": "https://github.com/ivanimmanuel-dev/TraCast/actions/runs/40430292744",
+  "tests": "84 passed in 19.47s",
   "clean_dependency_install": true,
   "pip_check": "No broken requirements found",
   "runner": "windows-latest",
