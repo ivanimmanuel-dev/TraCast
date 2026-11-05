@@ -18,6 +18,13 @@ def load(rel):
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
+def join_and(items):
+    items = [str(i) for i in items]
+    if len(items) == 1:
+        return items[0]
+    return ", ".join(items[:-1]) + " and " + items[-1]
+
+
 def pct(x, places=0):
     return f"{100 * x:.{places}f}%"
 
@@ -163,18 +170,34 @@ def scale_findings(summary, cost):
         f"{min(d['estimate'] for d in dense):+.3f} to {max(d['estimate'] for d in dense):+.3f} mph, "
         f"because a dense GRU already reads every sensor.",
     ]
+    vs = [(k, gaps[str(k)]["sgru_time_vs_gru_time"]) for k in sizes if str(k) in gaps]
+    better = [(k, g) for k, g in vs if g["ci95"][1] < 0]
+    level = [k for k, g in vs if g["ci95"][1] >= 0]
+    if better:
+        low = min(g["estimate"] for _, g in better)
+        high = max(g["estimate"] for _, g in better)
+        out.append(
+            f"- **Sharing the weights wins once the network is big.** At {join_and(k for k, _ in better)} "
+            f"sensors the shared GRU beats the dense GRU by {-high:.3f} to {-low:.3f} mph (the interval "
+            f"excludes zero), and at {join_and(level) if level else 'no other size'} they are level. It does that "
+            f"with {models['sgru_time'][str(large)]['parameters']:,} parameters instead of "
+            f"{models['gru_time'][str(large)]['parameters']:,}."
+        )
     names = ("gru_time", "graph_gru_time", "sgru_time", "sgraph_time")
     change = {
         n: models[n][str(large)]["core16_mae"]["mean"]
         - models[n][str(small)]["core16_mae"]["mean"]
         for n in names
     }
-    word = "worse" if min(change.values()) > 0 else "different"
+    dense_change = [change["gru_time"], change["graph_gru_time"]]
+    shared_change = [change["sgru_time"], change["sgraph_time"]]
     out.append(
-        f"- **More sensors did not make the first {small} better.** Trained on all {large} sensors, "
-        f"the models are {min(change.values()):+.3f} to {max(change.values()):+.3f} mph away from where "
-        f"they were when trained on {small} (same targets, so positive means {word}). With the same "
-        f"capacity and the same number of updates, a bigger and more varied network is harder to fit."
+        f"- **More sensors did not make the first {small} better, and the dense models suffer most.** "
+        f"Trained on all {large} sensors, the dense models are {min(dense_change):+.3f} to "
+        f"{max(dense_change):+.3f} mph worse on the same {small} targets than when trained on {small}, the shared "
+        f"models {min(shared_change):+.3f} to {max(shared_change):+.3f}. With the same capacity and the same number "
+        f"of updates, a bigger and more varied network is harder to fit, and a dense network has to squeeze "
+        f"every sensor through the same 32 hidden units."
     )
     source = cost or summary
     ratio = {
@@ -188,7 +211,9 @@ def scale_findings(summary, cost):
         f"- **The shared model's size doesn't grow, its compute does.** It stays at {shared:,} parameters "
         f"while the dense Graph-GRU needs {params:,} at {large} sensors. But the time per epoch grows "
         f"x{ratio['sgraph_time']:.1f} from {small} to {large} sensors for the shared Graph-GRU (there are "
-        f"x{large / small:.0f} more sensors) against x{ratio['graph_gru_time']:.1f} for the dense one."
+        f"x{large / small:.0f} more sensors) against x{ratio['graph_gru_time']:.1f} for the dense one. At {large} sensors "
+        f"that is {epoch_seconds(source['models']['sgraph_time'][str(large)]):.1f} s per epoch against "
+        f"{epoch_seconds(source['models']['graph_gru_time'][str(large)]):.1f} s."
     )
     best = min(names, key=lambda n: models[n][str(large)]["mae"]["mean"])
     skill = (
@@ -841,7 +866,7 @@ def readme_blocks():
         small, large = sizes[0], sizes[-1]
         models = scaling["models"]
         found = scale_findings(scaling, cost)
-        blocks["bullets"] += [found[0], found[2]]
+        blocks["bullets"] += [found[0], found[1]]
         rows = [
             ("ha", "Historical average"),
             ("gru_time", "Dense GRU"),
@@ -867,7 +892,7 @@ def readme_blocks():
             * len(sizes)
             + f"\n{table}\n\n"
             f"![Accuracy by sensor count](reports/scaling/scaling-accuracy.png)\n\n"
-            f"{found[0]} {found[2][2:]}\n\n"
+            f"{found[0][2:]} {found[1][2:]} {found[3][2:]}\n\n"
             f"The sizes' own-population scores, the cost in time and memory, and the limits are in the "
             f"[scaling report](reports/scaling/report.md).\n"
         )

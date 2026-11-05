@@ -149,6 +149,31 @@
     "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
     "original_sha256": "3dd14e1d0c8582e244d8bc28079c10438c4ae511e97e0cf5bb45d4d005b66db9"
   },
+  "reports/scaling/n016/manifest.json": {
+    "export_sha256": "43af940b2e4f4ec51f3390163eb52dc11fbb89ac424b7d3d09053974be3c239e",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "defe46caf8c0f81350bbb05af2655991f766f61b9189f0bef4a9ff6ea0449033"
+  },
+  "reports/scaling/n032/manifest.json": {
+    "export_sha256": "d61267d6247b7cf03acf28652749f32545ed1cb834448e0a1d64ab3dfc81851a",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "aeb32499a9ec791c1557a1d739211e43caa9381302e636089261f49936fdd52c"
+  },
+  "reports/scaling/n064/manifest.json": {
+    "export_sha256": "b82ca04f7fd50eac09fbcc85f8ee52bec2af21149537a0726b8b9031b580d5c8",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "c6a98f75c99222d18364c114eec9c5e3146de69c0368526cad04249b61d709f1"
+  },
+  "reports/scaling/n128/manifest.json": {
+    "export_sha256": "84f56b0ddf163bf9b28efae96c76856fb7772b9195745c2c02c8fc5b4edf42e5",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "ef21b05bb3d0a4594c5985960d4ac7144d83ec2c6bcf8526896bb76d3c9e7e54"
+  },
+  "reports/scaling/n207/manifest.json": {
+    "export_sha256": "af762f9dc1e9c729613b322438fe274e1d9ba3a5791a46296ea0f1aa5638dd82",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "ab3ed241cf5e1dce20e47f333b08c1ba7328cc8f46d95bdb305fe04e7862e590"
+  },
   "reports/smoke/manifest.json": {
     "export_sha256": "d18d40c8e303bf22f6f8a57feb564aa3fc160b95f57505b7a1b2391aee441151",
     "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",

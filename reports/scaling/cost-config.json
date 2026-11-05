@@ -1,0 +1,40 @@
+{
+  "benchmark": {
+    "batch_size": 64,
+    "core_sizes": [],
+    "embedding": 4,
+    "epochs": 3,
+    "hidden": 32,
+    "history": 12,
+    "horizon": 12,
+    "lr": 0.001,
+    "models": [
+      "linear_time",
+      "gru_time",
+      "graph_gru_time",
+      "sgru_time",
+      "sgraph_time",
+      "ha"
+    ],
+    "patience": null,
+    "rows": 34272,
+    "scheduler": "none",
+    "scheduler_patience": 4,
+    "seeds": [
+      7
+    ],
+    "sensors": 16,
+    "threads": 8,
+    "threshold": 0.1,
+    "train_stride": 3
+  },
+  "git_commit": "ac1828be8d290bd88b2894e84e5e801071503a62",
+  "git_dirty": false,
+  "sensor_counts": [
+    16,
+    32,
+    64,
+    128,
+    207
+  ]
+}

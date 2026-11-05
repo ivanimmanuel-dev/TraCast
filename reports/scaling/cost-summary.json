@@ -1,0 +1,6249 @@
+{
+  "day_bootstrap": {
+    "128": {
+      "graph_gru_time_vs_gru_time": {
+        "ci95": [
+          -0.08639373833150213,
+          -0.04436098966697556
+        ],
+        "days": 24,
+        "estimate": -0.06508305627516231,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "gru_time_vs_ha": {
+        "ci95": [
+          0.09240923729275631,
+          0.27333090708212815
+        ],
+        "days": 24,
+        "estimate": 0.18385967803893388,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.0
+      },
+      "sgraph_time_vs_graph_gru_time": {
+        "ci95": [
+          -0.5860595527494135,
+          -0.29725610954575865
+        ],
+        "days": 24,
+        "estimate": -0.4318254040982836,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgraph_time_vs_ha": {
+        "ci95": [
+          -0.43913202544392393,
+          -0.1929636486602541
+        ],
+        "days": 24,
+        "estimate": -0.31304878233451205,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgraph_time_vs_sgru_time": {
+        "ci95": [
+          -0.05751173654151359,
+          -0.03855951119362727
+        ],
+        "days": 24,
+        "estimate": -0.048070568276159964,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgru_time_vs_gru_time": {
+        "ci95": [
+          -0.605129151932162,
+          -0.3153664959500324
+        ],
+        "days": 24,
+        "estimate": -0.448837892097286,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      }
+    },
+    "16": {
+      "graph_gru_time_vs_gru_time": {
+        "ci95": [
+          -0.05516567813261919,
+          0.00608865326658131
+        ],
+        "days": 24,
+        "estimate": -0.024730415976535802,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.9421
+      },
+      "gru_time_vs_ha": {
+        "ci95": [
+          0.02190825605201271,
+          0.21829651815718246
+        ],
+        "days": 24,
+        "estimate": 0.11860939315066332,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.0067
+      },
+      "sgraph_time_vs_graph_gru_time": {
+        "ci95": [
+          -0.287658814736898,
+          -0.06699547911409824
+        ],
+        "days": 24,
+        "estimate": -0.17314736163248812,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.9997
+      },
+      "sgraph_time_vs_ha": {
+        "ci95": [
+          -0.2510864467037449,
+          0.08612259435031229
+        ],
+        "days": 24,
+        "estimate": -0.0792683844583606,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.8176
+      },
+      "sgraph_time_vs_sgru_time": {
+        "ci95": [
+          -0.08714903516156305,
+          -0.04230592626317355
+        ],
+        "days": 24,
+        "estimate": -0.06413452324283853,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgru_time_vs_gru_time": {
+        "ci95": [
+          -0.23784827120661242,
+          -0.036899073682372774
+        ],
+        "days": 24,
+        "estimate": -0.1337432543661854,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.9977
+      }
+    },
+    "207": {
+      "graph_gru_time_vs_gru_time": {
+        "ci95": [
+          -0.11918562749483509,
+          -0.07488643858329228
+        ],
+        "days": 24,
+        "estimate": -0.09745458782749772,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "gru_time_vs_ha": {
+        "ci95": [
+          0.16747934848191304,
+          0.38449968000468754
+        ],
+        "days": 24,
+        "estimate": 0.2777613184760872,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.0
+      },
+      "sgraph_time_vs_graph_gru_time": {
+        "ci95": [
+          -0.6618678629359132,
+          -0.37447063558631416
+        ],
+        "days": 24,
+        "estimate": -0.5085299367984057,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgraph_time_vs_ha": {
+        "ci95": [
+          -0.4627786470764323,
+          -0.20337974787182211
+        ],
+        "days": 24,
+        "estimate": -0.32822320614981626,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgraph_time_vs_sgru_time": {
+        "ci95": [
+          -0.060074002776614635,
+          -0.04148082255004528
+        ],
+        "days": 24,
+        "estimate": -0.05088353712091642,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgru_time_vs_gru_time": {
+        "ci95": [
+          -0.7089948298456069,
+          -0.4218152495877601
+        ],
+        "days": 24,
+        "estimate": -0.555100987504987,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      }
+    },
+    "32": {
+      "graph_gru_time_vs_gru_time": {
+        "ci95": [
+          -0.07185002569316115,
+          -0.023748152903910216
+        ],
+        "days": 24,
+        "estimate": -0.04754722017753732,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "gru_time_vs_ha": {
+        "ci95": [
+          0.06196428032624445,
+          0.2549427423976298
+        ],
+        "days": 24,
+        "estimate": 0.16222570957340743,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.0009
+      },
+      "sgraph_time_vs_graph_gru_time": {
+        "ci95": [
+          -0.43702765470287824,
+          -0.13635896681894646
+        ],
+        "days": 24,
+        "estimate": -0.27406585530823735,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgraph_time_vs_ha": {
+        "ci95": [
+          -0.31637031940864646,
+          -0.007459204824943868
+        ],
+        "days": 24,
+        "estimate": -0.15938736591236724,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.9799
+      },
+      "sgraph_time_vs_sgru_time": {
+        "ci95": [
+          -0.07806340041694201,
+          -0.04621187903867643
+        ],
+        "days": 24,
+        "estimate": -0.06212180311520221,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgru_time_vs_gru_time": {
+        "ci95": [
+          -0.41733233639267897,
+          -0.12404234712482684
+        ],
+        "days": 24,
+        "estimate": -0.25949127237057246,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      }
+    },
+    "64": {
+      "graph_gru_time_vs_gru_time": {
+        "ci95": [
+          -0.05386066949821601,
+          0.029826756115085312
+        ],
+        "days": 24,
+        "estimate": -0.015181101654094142,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.7681
+      },
+      "gru_time_vs_ha": {
+        "ci95": [
+          0.017990319986714957,
+          0.1830942932548122
+        ],
+        "days": 24,
+        "estimate": 0.10279825911371576,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.0096
+      },
+      "sgraph_time_vs_graph_gru_time": {
+        "ci95": [
+          -0.5184320005729228,
+          -0.15322505267014055
+        ],
+        "days": 24,
+        "estimate": -0.3217746302461526,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgraph_time_vs_ha": {
+        "ci95": [
+          -0.396138502195252,
+          -0.08282904077056871
+        ],
+        "days": 24,
+        "estimate": -0.23415747278653098,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 0.999
+      },
+      "sgraph_time_vs_sgru_time": {
+        "ci95": [
+          -0.07241804299462432,
+          -0.049919478046208485
+        ],
+        "days": 24,
+        "estimate": -0.06119906980369905,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      },
+      "sgru_time_vs_gru_time": {
+        "ci95": [
+          -0.4456261852105588,
+          -0.1324585061716679
+        ],
+        "days": 24,
+        "estimate": -0.2757566620965477,
+        "resampled_unit": "test day (forecast origin); training runs averaged first",
+        "resamples": 10000,
+        "share_below_zero": 1.0
+      }
+    }
+  },
+  "day_bootstrap_note": "Gaps in own-population MAE (first minus second, negative favors the first) with 95% intervals from resampling test days; training seeds averaged first.",
+  "environment": {
+    "logical_cpus": 16,
+    "numpy": "1.26.4",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python": "3.11.9",
+    "torch": "2.5.1+cpu"
+  },
+  "git_commit": "44ea9b793470869d7306d8622c335ba5f2bb32aa",
+  "git_dirty": true,
+  "models": {
+    "graph_gru_time": {
+      "128": {
+        "core16_horizons": {
+          "10": {
+            "mean": 4.00343279750257,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.958017348376757,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.9520739260770696,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.9746072777222134,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.015259659341466,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.075817132565438,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.0638881451240625,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.144172294183868,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 4.0313734243500905,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.1689991576279954,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.338197965756266,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.31277053750753,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.086550805511277,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.7942069384459893,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.8119459768441115,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.816541389624195,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.8489861240632837,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.88650280580179,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9284238291301787,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.9613005878191654,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.018715115883937,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.800583881959599,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.064845846334519,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.1576545989939415,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.188477474039894,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.03865312500295204,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.939848714078384,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 103408,
+        "peak_memory_mib": {
+          "mean": 349.5078125,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.901758643820629,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 1.5151827333332524,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 4.545548199999757,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "16": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.2325748444768516,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3327238023627417,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.4633124189116224,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.6058433231802374,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.737591252030429,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.916581258205597,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.006556432268259,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.191991680616629,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.0992160441069894,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.36210963054309,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.524373746704893,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.666063895576885,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.844911527415352,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.2325748444768516,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3327238023627417,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.4633124189116224,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.6058433231802374,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.737591252030429,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.916581258205597,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.006556432268259,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.191991680616629,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.0992160441069894,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.36210963054309,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.524373746704893,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.666063895576885,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.021882812504259164,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.844911527415352,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 16048,
+        "peak_memory_mib": {
+          "mean": 320.01953125,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.2506763853338,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 0.7800275999998121,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 2.3400827999994362,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "207": {
+        "core16_horizons": {
+          "10": {
+            "mean": 4.257562330234302,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 4.239317951992047,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 4.211117472927535,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 4.146445093920087,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.120740462326521,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.207450162682298,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.206117845612971,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.199054745874768,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 4.335476415683575,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.19070353530904,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.223004335853622,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.279181478797274,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.218014319267836,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 4.276969708158178,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 4.281389404072165,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 4.284309555647205,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 4.289444463878893,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.309230453300551,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.341038338012288,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.379522686778106,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.41646262409616,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 4.283547026622802,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.481524373539783,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.53893412760679,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.597442843768394,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.06275703124458687,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.3733163224600125,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 165028,
+        "peak_memory_mib": {
+          "mean": 381.7734375,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.379299050945775,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 2.129730333332797,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 6.389190999998391,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "32": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.352654497147703,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.421768420100944,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.4625187817656036,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.5742345891496266,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.6577274051006183,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.7406716250848553,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.9172120878715875,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.044303553584156,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.293682647558582,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.144057011235719,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.289789968527959,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.44084118424697,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.77828848094786,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.6182338106010947,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.6811393265997228,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7290617549370952,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.811556200063136,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.9042552106645534,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9675866636761596,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.121600874044243,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.219179352234928,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.5654078167370575,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.283116171276237,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.398433065418109,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.505259153641392,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.02081093749950469,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.9837357833244775,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 28528,
+        "peak_memory_mib": {
+          "mean": 319.7578125,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.061547479889818,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 1.021891366666144,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 3.065674099998432,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "64": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.6575537621283534,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.6644574295364034,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7271721993929443,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.756477787667598,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.904775489159076,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.8529187279803696,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.9042028855520705,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.006307753217089,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.671023465143691,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.111002816850835,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.204144650787898,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.346504481230813,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.900545120720595,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.819824024433543,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.818603148367644,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.8749748023743944,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.908898696023204,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.9929222708198053,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.022256694770782,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.083504090419749,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.158883495888741,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.7886408938623783,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.236200625268198,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.32387204811152,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.420723840743728,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.024485937487384035,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.037442052590308,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 53488,
+        "peak_memory_mib": {
+          "mean": 319.6953125,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.052052765899317,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 1.0764374999998836,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 3.2293124999996508,
+          "n": 1,
+          "sd": null
+        }
+      }
+    },
+    "gru_time": {
+      "128": {
+        "core16_horizons": {
+          "10": {
+            "mean": 4.109048088811773,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 4.106288853047416,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 4.039968511076183,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 4.130998831111306,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.06520130390686,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.176726388899946,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.2576382198759015,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.301824552212474,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 4.072922809412747,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.32043747981019,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.424023973911699,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.496734705149882,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.208484476435531,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.8693451753713157,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.8922120211517064,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.8891802818361096,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.913117336023098,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.9382392148823144,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9796654516977297,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.02787418733914,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.085999412335351,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.860720995059652,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.148758185522302,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.199603629123508,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.254465353900326,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.012798437495575854,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.004931770353546,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 66528,
+        "peak_memory_mib": {
+          "mean": 332.55078125,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.857325341759291,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 0.9395040333329234,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 2.8185120999987703,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "16": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.2783219266555057,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3639664799014763,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.475067347289967,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.6365959999887165,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7683269898467104,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9202824234485205,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.073231489492367,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.233202321862197,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.12552848108362,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.364749228846382,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.51078482288707,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.685645809400122,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.869641943391888,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.2783219266555057,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3639664799014763,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.475067347289967,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.6365959999887165,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7683269898467104,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9202824234485205,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.073231489492367,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.233202321862197,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.12552848108362,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.364749228846382,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.51078482288707,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.685645809400122,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.010711718744005339,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.869641943391888,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 11424,
+        "peak_memory_mib": {
+          "mean": 319.390625,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.228251687900125,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 0.7548261666664379,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 2.2644784999993135,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "207": {
+        "core16_horizons": {
+          "10": {
+            "mean": 4.4011388820107635,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 4.377336036560068,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 4.283001489282146,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 4.340664631560658,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.264720199671387,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.28803922936342,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.283837068616165,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.30829991821361,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 4.416320637284854,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.359921487783009,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.396990063978206,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.442575154411312,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.3469037332279665,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 4.353107613081687,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 4.368549631671318,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 4.367516487371921,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 4.3892047607022775,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.410144450641543,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.457025929893972,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.492779597268629,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.534247162331217,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 4.34794802069995,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.59337446527875,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.63402391489361,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.701351055488975,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.014110937485156683,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.47077091028751,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 105396,
+        "peak_memory_mib": {
+          "mean": 381.6171875,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.389995197239907,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 1.109823533333838,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 3.329470600001514,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "32": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.4746254752661128,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.56265615887297,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.613950490178135,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.678925790526723,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.8410247945265676,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9389959397111274,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.077968363819956,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.207000163016221,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.375764234672935,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.316199617218261,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.415983109080922,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.552849702624404,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.921328653292861,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.6070882502177213,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.718874871879839,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7829558022726206,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.826197534163879,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.9709348986728656,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.061162296144684,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.171037610706775,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.274246141144773,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.5365756611130506,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.381970654466413,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.4664467195881405,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.577905601653419,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.010971093757916606,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.031283003502015,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 19296,
+        "peak_memory_mib": {
+          "mean": 320.1484375,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.022346966111487,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 0.7006890666671097,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 2.102067200001329,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "64": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.8258011160569025,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.8656500496499056,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.8659317259655666,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.961411525412767,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.026742980581373,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.102480404211583,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.1854472942602134,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.249852183569674,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.785232581298715,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.328443246148462,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.457101601288682,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.48384850075644,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.09482860076669,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.8036240363272054,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.8280424332266905,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.8538041192575347,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.9230488639847216,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.979199190457988,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.0608169158893705,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.134970219100645,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.200846933549083,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.744573731039117,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.276617526024136,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.374924617476468,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.4510092645998585,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.011007031247345367,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.052623154244402,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 35040,
+        "peak_memory_mib": {
+          "mean": 319.63671875,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.877913288133737,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 0.769612033333639,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 2.308836100000917,
+          "n": 1,
+          "sd": null
+        }
+      }
+    },
+    "ha": {
+      "128": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.7504723659446615,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.7505545355983037,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7506278912391156,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.750704126405807,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7509476151794234,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.751048934524055,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.751139237713446,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.7513009111890114,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.7505558053888217,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 3.751451942053152,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 3.751688140672207,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 3.7518990969866914,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.7510325502412245,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 3.820982426076727,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.8209825177485395,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.8209007359166485,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.8208535139012643,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.8210471113737787,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.8210926032674046,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.821082293733444,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.821227515994524,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.820933566142641,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 3.821220400712338,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 3.821275167217592,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 3.8212672556904472,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.0002406249848263542,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.8210720923146124,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 400.46484375,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.415292967245379,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "16": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.7504723659446615,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.7505545355983037,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7506278912391156,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.750704126405807,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7509476151794234,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.751048934524055,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.751139237713446,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.7513009111890114,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.7505558053888217,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 3.751451942053152,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 3.751688140672207,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 3.7518990969866914,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.7510325502412245,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 3.7504723659446615,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.7505545355983037,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7506278912391156,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.750704126405807,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7509476151794234,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.751048934524055,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.751139237713446,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.7513009111890114,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.7505558053888217,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 3.751451942053152,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 3.751688140672207,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 3.7518990969866914,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.00025781250201362127,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.7510325502412245,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 320.18359375,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.404974227622688,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "207": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.7504723659446615,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.7505545355983037,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7506278912391156,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.750704126405807,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7509476151794234,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.751048934524055,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.751139237713446,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.7513009111890114,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.7505558053888217,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 3.751451942053152,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 3.751688140672207,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 3.7518990969866914,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.7510325502412245,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 4.192826761087355,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 4.192826991262251,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 4.192738893426213,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 4.192728566565347,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.192946093088808,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.193024027771608,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.193076707878965,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.193197579770028,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 4.192806485189861,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.193266502712459,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.193320182512167,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.193356351472539,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.0005335937487416231,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.193009591811423,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 499.73046875,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.861802584102274,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "32": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.7504723659446615,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.7505545355983037,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7506278912391156,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.750704126405807,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7509476151794234,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.751048934524055,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.751139237713446,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.7513009111890114,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.7505558053888217,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 3.751451942053152,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 3.751688140672207,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 3.7518990969866914,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.7510325502412245,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 3.8686453591675134,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.8687291580591636,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.8687864776881087,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.8687280474262558,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.8689473607446048,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.8690608322973046,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.8690806485672278,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.8692793160460766,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.8686587309208083,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 3.8693669495553387,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 3.8696253541885177,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 3.8697792924823675,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.00018437501125845301,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.8690572939286074,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 320.23046875,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.268965381474998,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "64": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.7504723659446615,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.7505545355983037,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7506278912391156,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.750704126405807,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7509476151794234,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.751048934524055,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.751139237713446,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.7513009111890114,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.7505558053888217,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 3.751451942053152,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 3.751688140672207,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 3.7518990969866914,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.7510325502412245,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 3.9497509198782916,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.9497310816057576,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.949659282660402,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.949587040346584,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.949750287902576,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.949791840596602,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.9497762271600725,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.949938720740358,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.9497760081218027,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 3.949944795364257,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 3.950068082355656,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 3.9501244548358727,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.0002281250033320248,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.949824895130686,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 327.03125,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.4500056565721735,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      }
+    },
+    "linear_time": {
+      "128": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.479341705002997,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.788064076674482,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.9300235276113855,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 4.0869439980141165,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.216976261590231,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.301894840909364,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.547525990493174,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.644128154023959,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.304448342610637,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.610492864714261,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.812893069531777,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.779226905997524,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.208496644764493,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.381481922333276,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.5782915632769514,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.718154745688289,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.8863174462237615,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.001797570738966,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.115133815609509,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.235917150536432,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.338345572957467,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.1303671419858055,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.436403875382858,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.49448361517812,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.575863706545571,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.01226328124914744,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.991046510538084,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 2416128,
+        "peak_memory_mib": {
+          "mean": 412.59765625,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 6.854465418422483,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 2.0670382333331268,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 6.20111469999938,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "16": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.9754682186606494,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.2278613758470924,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.423818963440461,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.635294665831528,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.837222915405802,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.0340069729587675,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.193494939817783,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.316206659453136,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6900025347187793,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.47434246084594,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.597498666195804,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.690892052777231,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.8413425354960813,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.9754682186606494,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.2278613758470924,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.423818963440461,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.635294665831528,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.837222915405802,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.0340069729587675,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.193494939817783,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.316206659453136,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6900025347187793,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.47434246084594,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.597498666195804,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.690892052777231,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.0006617187437996108,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.8413425354960813,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 43968,
+        "peak_memory_mib": {
+          "mean": 320.04296875,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.646344278519292,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 0.2283556333325881,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.6850668999977643,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "207": {
+        "core16_horizons": {
+          "10": {
+            "mean": 4.035162392860295,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 4.079860505285903,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 4.244338968929064,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 4.270374747770755,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.516829447032886,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.673907373006673,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.762638027598931,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.788458123567263,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.5883787715946798,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.871799317108578,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.863659379071436,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.972709627131127,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.472343056746466,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 4.091059467612454,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 4.297558576715498,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 4.4602601102272175,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 4.617408777448373,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.700971745885904,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.8494549676030765,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.911029913229952,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 5.018371401104847,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 3.8055900915794014,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 5.126589087319086,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.183114942291239,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.280468160830474,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.051516406259111136,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.6951492589684625,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 6262164,
+        "peak_memory_mib": {
+          "mean": 530.3515625,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.527568319371716,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 5.631580500000079,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 16.894741500000237,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "32": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.9947774773061875,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.306987303681293,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.4650568004497098,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.646977307353142,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.819728740432941,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9804171247831017,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.113872116679668,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.275995256430529,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.7595870488087493,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.321329985925466,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.455798214030676,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.513907991907569,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.8045362806490863,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.1063971459672377,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3572826908885522,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.5324175990350932,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.689044332321506,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.8619219020897577,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.008697184564744,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.135330409595688,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.270973862782055,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.8618945732193732,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.3487405503011445,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.464059574006547,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.521960227986376,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.0011875000183181328,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.846560004396506,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 161664,
+        "peak_memory_mib": {
+          "mean": 319.68359375,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.138452634090193,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 0.277684633332683,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.833053899998049,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "64": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.123077469502345,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.4102823787540557,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.524500160996366,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.7037821371079,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.8342631043128246,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9479317174282946,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.111121769781796,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.200484024271022,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.889505396157134,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.280542680409379,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.419572737935186,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.533476612109587,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.831545015730491,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 3.2211610461130222,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.4222245385268293,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.5688742517196856,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.7491752055236534,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.880591093529963,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9976824314132493,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.120677267253439,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.220862469917785,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.9786821370427257,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.302243701379037,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.399301174883404,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.528206705733867,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.0035257812527333954,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.865806835253055,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 618240,
+        "peak_memory_mib": {
+          "mean": 327.484375,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 6.9191157951528774,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 0.6266862000005252,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 1.8800586000015755,
+          "n": 1,
+          "sd": null
+        }
+      }
+    },
+    "persistence": {
+      "128": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.0262521288827493,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3158175940289127,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.5863927796045245,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.81006853938345,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.047650363627521,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.269486722761725,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.492516933020156,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.697635962751789,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6724930238417333,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.898881227520228,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.096053092728908,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.289877418545909,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.100260482224801,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 3.0083193008615394,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.2609756500116993,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.482162725858978,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.684497038185071,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.880500840305931,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.072910413694135,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.252280410901484,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.4204138782143625,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6682549152344244,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.590181188330046,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.75691601287794,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.921010872049635,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.0001062499990212018,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.9165352705437706,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 320.69921875,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.770704360097139,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "16": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.0262521288827493,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3158175940289127,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.5863927796045245,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.81006853938345,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.047650363627521,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.269486722761725,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.492516933020156,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.697635962751789,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6724930238417333,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.898881227520228,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.096053092728908,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.289877418545909,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.100260482224801,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 3.0262521288827493,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3158175940289127,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.5863927796045245,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.81006853938345,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.047650363627521,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.269486722761725,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.492516933020156,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.697635962751789,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6724930238417333,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.898881227520228,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.096053092728908,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.289877418545909,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 9.375000331601768e-05,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.100260482224801,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 319.95703125,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.548779252983465,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "207": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.0262521288827493,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3158175940289127,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.5863927796045245,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.81006853938345,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.047650363627521,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.269486722761725,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.492516933020156,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.697635962751789,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6724930238417333,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.898881227520228,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.096053092728908,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.289877418545909,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.100260482224801,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 3.2096920719292257,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.501070221357529,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.7535165385313416,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.984492994422279,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.209447036517813,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.42485074524214,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.62948810457362,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.821384984046041,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.814628670265983,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 5.012178156342039,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.197688185087362,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.382734040581514,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.00010468750133441063,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.245084726992478,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 381.81640625,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.19558861482377,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "32": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.0262521288827493,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3158175940289127,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.5863927796045245,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.81006853938345,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.047650363627521,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.269486722761725,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.492516933020156,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.697635962751789,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6724930238417333,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.898881227520228,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.096053092728908,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.289877418545909,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.100260482224801,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 3.145428356514943,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.4273311964638924,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.676107708989651,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.8965565552380053,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.122577738308052,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.3343703414074355,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.543178835842243,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.733476383780393,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.7772957088133188,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.919360908514041,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.107392087577393,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.284068608494976,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 9.375000331601768e-05,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.163928702495362,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 320.03515625,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.195123467365695,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "64": {
+        "core16_horizons": {
+          "10": {
+            "mean": 3.0262521288827493,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.3158175940289127,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.5863927796045245,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.81006853938345,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.047650363627521,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.269486722761725,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.492516933020156,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.697635962751789,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6724930238417333,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.898881227520228,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.096053092728908,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.289877418545909,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 4.100260482224801,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": null,
+        "horizon_mae": {
+          "10": {
+            "mean": 3.1700657427137564,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.449494981600498,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.6871288238713915,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.904567598899614,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 4.125883562586629,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.331170886845375,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.526674092785395,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.708126503453734,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.7917459019679103,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.890953302317212,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 5.069676626984699,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 5.2489685661558125,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.00010468750133441063,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 4.158704715848502,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 0,
+        "peak_memory_mib": {
+          "mean": 320.0390625,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 8.09640218171608,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": null,
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 0.0,
+          "n": 1,
+          "sd": null
+        }
+      }
+    },
+    "sgraph_time": {
+      "128": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.7750407053101815,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.0058606235219383,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.252981590446862,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.4301657409872774,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7090825340196516,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.87656559116318,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.084665554776449,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.255198038872328,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.4583148767892005,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.479660254212815,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.614917524608831,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.7847136483684,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.727263890256426,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.7141684249899174,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 2.925300940266879,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.122804152211254,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.2895882401269088,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.4828880946184775,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.636305670544037,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.7951027109721776,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 3.943180671168571,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.431204812051041,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.115991078678575,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.252714974948138,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.38702994918523,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.5117679687458576,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.5080233099801004,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4236,
+        "peak_memory_mib": {
+          "mean": 499.3203125,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.1112323376779,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 12.774057566666064,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 38.32217269999819,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "16": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.7420028465261677,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 2.9735796695533168,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.2027697946397424,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.3853464172550543,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.6250956201630684,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.817398057049638,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.008060548262779,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.175168667468699,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.4493517974990024,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.398652653126632,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.548661249611572,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.735082668238694,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.671764165782864,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.7420028465261677,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 2.9735796695533168,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.2027697946397424,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.3853464172550543,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.6250956201630684,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.817398057049638,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.008060548262779,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.175168667468699,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.4493517974990024,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.398652653126632,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.548661249611572,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.735082668238694,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.06205234376466251,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.671764165782864,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4236,
+        "peak_memory_mib": {
+          "mean": 319.88671875,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.828702124736945,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 2.338132566665687,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 7.014397699997062,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "207": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.8023105201262632,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.0397342636645592,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.283412351941525,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.4549288639705185,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7482802304088474,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9039571442963257,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.107603073115222,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.276117934383178,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.500387100878039,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.488180344587458,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.610646225733677,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.787485959478137,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.7502536677153127,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.935923638542499,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.193619872301516,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.4251226478930024,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.614659789593111,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.8420071002709437,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.0207703690768914,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.201078184073608,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.375417778313614,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.607726574772363,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.56133783723321,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.72136537584714,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.878545832672071,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.7814406249906369,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.8647863856616067,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4236,
+        "peak_memory_mib": {
+          "mean": 640.3984375,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.534499596338509,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 23.907510366666127,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 71.72253109999838,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "32": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.7408500709870856,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 2.9725911754631493,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.198118202667758,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.3798421070860454,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.6301562523439004,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.8128190583194153,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.001455692450287,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.172478465432639,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.4480078187277536,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.404923573710569,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.534832938111433,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.716479826206511,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.667712931792212,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.8276675932126607,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.0570661370680767,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.2689909156595305,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.454604606989781,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.682924010989511,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.8593640255683943,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.03064284436882,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.194921787096565,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.5248569408709076,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.398963896459271,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.527197476379566,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.688838901531796,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.09781562498289986,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.70966992801624,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4236,
+        "peak_memory_mib": {
+          "mean": 346.44921875,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.479352216552055,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 3.3111582999990787,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 9.933474899997236,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "64": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.747290728192883,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 2.978734207590929,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.222500459883579,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.4001032342892556,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.6689452747843707,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.8435179807670523,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.046241360252859,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.2201047387783825,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.4402430707771474,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.443703982929268,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.576851091429529,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.750123810640369,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.6948633283596353,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.844340586048043,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.0752341371038256,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.2917166967889107,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.4742664295434427,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.693663015758319,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.8618171076233727,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.033252436296266,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.194926291287359,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.533495289405014,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.38355234670675,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.525957170242935,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.675787561325621,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.2127593749889911,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.715667422344155,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4236,
+        "peak_memory_mib": {
+          "mean": 407.80078125,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.388230064672213,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 5.747010266667227,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 17.24103080000168,
+          "n": 1,
+          "sd": null
+        }
+      }
+    },
+    "sgru_time": {
+      "128": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.849895931463543,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.1119270702548616,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.3777658468858487,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.564441897534442,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.8150164374682145,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.008675404926595,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.199559442670044,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.420321399802793,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.570814801904219,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.5266392905903965,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.6987996297422345,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.8825432175295935,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.8355333642310656,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.729935500842808,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 2.9608433293178607,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.1622908819863604,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.3404998751085415,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.5306732849314866,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.6968874188166763,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 3.853341158620399,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.038252368319772,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.457336837672778,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.150980267271429,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.299424708504273,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.45266090768274,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.4259187499968675,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.5560938782562603,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4044,
+        "peak_memory_mib": {
+          "mean": 496.25390625,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.248001597879801,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 12.536805333332572,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 37.61041599999771,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "16": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.7387177476910933,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.013844597794127,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.2541492766262183,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.464841797299608,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.6815204542384694,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.891465500971541,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.090868901170649,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.33166051858613,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.4491856786797337,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.4307793442880445,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.636005444212122,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.847745006750695,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.7358986890257024,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.7387177476910933,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.013844597794127,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.2541492766262183,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.464841797299608,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.6815204542384694,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.891465500971541,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.090868901170649,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.33166051858613,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.4491856786797337,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.4307793442880445,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.636005444212122,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.847745006750695,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.06023203124527754,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.7358986890257024,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4044,
+        "peak_memory_mib": {
+          "mean": 320.03515625,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.971640270967318,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 2.3736810333333174,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 7.121043099999952,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "207": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.8799826510766526,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.15039829433247,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.411389217528061,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.59044584104672,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.8336250989559035,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.022594812148519,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.209524306245161,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.433041327641932,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6106550942175684,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.534807046931611,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.71323515641133,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.891953235729171,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.8568043401887584,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.9546710533477962,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.2297557292637546,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.4623644174992876,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.6689247198173134,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.887011862714249,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 4.077744937805581,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.261032153867741,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.476552579813026,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.6356068236555026,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.600449216840041,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.779285440774208,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.954781537798651,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.7568476562482829,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.915669922782523,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4044,
+        "peak_memory_mib": {
+          "mean": 627.19140625,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.6866488681549185,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 23.708264300000035,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 71.1247929000001,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "32": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.755342389787012,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.033097590526299,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.2818763859620965,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.4848282930065686,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.720074593021049,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9209434608419764,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.123666841992067,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.358161350030519,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.4651213743452356,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.466086708934236,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.651679117629129,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.845443135523572,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.7588601034666467,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.835063160132459,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.0977855388977256,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.324691236457652,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.52880462605,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.7421015148564685,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.929236755091669,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.114696616988347,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.326246958868907,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.5340464238970344,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.438576624834679,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.607484691742977,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.7827666257593915,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.09269140623757721,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.7717917311314424,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4044,
+        "peak_memory_mib": {
+          "mean": 345.5859375,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.6071870137533875,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 3.3619344333340755,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 10.085803300002226,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "64": {
+        "core16_horizons": {
+          "10": {
+            "mean": 2.7971619687949825,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.0713723830701753,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.3317663551128267,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.5279423369049874,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.770211758638942,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.966155288841454,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.161792797747327,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.3871223905397985,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.514756362053018,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.495564300606148,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.667623709621027,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.85690329536307,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "core16_mae": {
+          "mean": 3.795697745607813,
+          "n": 1,
+          "sd": null
+        },
+        "epochs_run": {
+          "mean": 3.0,
+          "n": 1,
+          "sd": null
+        },
+        "horizon_mae": {
+          "10": {
+            "mean": 2.865722680508646,
+            "n": 1,
+            "sd": null
+          },
+          "15": {
+            "mean": 3.1248022144011114,
+            "n": 1,
+            "sd": null
+          },
+          "20": {
+            "mean": 3.3470262347728323,
+            "n": 1,
+            "sd": null
+          },
+          "25": {
+            "mean": 3.546564002620724,
+            "n": 1,
+            "sd": null
+          },
+          "30": {
+            "mean": 3.753507807078098,
+            "n": 1,
+            "sd": null
+          },
+          "35": {
+            "mean": 3.9336983419061355,
+            "n": 1,
+            "sd": null
+          },
+          "40": {
+            "mean": 4.106522969321256,
+            "n": 1,
+            "sd": null
+          },
+          "45": {
+            "mean": 4.307764734991647,
+            "n": 1,
+            "sd": null
+          },
+          "5": {
+            "mean": 2.5617904750585576,
+            "n": 1,
+            "sd": null
+          },
+          "50": {
+            "mean": 4.427966508883698,
+            "n": 1,
+            "sd": null
+          },
+          "55": {
+            "mean": 4.589557872517221,
+            "n": 1,
+            "sd": null
+          },
+          "60": {
+            "mean": 4.757474063714319,
+            "n": 1,
+            "sd": null
+          }
+        },
+        "inference_ms_per_window": {
+          "mean": 0.21344296875724922,
+          "n": 1,
+          "sd": null
+        },
+        "mae": {
+          "mean": 3.776866492147854,
+          "n": 1,
+          "sd": null
+        },
+        "parameters": 4044,
+        "peak_memory_mib": {
+          "mean": 407.7109375,
+          "n": 1,
+          "sd": null
+        },
+        "rmse": {
+          "mean": 7.531789628759869,
+          "n": 1,
+          "sd": null
+        },
+        "seconds_per_epoch": {
+          "mean": 5.6386249000000435,
+          "n": 1,
+          "sd": null
+        },
+        "seeds": [
+          7
+        ],
+        "train_seconds": {
+          "mean": 16.91587470000013,
+          "n": 1,
+          "sd": null
+        }
+      }
+    }
+  },
+  "note": "mae is on every sensor a model was trained on, so it is not comparable across sizes; core16_mae scores every model on the same first 16 sensors.",
+  "sizes": [
+    16,
+    32,
+    64,
+    128,
+    207
+  ]
+}

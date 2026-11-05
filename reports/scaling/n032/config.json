@@ -1,0 +1,32 @@
+{
+  "batch_size": 64,
+  "core_sizes": [
+    16
+  ],
+  "embedding": 4,
+  "epochs": 30,
+  "hidden": 32,
+  "history": 12,
+  "horizon": 12,
+  "lr": 0.001,
+  "models": [
+    "linear_time",
+    "gru_time",
+    "graph_gru_time",
+    "sgru_time",
+    "sgraph_time",
+    "ha"
+  ],
+  "patience": null,
+  "rows": 34272,
+  "scheduler": "plateau",
+  "scheduler_patience": 4,
+  "seeds": [
+    7,
+    42
+  ],
+  "sensors": 32,
+  "threads": 8,
+  "threshold": 0.1,
+  "train_stride": 3
+}

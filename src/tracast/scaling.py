@@ -147,6 +147,11 @@ def summarize(out):
                 "horizon_mae": {str(m): v for m, v in horizons.items()},
                 "parameters": runs[0]["parameter_count"],
                 "train_seconds": _stats([r["train_seconds"] for r in runs]),
+                "seconds_per_epoch": (
+                    _stats([r["train_seconds"] / len(r["history"]) for r in runs])
+                    if runs[0]["history"]
+                    else None
+                ),
                 "epochs_run": _stats([len(r["history"]) for r in runs])
                 if runs[0]["history"]
                 else None,
@@ -254,13 +259,25 @@ def figures(summary, out):
         "Same 16 target sensors for every size",
         "Test MAE on the first 16 sensors (mph)",
     )
-    axes[1].legend(fontsize=8)
+    fig.legend(
+        *axes[1].get_legend_handles_labels(),
+        loc="outside lower center",
+        ncol=4,
+        fontsize=8,
+    )
     fig.savefig(out / "scaling-accuracy.png", dpi=170)
     plt.close(fig)
 
     fig, axes = plt.subplots(1, 4, figsize=(15, 3.6), constrained_layout=True)
-    draw(axes[0], "train_seconds", "mean", "Training time", "seconds", log=True)
-    draw(axes[1], "peak_memory_mib", "mean", "Peak process memory", "MiB", log=True)
+    draw(
+        axes[0],
+        "seconds_per_epoch",
+        "mean",
+        "Training time per epoch",
+        "seconds",
+        log=True,
+    )
+    draw(axes[1], "peak_memory_mib", "mean", "Peak process memory", "MiB")
     draw(axes[2], "parameters", None, "Parameters", "count", log=True)
     draw(
         axes[3],
@@ -270,7 +287,12 @@ def figures(summary, out):
         "ms per window",
         log=True,
     )
-    axes[3].legend(fontsize=7)
+    fig.legend(
+        *axes[3].get_legend_handles_labels(),
+        loc="outside lower center",
+        ncol=4,
+        fontsize=8,
+    )
     fig.savefig(out / "scaling-cost.png", dpi=170)
     plt.close(fig)
 
