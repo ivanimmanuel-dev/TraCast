@@ -1,0 +1,53 @@
+{
+  "benchmark": {
+    "batch_size": 64,
+    "embedding": 4,
+    "epochs": 60,
+    "hidden": 32,
+    "history": 12,
+    "horizon": 12,
+    "lr": 0.001,
+    "patience": 8,
+    "rows": 34272,
+    "scheduler": "plateau",
+    "scheduler_patience": 2,
+    "sensors": 16,
+    "threads": 4,
+    "threshold": 0.1,
+    "train_stride": 1
+  },
+  "etas": [
+    0.005,
+    0.01,
+    0.02,
+    0.05,
+    0.1
+  ],
+  "git_commit": "ac1828be8d290bd88b2894e84e5e801071503a62",
+  "git_dirty": false,
+  "head_days": 14,
+  "head_epochs": 1,
+  "head_lrs": [
+    0.0001,
+    0.0005,
+    0.002
+  ],
+  "model": "gru_time",
+  "retrain_epochs": 3,
+  "retrain_every": 7,
+  "retrain_lr": 0.0005,
+  "seeds": [
+    7,
+    42,
+    2026
+  ],
+  "settings": {
+    "stale": 0.4,
+    "standard": 0.7
+  },
+  "slot_etas": [
+    0.1,
+    0.3,
+    0.5
+  ]
+}
