@@ -28,6 +28,7 @@ from .federated_task import (
     train_epochs,
     state_hash,
 )
+from .provenance import git_state
 
 
 def prepare(config, data, out):
@@ -54,18 +55,6 @@ def prepare(config, data, out):
     )
     source = code_manifest()
     identity = {"config": asdict(config), "data_sha256": SHA256, "code": source}
-    git = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=Path(__file__).resolve().parents[2],
-        capture_output=True,
-        text=True,
-    )
-    dirty = subprocess.run(
-        ["git", "status", "--porcelain"],
-        cwd=Path(__file__).resolve().parents[2],
-        capture_output=True,
-        text=True,
-    )
     partition_hashes = {
         path.name: digest(path) for path in sorted((job / "partitions").glob("*.npz"))
     }
@@ -79,8 +68,7 @@ def prepare(config, data, out):
             "partition_files": partition_hashes,
             "python": sys.version,
             "platform": platform.platform(),
-            "git_commit": git.stdout.strip() if git.returncode == 0 else None,
-            "git_dirty": bool(dirty.stdout.strip()) if dirty.returncode == 0 else None,
+            **git_state(),
             "command": sys.argv,
             "versions": {
                 name: version(name)
@@ -169,6 +157,55 @@ def centralized(config, job):
         "persistence_test": pool([score(None, datasets["test"], config)]),
     }
     write_json(job / "centralized.json", result)
+    return result
+
+
+def local_only(config, job):
+    """Train every client alone: the arm with no communication.
+
+    Same start weights and same local work as federated training (rounds blocks of
+    local epochs, same seeds, fresh optimizer per block). Each client keeps its
+    best-validation round and the test statistics are pooled across clients.
+    """
+    loaded = [load_partition(job, i) for i in range(config.clients)]
+    clients, statistics = [], []
+    for client_id, (datasets, _) in enumerate(loaded):
+        seed_all(config.seed, config.threads)
+        model = new_model(config)
+        model.load_state_dict(
+            torch.load(job / "initial.pt", map_location="cpu", weights_only=True)
+        )
+        best, best_round, best_state = float("inf"), None, None
+        for round_id in range(1, config.rounds + 1):
+            train_epochs(
+                model,
+                datasets["train"],
+                config,
+                config.seed + 10000 * round_id + client_id,
+            )
+            validation = pool([score(model, datasets["val"], config)])
+            if validation["mae"] < best:
+                best, best_round = validation["mae"], round_id
+                best_state = {k: v.clone() for k, v in model.state_dict().items()}
+        model.load_state_dict(best_state)
+        stats = score(model, datasets["test"], config)
+        statistics.append(stats)
+        clients.append(
+            {
+                "client_id": client_id,
+                "best_round": best_round,
+                "validation_mae": best,
+                "state_sha256": state_hash(model),
+                "statistics": stats,
+                "metrics": pool([stats]),
+            }
+        )
+    result = {
+        "test": pool(statistics),
+        "clients": clients,
+        "scope": "Per-client models selected on each client's own validation data; no communication",
+    }
+    write_json(job / "local-only.json", result)
     return result
 
 
@@ -287,6 +324,7 @@ def execute(job):
         if not (job / "federated.json").exists():
             raise RuntimeError("Flower exited without completed federated metrics")
         centralized(config, job)
+        local_only(config, job)
         plots(job)
         write_json(job / "status.json", {"status": "complete"})
     except BaseException as error:
@@ -301,7 +339,7 @@ def execute(job):
         raise
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(
         description="TraCast Flower simulation and matched centralized GRU"
     )
@@ -309,7 +347,7 @@ def main():
     parser.add_argument("--data", default="data/raw/metr-la.h5")
     parser.add_argument("--out", required=True)
     parser.add_argument("--prepare-only", action="store_true")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     config = FederatedConfig(**json.loads(Path(args.config).read_text()))
     job = prepare(config, args.data, args.out)
     if not args.prepare_only:

@@ -17,13 +17,32 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
+from .baselines import HistoricalAverage, score_table
 from .data import SHA256, Scaler, Windows, load, split, missing_report
 from .experiment import seed_all, evaluate, write_json, code_manifest
 from .federated_task import state_hash
 from .graph_model import GraphGRU
-from .model import GRU
+from .model import GRU, DailyMetrics, LinearAR
+from .provenance import git_state
 from .resources import peak_memory
+from .stats import day_bootstrap
 from . import topology
+
+# A _time suffix gives a model the calendar inputs. ha and persistence don't train.
+BASES = ("gru", "lstm", "graph_gru", "graph_self", "linear")
+STATIC = ("persistence", "ha")
+TRIALS = STATIC + BASES + tuple(f"{base}_time" for base in BASES)
+SCHEDULERS = ("none", "plateau")
+
+
+def split_name(name):
+    """Return the architecture and whether it receives calendar channels."""
+    timed = name.endswith("_time")
+    return (name[: -len("_time")] if timed else name), timed
+
+
+def valid_model(name):
+    return name == "ha" or split_name(name)[0] in BASES
 
 
 @dataclass
@@ -41,6 +60,14 @@ class BenchmarkConfig:
     threads: int = 4
     threshold: float = 0.1
     models: list[str] = field(default_factory=lambda: ["gru", "graph_gru"])
+    # defaults give the original fixed-epoch protocol
+    patience: int | None = None
+    scheduler: str = "none"
+    scheduler_patience: int = 2
+
+    @property
+    def uses_time(self):
+        return any(split_name(name)[1] for name in self.models)
 
     def validate(self):
         for name in (
@@ -69,27 +96,41 @@ class BenchmarkConfig:
         if (
             not self.models
             or len(set(self.models)) != len(self.models)
-            or set(self.models) - {"gru", "lstm", "graph_gru", "graph_self"}
+            or not all(valid_model(name) for name in self.models)
         ):
             raise ValueError("Invalid model list")
+        if self.patience is not None and (
+            type(self.patience) is not int or self.patience < 1
+        ):
+            raise ValueError("patience must be null or a positive integer")
+        if self.scheduler not in SCHEDULERS:
+            raise ValueError(f"scheduler must be one of {SCHEDULERS}")
+        if type(self.scheduler_patience) is not int or self.scheduler_patience < 1:
+            raise ValueError("scheduler_patience must be a positive integer")
 
 
 def model_for(name, config, weights):
-    if name == "persistence":
+    if name in STATIC:
         return None
-    if name == "gru":
-        return GRU(config.sensors, config.hidden, config.horizon)
-    if name == "lstm":
+    base, timed = split_name(name)
+    extra = 3 if timed else 0
+    if base == "gru":
+        return GRU(config.sensors, config.hidden, config.horizon, extra)
+    if base == "lstm":
         from .recurrent import LSTM
 
-        return LSTM(config.sensors, config.hidden, config.horizon)
-    if name in ("graph_gru", "graph_self"):
-        graph = weights if name == "graph_gru" else np.zeros_like(weights)
-        return GraphGRU(graph, config.hidden, config.horizon, config.embedding)
+        return LSTM(config.sensors, config.hidden, config.horizon, extra)
+    if base == "linear":
+        return LinearAR(config.sensors, config.history, config.horizon, extra)
+    if base in ("graph_gru", "graph_self"):
+        graph = weights if base == "graph_gru" else np.zeros_like(weights)
+        return GraphGRU(graph, config.hidden, config.horizon, config.embedding, extra)
     raise ValueError(f"Unknown model: {name}")
 
 
-def prepared(config, data, graph_dir):
+def prepared(config, data, graph_dir, time_features=None):
+    if time_features is None:
+        time_features = config.uses_time
     frame = load(data, 207, config.rows)
     ids, weights, graph = topology.load(
         graph_dir, frame.columns, config.sensors, config.threshold
@@ -98,7 +139,7 @@ def prepared(config, data, graph_dir):
     parts = split(frame, config.history, config.horizon)
     scaler = Scaler().fit(parts["train"])
     datasets = {
-        name: Windows(part, scaler, config.history, config.horizon)
+        name: Windows(part, scaler, config.history, config.horizon, time_features)
         for name, part in parts.items()
     }
     protocol = {
@@ -118,13 +159,7 @@ def prepared(config, data, graph_dir):
     return datasets, scaler, weights, protocol
 
 
-def inference(model, x, horizon):
-    if model is not None:
-        model.eval()
-
-    def predict():
-        return x[:, -1:].expand(-1, horizon, -1) if model is None else model(x)
-
+def timed_calls(predict, batch_size, scope):
     with torch.inference_mode():
         for _ in range(5):
             predict()
@@ -134,19 +169,37 @@ def inference(model, x, horizon):
             predict()
             seconds.append(time.perf_counter() - start)
     return {
-        "batch_size": len(x),
+        "batch_size": batch_size,
         "repetitions": 30,
         "warmups": 5,
         "median_batch_seconds": statistics.median(seconds),
-        "median_ms_per_window": statistics.median(seconds) * 1000 / len(x),
-        "scope": "Normalized forward pass only; fixed first test batch; excludes loader and metrics",
+        "median_ms_per_window": statistics.median(seconds) * 1000 / batch_size,
+        "scope": scope,
     }
+
+
+def inference(model, x, horizon, sensors):
+    if model is not None:
+        model.eval()
+
+    def predict():
+        if model is None:
+            return x[:, -1:, :sensors].expand(-1, horizon, -1)
+        return model(x)
+
+    return timed_calls(
+        predict,
+        len(x),
+        "Normalized forward pass only; fixed first test batch; excludes loader and metrics",
+    )
 
 
 def trial(config, data, graph_dir, name, seed, out):
     config.validate()
     seed_all(seed, config.threads)
-    datasets, scaler, weights, protocol = prepared(config, data, graph_dir)
+    datasets, scaler, weights, protocol = prepared(
+        config, data, graph_dir, config.uses_time or split_name(name)[1]
+    )
     out = Path(out)
     out.mkdir(parents=True, exist_ok=False)
     write_json(out / "status.json", {"status": "running"})
@@ -169,11 +222,19 @@ def trial(config, data, graph_dir, name, seed, out):
             if model is not None
             else None
         )
+        scheduler = (
+            torch.optim.lr_scheduler.ReduceLROnPlateau(
+                optimizer, factor=0.5, patience=config.scheduler_patience
+            )
+            if optimizer is not None and config.scheduler == "plateau"
+            else None
+        )
         history = []
-        best = float("inf")
+        best, stale, stopped_early = float("inf"), 0, False
         train_seconds, validation_seconds = 0.0, 0.0
         for epoch in range(1, config.epochs + 1) if model is not None else []:
             model.train()
+            rate = optimizer.param_groups[0]["lr"]
             loss_sum, count_sum, steps = 0.0, 0, 0
             start = time.perf_counter()
             for x, y, mask in loaders["train"]:
@@ -202,6 +263,7 @@ def trial(config, data, graph_dir, name, seed, out):
             validation_seconds += validation_elapsed
             row = {
                 "epoch": epoch,
+                "lr": rate,
                 "train_normalized_mae": loss_sum / count_sum,
                 "observed_targets": count_sum,
                 "optimizer_steps": steps,
@@ -211,27 +273,61 @@ def trial(config, data, graph_dir, name, seed, out):
             }
             history.append(row)
             if validation["mae"] < best:
-                best = validation["mae"]
+                best, stale = validation["mae"], 0
                 torch.save(model.state_dict(), out / "best.pt")
+            else:
+                stale += 1
+            if scheduler is not None:
+                scheduler.step(validation["mae"])
             write_json(out / "history.json", history)
             print(
                 f"{name} seed={seed} epoch={epoch} val_MAE={validation['mae']:.6f} train_s={elapsed:.3f}",
                 flush=True,
             )
+            if config.patience is not None and stale >= config.patience:
+                stopped_early = epoch < config.epochs
+                break
         if model is not None:
             model.load_state_dict(
                 torch.load(out / "best.pt", map_location="cpu", weights_only=True)
             )
+        test_set = datasets["test"]
+        codes, labels = test_set.origin_days()
+        daily = DailyMetrics(codes, labels)
         start = time.perf_counter()
-        test = evaluate(model, loaders["test"], mean, std, config.horizon)
+        if name == "ha":
+            train_set = datasets["train"]
+            fitted = HistoricalAverage().fit(
+                train_set.times, train_set.y, train_set.mask
+            )
+            table = fitted.predict(test_set.times)
+            test = score_table(test_set, table, daily)
+        else:
+            test = evaluate(
+                model, loaders["test"], mean, std, config.horizon, daily=daily
+            )
         test_seconds = time.perf_counter() - start
         x = next(iter(loaders["test"]))[0]
-        timing = inference(model, x, config.horizon)
+        if name == "ha":
+            rows = (
+                np.arange(len(x))[:, None]
+                + test_set.history
+                + np.arange(config.horizon)[None, :]
+            )
+            timing = timed_calls(
+                lambda: table[rows],
+                len(x),
+                "Table lookup for the first test batch; excludes fitting, loader, and metrics",
+            )
+        else:
+            timing = inference(model, x, config.horizon, config.sensors)
         result = {
             "model": name,
             "seed": seed,
             "test": test,
+            "daily": daily.result(),
             "history": history,
+            "stopped_early": stopped_early,
             "best_epoch": (
                 min(history, key=lambda r: r["validation"]["mae"])["epoch"]
                 if history
@@ -298,9 +394,16 @@ def aggregate(results):
                 for i in range(len(values[0]["test"]["per_horizon"]))
             ],
         }
+    for name, entry in summary.items():
+        values = [r for r in results if r["model"] == name]
+        if values[0]["history"]:
+            entry["best_epoch"] = moments([r["best_epoch"] for r in values])
+            entry["epochs_run"] = moments([len(r["history"]) for r in values])
     paired = {}
     reference = {r["seed"]: r for r in results if r["model"] == "gru"}
-    for name in ("lstm", "graph_gru", "graph_self"):
+    for name in summary:
+        if name == "gru" or name in STATIC:
+            continue
         values = [
             r["test"]["mae"] - reference[r["seed"]]["test"]["mae"]
             for r in results
@@ -313,11 +416,51 @@ def aggregate(results):
                 "mean": float(np.mean(values)),
                 "sd": float(np.std(values, ddof=1)) if len(values) > 1 else None,
             }
-    return {
+    report = {
         "models": summary,
         "paired_mae": paired,
         "uncertainty": "Sample SD across training seeds; common fixed test block",
     }
+    if results and all("daily" in r for r in results):
+        records = {
+            name: [r["daily"] for r in results if r["model"] == name]
+            for name in summary
+        }
+        for name, entry in summary.items():
+            entry["test_mae_ci95_days"] = day_bootstrap(records[name])["ci95"]
+        learned = [name for name in summary if name not in STATIC]
+        pairs = [
+            (name, "gru") for name in learned if name != "gru" and "gru" in summary
+        ]
+        if "graph_gru" in summary and "graph_self" in summary:
+            pairs.append(("graph_gru", "graph_self"))
+        for name in learned:
+            plain = split_name(name)[0]
+            if name != plain and plain in summary:
+                pairs.append((name, plain))
+        # with calendar inputs, compare against the GRU that also has them
+        if "gru_time" in summary:
+            pairs += [
+                (name, "gru_time")
+                for name in learned
+                if name.endswith("_time") and name != "gru_time"
+            ]
+        if "graph_gru_time" in summary and "graph_self_time" in summary:
+            pairs.append(("graph_gru_time", "graph_self_time"))
+        if "ha" in summary:
+            pairs += [(name, "ha") for name in learned]
+            pairs.append(("ha", "persistence"))
+        report["day_bootstrap"] = {
+            f"{first}_vs_{second}": day_bootstrap(records[first], records[second])
+            for first, second in dict.fromkeys(pairs)
+            if second in records
+        }
+        report["day_bootstrap_note"] = (
+            "Negative estimates favor the first model. Intervals resample test days "
+            "with replacement after averaging training seeds, so they describe "
+            "variation across the held-out dates, not across initializations."
+        )
+    return report
 
 
 def plots(out, results, summary, protocol):
@@ -349,17 +492,26 @@ def plots(out, results, summary, protocol):
         if not values:
             continue
         for metric, ax in zip(("train_normalized_mae", "validation"), axes):
-            data = np.array(
+            curves = [
                 [
-                    [
-                        h[metric] if metric != "validation" else h[metric]["mae"]
-                        for h in r["history"]
-                    ]
-                    for r in values
+                    h[metric] if metric != "validation" else h[metric]["mae"]
+                    for h in r["history"]
+                ]
+                for r in values
+            ]
+            # early stopping gives runs different lengths, so each epoch
+            # averages the runs still training
+            columns = [
+                [curve[i] for curve in curves if len(curve) > i]
+                for i in range(max(map(len, curves)))
+            ]
+            y = np.array([np.mean(column) for column in columns])
+            sd = np.array(
+                [
+                    np.std(column, ddof=1) if len(column) > 1 else 0.0
+                    for column in columns
                 ]
             )
-            y = data.mean(axis=0)
-            sd = data.std(axis=0, ddof=1) if len(data) > 1 else np.zeros_like(y)
             x = np.arange(1, len(y) + 1)
             ax.plot(x, y, label=name)
             ax.fill_between(x, y - sd, y + sd, alpha=0.12)
@@ -430,7 +582,6 @@ def run(config, data, graph_dir, out):
         "topology_files": topology.FILES,
         "code": source,
     }
-    git = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True)
     write_json(
         out / "manifest.json",
         {
@@ -438,7 +589,7 @@ def run(config, data, graph_dir, out):
             "run_id": hashlib.sha256(
                 json.dumps(identity, sort_keys=True).encode()
             ).hexdigest(),
-            "git_commit": git.stdout.strip(),
+            **git_state(),
             "python": sys.version,
             "platform": platform.platform(),
             "command": sys.argv,
@@ -452,8 +603,11 @@ def run(config, data, graph_dir, out):
     write_json(out / "status.json", {"status": "running"})
     results = []
     try:
-        tasks = [("persistence", config.seeds[0])] + [
-            (m, s) for s in config.seeds for m in config.models
+        # persistence and ha don't train, so they run once
+        static = ["persistence"] + [m for m in config.models if m in STATIC]
+        learned = [m for m in config.models if m not in STATIC]
+        tasks = [(m, config.seeds[0]) for m in static] + [
+            (m, s) for s in config.seeds for m in learned
         ]
         for name, seed in tasks:
             target = out / f"{name}-seed-{seed}"
@@ -498,17 +652,15 @@ def run(config, data, graph_dir, out):
         raise
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="configs/benchmark.json")
     parser.add_argument("--data", default="data/raw/metr-la.h5")
     parser.add_argument("--topology", default="data/topology")
     parser.add_argument("--out", required=True)
-    parser.add_argument(
-        "--trial", choices=("persistence", "gru", "lstm", "graph_gru", "graph_self")
-    )
+    parser.add_argument("--trial", choices=TRIALS)
     parser.add_argument("--seed", type=int, default=42)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     config = BenchmarkConfig(**json.loads(Path(args.config).read_text()))
     if args.trial:
         trial(config, args.data, args.topology, args.trial, args.seed, args.out)

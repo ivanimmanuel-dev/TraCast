@@ -1,6 +1,9 @@
 from pathlib import Path
 import hashlib
+import http.client
 import json
+import time
+import urllib.error
 import urllib.request
 
 import numpy as np
@@ -23,6 +26,35 @@ def digest(path):
     return result.hexdigest()
 
 
+def download(url, partial, timeout=120, retries=3, delay=2.0):
+    """Download url into partial, retrying network errors and 5xx with backoff.
+
+    Client errors (like a 404) aren't retried, and the caller checks the checksum.
+    """
+    partial = Path(partial)
+    for attempt in range(retries + 1):
+        try:
+            with (
+                urllib.request.urlopen(url, timeout=timeout) as response,
+                partial.open("wb") as stream,
+            ):
+                while chunk := response.read(1024 * 1024):
+                    stream.write(chunk)
+            return partial
+        except urllib.error.HTTPError as error:
+            if error.code < 500 or attempt == retries:
+                raise
+        except (
+            urllib.error.URLError,
+            TimeoutError,
+            ConnectionError,
+            http.client.HTTPException,
+        ):
+            if attempt == retries:
+                raise
+        time.sleep(delay * 2**attempt)
+
+
 def fetch(path):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -34,12 +66,7 @@ def fetch(path):
         return path
     partial = path.with_suffix(".partial")
     try:
-        with (
-            urllib.request.urlopen(URL, timeout=120) as response,
-            partial.open("wb") as stream,
-        ):
-            while chunk := response.read(1024 * 1024):
-                stream.write(chunk)
+        download(URL, partial)
         if digest(partial) != SHA256:
             raise ValueError("Downloaded dataset checksum mismatch")
         partial.replace(path)
@@ -152,11 +179,37 @@ class Scaler:
         )
 
 
+TIME_CHANNELS = 3
+
+
+def calendar_features(index):
+    """Time of day (sin, cos) and a weekend flag for each timestamp, as float32.
+
+    They only depend on the clock, so they're known for every forecast target.
+    """
+    index = pd.DatetimeIndex(index)
+    minute = index.hour.to_numpy() * 60 + index.minute.to_numpy()
+    phase = 2 * np.pi * minute / 1440
+    weekend = index.dayofweek.to_numpy() >= 5
+    return np.stack([np.sin(phase), np.cos(phase), weekend], axis=1).astype(np.float32)
+
+
 class Windows(Dataset):
-    def __init__(self, frame, scaler, history=12, horizon=12):
+    """Chronological input/target windows.
+
+    With time_features the calendar columns come after the sensor channels, so
+    x[..., :sensors] is always the speeds. Targets and masks don't change.
+    """
+
+    def __init__(self, frame, scaler, history=12, horizon=12, time_features=False):
         if history < 1 or horizon < 1 or len(frame) < history + horizon:
             raise ValueError("Invalid window sizes")
         self.x = scaler.inputs(frame)
+        self.extra = 0
+        if time_features:
+            self.x = np.concatenate([self.x, calendar_features(frame.index)], axis=1)
+            self.extra = TIME_CHANNELS
+        self.times = frame.index
         raw = frame.to_numpy(dtype=np.float32)
         self.mask = np.isfinite(raw) & (raw != 0)
         self.y = np.where(self.mask, raw, 0).astype(np.float32)
@@ -165,6 +218,12 @@ class Windows(Dataset):
 
     def __len__(self):
         return len(self.x) - self.history - self.horizon + 1
+
+    def origin_days(self):
+        """Day of each window's first forecast target, as codes plus labels (for resampling days)."""
+        first = self.times[self.history : self.history + len(self)]
+        codes, labels = pd.factorize(first.normalize())
+        return codes.astype(np.int64), [str(day.date()) for day in labels]
 
     def __getitem__(self, index):
         if not 0 <= index < len(self):

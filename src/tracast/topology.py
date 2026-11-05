@@ -2,12 +2,11 @@
 
 from collections import deque
 from pathlib import Path
-import urllib.request
 
 import numpy as np
 import pandas as pd
 
-from .data import digest
+from .data import digest, download
 
 REVISION = "602afd9d767d3aa1c9b3eac51710d6aeee12c227"
 FILES = {
@@ -29,12 +28,7 @@ def fetch(directory):
         partial = path.with_suffix(path.suffix + ".partial")
         try:
             url = f"https://raw.githubusercontent.com/liyaguang/DCRNN/{REVISION}/data/sensor_graph/{name}"
-            with (
-                urllib.request.urlopen(url, timeout=90) as response,
-                partial.open("wb") as target,
-            ):
-                while chunk := response.read(1024 * 1024):
-                    target.write(chunk)
+            download(url, partial, timeout=90)
             if digest(partial) != expected:
                 raise ValueError(f"Topology checksum mismatch: {name}")
             partial.replace(path)

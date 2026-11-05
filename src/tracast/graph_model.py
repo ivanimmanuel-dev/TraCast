@@ -18,15 +18,18 @@ def normalized(weights):
 
 
 class GraphGRU(nn.Module):
-    def __init__(self, weights, hidden=32, horizon=12, embedding=4):
+    def __init__(self, weights, hidden=32, horizon=12, embedding=4, extra=0):
         super().__init__()
         weights = torch.as_tensor(weights, dtype=torch.float32).clone()
         self.register_buffer("incoming", normalized(weights.T))
         self.register_buffer("outgoing", normalized(weights))
-        self.sensors = weights.shape[0]
+        self.sensors, self.extra = weights.shape[0], extra
         self.spatial = nn.Linear(3, embedding)
         self.encoder = GRU(self.sensors, hidden, horizon)
-        self.encoder.gru = nn.GRU(self.sensors * embedding, hidden, batch_first=True)
+        # Node embeddings, then any calendar channels, feed the recurrent layer.
+        self.encoder.gru = nn.GRU(
+            self.sensors * embedding + extra, hidden, batch_first=True
+        )
 
     def spatial_features(self, x):
         incoming = torch.einsum("ij,btj->bti", self.incoming, x)
@@ -34,5 +37,12 @@ class GraphGRU(nn.Module):
         return torch.stack((x, incoming, outgoing), dim=-1)
 
     def forward(self, x):
-        features = torch.relu(self.spatial(self.spatial_features(x)))
-        return self.encoder(features.flatten(start_dim=2))
+        speeds = x[..., : self.sensors]
+        features = torch.relu(self.spatial(self.spatial_features(speeds)))
+        calendar = x[..., self.sensors : self.sensors + self.extra]
+        inputs = torch.cat([features.flatten(start_dim=2), calendar], dim=-1)
+        # encoder.forward only reads sensor channels, so call its gru and head
+        _, state = self.encoder.gru(inputs)
+        return self.encoder.head(state[-1]).reshape(
+            -1, self.encoder.horizon, self.sensors
+        )

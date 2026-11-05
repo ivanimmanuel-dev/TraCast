@@ -6,7 +6,6 @@ import json
 import os
 import platform
 import random
-import subprocess
 import sys
 
 import numpy as np
@@ -15,6 +14,7 @@ from torch.utils.data import DataLoader
 
 from .data import SHA256, URL, Scaler, Windows, digest, load, missing_report, split
 from .model import GRU, Metrics
+from .provenance import git_state
 
 
 @dataclass
@@ -67,17 +67,27 @@ def seed_all(seed, threads):
     torch.backends.mkldnn.enabled = False
 
 
-def evaluate(model, loader, mean, std, horizon):
+def evaluate(model, loader, mean, std, horizon, daily=None):
+    """Score model (or persistence when None) on an unshuffled loader.
+
+    Persistence repeats the latest speed channels and ignores calendar channels.
+    Pass a DailyMetrics to also collect per-day error sums.
+    """
     scores = Metrics(horizon)
     if model is not None:
         model.eval()
+    seen = 0
     with torch.no_grad():
         for x, y, mask in loader:
             if model is None:
-                prediction = (x[:, -1:] * std + mean).expand(-1, horizon, -1)
+                latest = x[:, -1:, : mean.shape[0]]
+                prediction = (latest * std + mean).expand(-1, horizon, -1)
             else:
                 prediction = model(x) * std + mean
             scores.update(prediction, y, mask)
+            if daily is not None:
+                daily.update(prediction, y, mask, seen)
+            seen += len(x)
     return scores.result()
 
 
@@ -156,12 +166,6 @@ def run(config, data, out):
     source = code_manifest()
     identity = {"config": asdict(config), "data_sha256": SHA256, "code": source}
     run_id = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
-    git = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=Path(__file__).resolve().parents[2],
-        capture_output=True,
-        text=True,
-    )
     write_json(
         out / "manifest.json",
         {
@@ -178,7 +182,7 @@ def run(config, data, out):
             "deterministic_algorithms": True,
             "mkldnn": False,
             "command": sys.argv,
-            "git_commit": git.stdout.strip() if git.returncode == 0 else None,
+            **git_state(),
             "versions": {
                 name: version(name)
                 for name in ("numpy", "pandas", "tables", "matplotlib", "torch")

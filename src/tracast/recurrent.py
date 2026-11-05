@@ -4,12 +4,12 @@ from torch import nn
 
 
 class LSTM(nn.Module):
-    def __init__(self, sensors, hidden=32, horizon=12):
+    def __init__(self, sensors, hidden=32, horizon=12, extra=0):
         super().__init__()
-        self.encoder = nn.LSTM(sensors, hidden, batch_first=True)
+        self.encoder = nn.LSTM(sensors + extra, hidden, batch_first=True)
         self.head = nn.Linear(hidden, horizon * sensors)
-        self.sensors, self.horizon = sensors, horizon
+        self.sensors, self.horizon, self.extra = sensors, horizon, extra
 
     def forward(self, x):
-        _, (hidden, _) = self.encoder(x)
+        _, (hidden, _) = self.encoder(x[..., : self.sensors + self.extra])
         return self.head(hidden[-1]).reshape(-1, self.horizon, self.sensors)

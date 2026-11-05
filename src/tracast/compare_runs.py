@@ -11,7 +11,7 @@ from .experiment import write_json
 def compare(first, second):
     first, second = Path(first), Path(second)
     checks = {}
-    for name in (
+    names = [
         "config.json",
         "clients.json",
         "initial.json",
@@ -20,9 +20,14 @@ def compare(first, second):
         "centralized.json",
         "centralized-history.json",
         "status.json",
-    ):
-        left, right = json.loads((first / name).read_text()), json.loads(
-            (second / name).read_text()
+    ]
+    # Jobs recorded before the local-only arm existed do not have this file.
+    if (first / "local-only.json").exists() or (second / "local-only.json").exists():
+        names.append("local-only.json")
+    for name in names:
+        left, right = (
+            json.loads((first / name).read_text()),
+            json.loads((second / name).read_text()),
         )
         checks[name] = left == right
     manifests = [
@@ -50,14 +55,14 @@ def compare(first, second):
     return checks
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Compare TraCast federated experiment outputs"
     )
     parser.add_argument("first")
     parser.add_argument("second")
     parser.add_argument("--out")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     checks = compare(args.first, args.second)
     if args.out:
         write_json(args.out, checks)

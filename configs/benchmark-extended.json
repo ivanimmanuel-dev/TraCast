@@ -1,0 +1,29 @@
+{
+  "sensors": 16,
+  "rows": 34272,
+  "history": 12,
+  "horizon": 12,
+  "hidden": 32,
+  "embedding": 4,
+  "batch_size": 64,
+  "epochs": 60,
+  "lr": 0.001,
+  "seeds": [7, 42, 2026, 123, 999],
+  "threads": 4,
+  "threshold": 0.1,
+  "models": [
+    "linear",
+    "linear_time",
+    "gru",
+    "gru_time",
+    "lstm",
+    "graph_gru",
+    "graph_gru_time",
+    "graph_self",
+    "graph_self_time",
+    "ha"
+  ],
+  "patience": 8,
+  "scheduler": "plateau",
+  "scheduler_patience": 2
+}

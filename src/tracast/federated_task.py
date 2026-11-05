@@ -133,6 +133,14 @@ class SensorWindows(Dataset):
         self.candidate_count = len(self.windows) * (len(frame) - history - horizon + 1)
         if not self.indices:
             raise ValueError("No usable windows")
+        # Built once per sensor; collation copies them into each batch.
+        self.moments = [
+            (
+                torch.from_numpy(w.mean.copy()).reshape(1, 1),
+                torch.from_numpy(w.std.copy()).reshape(1, 1),
+            )
+            for w in self.windows
+        ]
 
     def __len__(self):
         return len(self.indices)
@@ -141,13 +149,7 @@ class SensorWindows(Dataset):
         sensor, position = self.indices[index]
         windows = self.windows[sensor]
         x, y, mask = windows[position]
-        return (
-            x,
-            y,
-            mask,
-            torch.from_numpy(windows.mean.copy()).reshape(1, 1),
-            torch.from_numpy(windows.std.copy()).reshape(1, 1),
-        )
+        return (x, y, mask, *self.moments[sensor])
 
 
 def bundle(frame, config):

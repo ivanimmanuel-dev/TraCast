@@ -428,3 +428,68 @@ def test_study_uses_configured_budgets_and_checks_controls(config, tmp_path):
     changed[0]["rounds"][0]["state_sha256"] = "different-prefix"
     with pytest.raises(ValueError, match="reproducibility"):
         aggregate(changed)
+
+
+def test_local_only_arm_is_deterministic_and_pools_client_statistics(
+    frame, config, tmp_path, monkeypatch
+):
+    import tracast.federated as runner
+
+    monkeypatch.setattr(runner, "load", lambda *args: frame)
+    config = replace(config, rounds=2)
+    job = runner.prepare(config, "constructed-test-fixture", tmp_path / "job")
+    first = runner.local_only(config, job)
+    assert first == runner.local_only(config, job)
+    assert json.loads((job / "local-only.json").read_text()) == first
+    assert [client["client_id"] for client in first["clients"]] == [0, 1, 2]
+    assert all(1 <= client["best_round"] <= 2 for client in first["clients"])
+    for horizon, row in enumerate(first["test"]["per_horizon"]):
+        assert row["count"] == sum(
+            client["statistics"]["count"][horizon] for client in first["clients"]
+        )
+    # Clients start from shared weights but train only on their own sensors.
+    assert len({client["state_sha256"] for client in first["clients"]}) == 3
+
+
+def test_study_summarizes_the_local_only_arm(config, tmp_path):
+    from dataclasses import asdict
+    from tracast.federated_study import aggregate, plot
+
+    cases = []
+    for seed in (7, 42):
+        for rule in ("balanced", "congestion"):
+            for budget in (1, 2):
+                cases.append(
+                    {
+                        "case_id": f"{rule[0]}{budget}-s{seed}",
+                        "seed": seed,
+                        "partition_rule": rule,
+                        "round_budget": budget,
+                        "config": asdict(config),
+                        "fedavg": {
+                            "test": {"mae": 4.0, "rmse": 8.0},
+                            "communication": {"total_parameter_bytes": 100 * budget},
+                        },
+                        "centralized": {
+                            "test": {"mae": 3.0, "rmse": 7.0},
+                            "persistence_test": {"mae": 5.0},
+                            "state_sha256": str(seed),
+                        },
+                        "local_only": {"test": {"mae": 4.5 + seed / 100, "rmse": 9.0}},
+                        "heterogeneity": {"mean_js_bits": 0.1},
+                        "wall_seconds": 1.0,
+                        "rounds": [
+                            {
+                                "state_sha256": f"{seed}-{i}",
+                                "validation": {"mae": 4.0 / i},
+                            }
+                            for i in range(1, budget + 1)
+                        ],
+                    }
+                )
+    summary = aggregate(cases)
+    balanced = summary["conditions"]["balanced-2"]
+    assert balanced["local_only_mae"]["mean"] == pytest.approx(4.5 + 24.5 / 100)
+    assert "alone" in summary["brief_findings"]
+    plot(tmp_path, cases, summary)
+    assert (tmp_path / "tradeoffs.png").stat().st_size > 0

@@ -89,6 +89,13 @@ def aggregate(cases):
             "mean_training_js_bits": values[0]["heterogeneity"]["mean_js_bits"],
             "wall_seconds": stats([c["wall_seconds"] for c in values]),
         }
+        if all("local_only" in c for c in values):
+            conditions[key]["local_only_mae"] = stats(
+                [c["local_only"]["test"]["mae"] for c in values]
+            )
+            conditions[key]["local_only_rmse"] = stats(
+                [c["local_only"]["test"]["rmse"] for c in values]
+            )
     reference_checks = {}
     prefix_checks = {}
     for seed in sorted(set(c["seed"] for c in cases)):
@@ -147,6 +154,11 @@ def aggregate(cases):
         f"{g['mean_training_js_bits']:.4f} bits. Estimated model parameter payload: "
         f"{b['parameter_bytes']:,} bytes. Balanced round budgets: {'/'.join(map(str, budgets))}."
     )
+    if "local_only_mae" in b:
+        brief += (
+            f" Training each balanced client alone, with the same local work and no"
+            f" communication, scored MAE {b['local_only_mae']['mean']:.3f} mph."
+        )
     return {
         "conditions": conditions,
         "centralized_reference_identical": reference_checks,
@@ -200,6 +212,14 @@ def plot(out, cases, summary):
             f" {c['round_budget']} round" + ("s" if c["round_budget"] != 1 else ""),
             (c["parameter_bytes"] / 1024, c["fedavg_mae"]["mean"]),
             fontsize=8,
+        )
+    if all("local_only_mae" in c for c in balanced):
+        longest = max(balanced, key=lambda c: c["round_budget"])
+        axes[0].axhline(
+            longest["local_only_mae"]["mean"],
+            color="#7a8793",
+            linestyle=":",
+            label=f"Local only, no communication ({longest['round_budget']} rounds of work)",
         )
     axes[0].set(
         xlabel="Estimated parameter payload (KiB)",
@@ -296,6 +316,7 @@ def run(settings, data, out):
                         "config": asdict(config),
                         "fedavg": read("federated.json"),
                         "centralized": read("centralized.json"),
+                        "local_only": read("local-only.json"),
                         "clients": clients,
                         "rounds": read("rounds.json"),
                         "centralized_history": read("centralized-history.json"),
@@ -321,12 +342,12 @@ def run(settings, data, out):
         raise
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="configs/federated-study.json")
     parser.add_argument("--data", default="data/raw/metr-la.h5")
     parser.add_argument("--out", required=True)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     run(json.loads(Path(args.config).read_text()), args.data, args.out)
 
 

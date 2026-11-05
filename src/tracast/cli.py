@@ -1,27 +1,45 @@
 import argparse
 from dataclasses import asdict
+import importlib
 import json
 from pathlib import Path
+import sys
 
 from .data import fetch, load, missing_report, split
 from .experiment import Config, plots, run, write_json
 
+# these keep their own parsers; everything after the name is forwarded
+DELEGATED = {
+    "benchmark": ("tracast.benchmark", "centralized model comparison"),
+    "federated": ("tracast.federated", "three-client Flower simulation"),
+    "study": ("tracast.federated_study", "federated round-budget study"),
+    "compare": ("tracast.compare_runs", "check two federated runs for exact repeats"),
+}
 
-def main():
+
+def main(argv=None):
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv and argv[0] in DELEGATED:
+        module = importlib.import_module(DELEGATED[argv[0]][0])
+        return module.main(argv[1:])
     parser = argparse.ArgumentParser(description="TraCast: METR-LA CPU forecasting")
     commands = parser.add_subparsers(dest="command", required=True)
-    download = commands.add_parser("fetch")
+    download = commands.add_parser("fetch", help="download and verify METR-LA")
     download.add_argument("--data", default="data/raw/metr-la.h5")
-    inspect = commands.add_parser("inspect")
+    inspect = commands.add_parser("inspect", help="report missing readings and plot")
     inspect.add_argument("--data", default="data/raw/metr-la.h5")
     inspect.add_argument("--sensors", type=int, default=207)
     inspect.add_argument("--out", default="runs/inspection")
-    train = commands.add_parser("run")
+    train = commands.add_parser("run", help="train and score one GRU")
     train.add_argument("--data", default="data/raw/metr-la.h5")
     train.add_argument("--config", default="configs/subset.json")
     train.add_argument("--out", required=True)
-    commands.add_parser("config")
-    args = parser.parse_args()
+    commands.add_parser("config", help="print the default GRU configuration")
+    for name, (_, summary) in DELEGATED.items():
+        commands.add_parser(
+            name, help=f"{summary} (pass --help after the name for options)"
+        )
+    args = parser.parse_args(argv)
     if args.command == "fetch":
         print(fetch(args.data))
     elif args.command == "config":
