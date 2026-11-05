@@ -1,0 +1,57 @@
+{
+  "sensors": 207,
+  "timestamps": 34272,
+  "graph": {
+    "directed_edges": 1515,
+    "components": [
+      206,
+      1
+    ],
+    "sensor_order_matches_graph_file": true
+  },
+  "splits": {
+    "train": {
+      "first": "2012-03-01 00:00:00",
+      "last": "2012-05-23 07:05:00",
+      "rows": 23990,
+      "missing_share": 0.07132198802641197,
+      "sensors_over_30_percent_missing": 0,
+      "worst_sensor_missing_share": 0.2298874531054606,
+      "mean_speed": 58.58425765022911,
+      "share_below_40_mph": 0.10495451834986719
+    },
+    "val": {
+      "first": "2012-05-23 07:10:00",
+      "last": "2012-06-04 04:40:00",
+      "rows": 3427,
+      "missing_share": 0.06962188587643733,
+      "sensors_over_30_percent_missing": 4,
+      "worst_sensor_missing_share": 0.5293259410563175,
+      "mean_speed": 58.899427366597,
+      "share_below_40_mph": 0.10617121212121212
+    },
+    "test": {
+      "first": "2012-06-04 04:45:00",
+      "last": "2012-06-27 23:55:00",
+      "rows": 6855,
+      "missing_share": 0.12102523987216214,
+      "sensors_over_30_percent_missing": 7,
+      "worst_sensor_missing_share": 0.4446389496717724,
+      "mean_speed": 57.76658933574339,
+      "share_below_40_mph": 0.12325496371222495
+    }
+  },
+  "slowest_hours_of_day": {
+    "weekday": [
+      17,
+      16,
+      8
+    ],
+    "weekend": [
+      13,
+      14,
+      15
+    ]
+  },
+  "note": "The slowest weekday hours are the evening and morning rush, so the timestamps behave like local time. missing_share counts NaN and zero readings."
+}
