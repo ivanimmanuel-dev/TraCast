@@ -1,0 +1,39 @@
+{
+  "alpha": 0.1,
+  "benchmark": {
+    "batch_size": 64,
+    "embedding": 4,
+    "epochs": 60,
+    "hidden": 32,
+    "history": 12,
+    "horizon": 12,
+    "lr": 0.001,
+    "patience": 8,
+    "rows": 34272,
+    "scheduler": "plateau",
+    "scheduler_patience": 2,
+    "sensors": 16,
+    "threads": 4,
+    "threshold": 0.1,
+    "train_stride": 1
+  },
+  "calibration": 0.05,
+  "congestion_mph": 40.0,
+  "gamma": 0.005,
+  "git_commit": "440fd0e9620a23d8d17a4eaaccc675ed06d39312",
+  "git_dirty": false,
+  "model": "gru_time",
+  "reliability_alphas": [
+    0.05,
+    0.1,
+    0.2,
+    0.3,
+    0.5
+  ],
+  "rolling_days": 7,
+  "seeds": [
+    7,
+    42,
+    2026
+  ]
+}
