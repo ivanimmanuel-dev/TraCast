@@ -34,6 +34,7 @@ PAIRS = [
     ("slstm_time", "sgru_time"),
     ("sgru_id_time", "sgru_time"),
     ("sgraph_id_time", "sgraph_time"),
+    ("sgraph_id_time", "sgru_id_time"),
     ("sgru_time", "gru_time"),
     ("sgraph_time", "graph_gru_time"),
     ("graph_gru_time", "gru_time"),
