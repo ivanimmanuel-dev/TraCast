@@ -22,6 +22,260 @@ def pct(x, places=0):
     return f"{100 * x:.{places}f}%"
 
 
+# --- scaling -------------------------------------------------------------------------
+
+SCALE_LABELS = {
+    "persistence": "Persistence",
+    "ha": "Historical average",
+    "linear_time": "Linear + calendar (dense)",
+    "gru_time": "GRU + calendar (dense)",
+    "graph_gru_time": "Graph-GRU + calendar (dense)",
+    "sgru_time": "Shared GRU + calendar",
+    "sgraph_time": "Shared Graph-GRU + calendar",
+}
+
+
+def cell(entry, key, places=3, sd=True):
+    value = entry[key]
+    text = f"{value['mean']:.{places}f}"
+    if sd and value.get("sd") is not None:
+        text += f" ({value['sd']:.{places}f})"
+    return text
+
+
+def size_table(summary, key, places=3, sd=True):
+    sizes = summary["sizes"]
+    rows = []
+    for name, label in SCALE_LABELS.items():
+        by = summary["models"].get(name)
+        if by is None:
+            continue
+        cells = [
+            cell(by[str(k)], key, places, sd) if str(k) in by else "" for k in sizes
+        ]
+        rows.append(f"| {label} | " + " | ".join(cells) + " |")
+    head = "| Model | " + " | ".join(str(k) for k in sizes) + " |"
+    rule = "|---|" + "---:|" * len(sizes)
+    return "\n".join([head, rule] + rows)
+
+
+def epoch_seconds(entry):
+    return entry["train_seconds"]["mean"] / entry["epochs_run"]["mean"]
+
+
+def scale_findings(summary, cost):
+
+    sizes = summary["sizes"]
+    small, large = sizes[0], sizes[-1]
+    models = summary["models"]
+    gaps = summary["day_bootstrap"]
+    graph = [gaps[str(k)]["sgraph_time_vs_sgru_time"] for k in sizes if str(k) in gaps]
+    helps = sum(g["ci95"][1] < 0 for g in graph)
+    dense = [
+        gaps[str(k)]["graph_gru_time_vs_gru_time"] for k in sizes if str(k) in gaps
+    ]
+    out = [
+        f"- **In the shared models the graph helps, at {helps} of {len(graph)} sizes.** Adding the "
+        f"neighbor averages changes MAE by {min(g['estimate'] for g in graph):+.3f} to "
+        f"{max(g['estimate'] for g in graph):+.3f} mph. Without them a shared model sees nothing "
+        f"about its neighbors, so this is a clean test of the graph, which the dense models can't give.",
+        f"- **In the dense models it barely shows.** The same graph features move the dense GRU by "
+        f"{min(d['estimate'] for d in dense):+.3f} to {max(d['estimate'] for d in dense):+.3f} mph, "
+        f"because a dense GRU already reads every sensor.",
+    ]
+    names = ("gru_time", "graph_gru_time", "sgru_time", "sgraph_time")
+    change = {
+        n: models[n][str(large)]["core16_mae"]["mean"]
+        - models[n][str(small)]["core16_mae"]["mean"]
+        for n in names
+    }
+    word = "worse" if min(change.values()) > 0 else "different"
+    out.append(
+        f"- **More sensors did not make the first {small} better.** Trained on all {large} sensors, "
+        f"the models are {min(change.values()):+.3f} to {max(change.values()):+.3f} mph away from where "
+        f"they were when trained on {small} (same targets, so positive means {word}). With the same "
+        f"capacity and the same number of updates, a bigger and more varied network is harder to fit."
+    )
+    source = cost or summary
+    ratio = {
+        n: epoch_seconds(source["models"][n][str(large)])
+        / epoch_seconds(source["models"][n][str(small)])
+        for n in names
+    }
+    params = models["graph_gru_time"][str(large)]["parameters"]
+    shared = models["sgraph_time"][str(large)]["parameters"]
+    out.append(
+        f"- **The shared model's size doesn't grow, its compute does.** It stays at {shared:,} parameters "
+        f"while the dense Graph-GRU needs {params:,} at {large} sensors. But the time per epoch grows "
+        f"x{ratio['sgraph_time']:.1f} from {small} to {large} sensors for the shared Graph-GRU (there are "
+        f"x{large / small:.0f} more sensors) against x{ratio['graph_gru_time']:.1f} for the dense one."
+    )
+    best = min(names, key=lambda n: models[n][str(large)]["mae"]["mean"])
+    skill = (
+        1
+        - models[best][str(large)]["mae"]["mean"]
+        / models["ha"][str(large)]["mae"]["mean"]
+    )
+    out.append(
+        f"- **On all {large} sensors the best model is {SCALE_LABELS[best]}** at "
+        f"{models[best][str(large)]['mae']['mean']:.3f} mph, {skill:.0%} lower than the historical "
+        f"average ({models['ha'][str(large)]['mae']['mean']:.3f})."
+    )
+    return out
+
+
+SCALING = """# Scaling to the whole network
+
+Everything so far used 16 sensors that happen to sit on one highway. METR-LA has 207, so the obvious question is what changes when the model sees all of them, and whether the road graph helps more when there is more of it.
+
+![Nested sensor subsets](scaling-subsets.png)
+
+## Setup
+
+The sensors are prefixes of one ordering of the whole graph (a breadth-first walk from the first sensor, then the one sensor the walk can't reach). So the first 16 are exactly the sensors from the earlier experiments and every bigger set contains the smaller ones. The sizes are {sizes}. Splits, windows, masking and training-only normalization are the same as before, and a test checks that the 16-sensor results didn't move.
+
+Models, all with 32 hidden units and the calendar inputs:
+
+- **Dense GRU and dense Graph-GRU**: the earlier models. They read all sensors at once, so their input and output layers grow with the sensor count.
+- **Shared GRU and shared Graph-GRU**: one small GRU run on every sensor separately with the same weights, so the size doesn't depend on the sensor count. The shared Graph-GRU also gets the average speed of each sensor's upstream and downstream neighbors; the shared GRU gets nothing but the sensor's own history.
+- A linear model, the historical average and persistence as baselines.
+
+![Shared Graph-GRU, schematic](../figures/shared-architecture.png)
+
+Every model gets the same number of updates at every size: {epochs} epochs that each use a random third of the training windows (so {full} full passes), with the learning rate halved when validation stalls, and the best epoch on validation is kept. Seeds: {seeds}. That is a budget, not early stopping, so a model that needs longer is at a disadvantage; the earlier experiments showed this matters, and it is one of the limits below.
+
+## Two kinds of comparison
+
+The sets of sensors differ between sizes, so a score on "all the sensors" isn't comparable across sizes: the added sensors are simply harder (persistence goes from {p16} to {plarge} mph and the historical average from {h16} to {hlarge}). I report two things:
+
+- **Own population**: each model scored on all the sensors it was trained on. Fine for comparing models at one size.
+- **Same 16 sensors**: every model scored on the first 16 sensors only, so the targets are identical at every size. This is the fair way to ask whether more sensors help.
+
+## Results
+
+Test MAE in mph on the same first 16 sensors, mean (SD over seeds):
+
+{core_table}
+
+Test MAE in mph on all the sensors each model was trained on (not comparable across columns):
+
+{own_table}
+
+{findings}
+
+Gaps between models at each size, on identical windows (first minus second, negative favors the first; 95% interval from resampling test days, seeds averaged first):
+
+| Size | Shared graph - shared plain | Shared plain - dense plain | Shared graph - dense graph | Dense graph - dense plain |
+|---|---:|---:|---:|---:|
+{gap_rows}
+
+![Accuracy by sensor count](scaling-accuracy.png)
+
+## Cost
+
+{cost_intro}
+
+| Model | Parameters at {large} | Seconds per epoch, {sizes_short} | Peak memory (MiB), {sizes_short} | Inference ms per window, {sizes_short} |
+|---|---:|---:|---:|---:|
+{cost_rows}
+
+![Cost by sensor count](scaling-cost.png)
+
+## Limits
+
+- Equal update budgets, not equal convergence. A model that is still improving at the end is undersold, and the shared models are slower to train per update.
+- Two seeds per cell. The paired test-day intervals say how much a gap depends on which days were held out, but the seed SDs here come from only two runs.
+- The sensor ordering is one breadth-first walk. A different walk (or a random subset) would give different nested sets, and the first 16 are a single highway segment, so "the first 16" is not a typical set of sensors.
+- All 207 sensors share one network, one time period and one city. Nothing here says how it behaves in another network.
+- The models have 32 hidden units at every size. Giving the bigger sets more capacity is the first thing to try next, since the same-16 scores got worse as the population grew.
+
+## Reproduce
+
+```powershell
+.\\.venv\\Scripts\\python.exe -m tracast.cli scaling --config configs/scaling.json --out runs/scaling
+.\\.venv\\Scripts\\python.exe -m tracast.cli scaling --config configs/scaling-cost.json --out runs/scaling-cost
+```
+
+The first is the accuracy run ({epochs} epochs, {nseeds} seeds). The second repeats the setup for 3 epochs with one seed and nothing else running on the machine, and the cost numbers come from it. The accuracy run's own timings were taken while other jobs shared the machine, so they are in `scaling-summary.json` but not used. Files: [scaling-summary.json](scaling-summary.json), [cost-summary.json](cost-summary.json), [scaling-config.json](scaling-config.json).
+"""
+
+
+def scaling_page(summary, cost):
+    sizes = summary["sizes"]
+    large = sizes[-1]
+    source = cost or summary
+    gaps = summary["day_bootstrap"]
+
+    def gap(size, key):
+        g = gaps.get(str(size), {}).get(key)
+        if g is None:
+            return ""
+        return f"{g['estimate']:+.3f} ({g['ci95'][0]:+.3f} to {g['ci95'][1]:+.3f})"
+
+    gap_rows = "\n".join(
+        f"| {k} | {gap(k, 'sgraph_time_vs_sgru_time')} | {gap(k, 'sgru_time_vs_gru_time')} "
+        f"| {gap(k, 'sgraph_time_vs_graph_gru_time')} | {gap(k, 'graph_gru_time_vs_gru_time')} |"
+        for k in sizes
+    )
+
+    def series(name, getter, places):
+        by = source["models"][name]
+        return " / ".join(
+            f"{getter(by[str(k)]):.{places}f}" for k in sizes if str(k) in by
+        )
+
+    cost_rows = "\n".join(
+        f"| {SCALE_LABELS[name]} | {summary['models'][name][str(large)]['parameters']:,} "
+        f"| {series(name, epoch_seconds, 1)} "
+        f"| {series(name, lambda e: e['peak_memory_mib']['mean'], 0)} "
+        f"| {series(name, lambda e: e['inference_ms_per_window']['mean'], 3)} |"
+        for name in (
+            "linear_time",
+            "gru_time",
+            "graph_gru_time",
+            "sgru_time",
+            "sgraph_time",
+        )
+    )
+    config = json.loads((ROOT / "reports/scaling/scaling-config.json").read_text())[
+        "benchmark"
+    ]
+    persistence, ha = summary["models"]["persistence"], summary["models"]["ha"]
+    return SCALING.format(
+        sizes=", ".join(map(str, sizes)),
+        sizes_short="/".join(map(str, sizes)),
+        large=large,
+        epochs=config["epochs"],
+        full=round(config["epochs"] / config["train_stride"]),
+        seeds=", ".join(map(str, config["seeds"])),
+        nseeds=len(config["seeds"]),
+        p16=f"{persistence[str(sizes[0])]['mae']['mean']:.2f}",
+        plarge=f"{persistence[str(large)]['mae']['mean']:.2f}",
+        h16=f"{ha[str(sizes[0])]['mae']['mean']:.2f}",
+        hlarge=f"{ha[str(large)]['mae']['mean']:.2f}",
+        core_table=size_table(summary, "core16_mae"),
+        own_table=size_table(summary, "mae"),
+        findings="\n".join(scale_findings(summary, cost)),
+        gap_rows=gap_rows,
+        cost_intro=(
+            "Measured in a separate short run with nothing else running on the machine "
+            "(8 threads, 3 epochs of a random third of the windows, one seed)."
+            if cost
+            else "Measured in the main run, which shared the machine with other jobs, so treat these as rough."
+        ),
+        cost_rows=cost_rows,
+    )
+
+
+def build_scaling():
+    summary = load("reports/scaling/scaling-summary.json")
+    if summary is None:
+        return None
+    cost = load("reports/scaling/cost-summary.json")
+    (REPORTS / "scaling/report.md").write_bytes(scaling_page(summary, cost).encode())
+    return summary
+
+
 # --- uncertainty ---------------------------------------------------------------------
 
 UNC_LABELS = {
@@ -218,4 +472,5 @@ def build_uncertainty():
 
 
 if __name__ == "__main__":
+    build_scaling()
     build_uncertainty()
