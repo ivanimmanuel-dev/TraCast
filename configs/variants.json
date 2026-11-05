@@ -1,0 +1,19 @@
+{
+  "sensor_counts": [16, 64],
+  "rows": 34272,
+  "history": 12,
+  "horizon": 12,
+  "hidden": 32,
+  "embedding": 4,
+  "batch_size": 64,
+  "epochs": 30,
+  "lr": 0.001,
+  "seeds": [7, 42],
+  "threads": 8,
+  "threshold": 0.1,
+  "models": ["sgru_time", "slstm_time", "sgru_id_time", "sgraph_time", "sgraph_id_time"],
+  "patience": null,
+  "scheduler": "plateau",
+  "scheduler_patience": 4,
+  "train_stride": 3
+}

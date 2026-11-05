@@ -156,13 +156,16 @@ def test_invalid_shared_models_are_rejected():
 def test_benchmark_builds_the_shared_models():
     config = BenchmarkConfig(sensors=4, hidden=8)
     graph = chain_graph(4)
-    for name in ("sgru", "slstm", "sgraph"):
+    for name in ("sgru", "slstm", "sgraph", "sgru_id", "sgraph_id"):
         plain = model_for(name, config, graph)
         timed = model_for(name + "_time", config, graph)
         assert parameters(timed) > parameters(plain)
         assert plain(torch.randn(2, 12, 7)).shape == (2, 12, 4)
     assert model_for("sgraph", config, graph).graph
     assert not model_for("sgru", config, graph).graph
+    assert model_for("sgraph_id", config, graph).graph
+    assert model_for("sgru_id", config, graph).node.shape == (4, config.embedding)
+    assert model_for("sgru", config, graph).node is None
 
 
 @pytest.mark.parametrize(

@@ -30,8 +30,19 @@ from . import topology
 
 # A _time suffix gives a model the calendar inputs. ha and persistence don't train.
 # dense models read every sensor at once; the s* models share one recurrent net
-# across sensors (see shared.py)
-BASES = ("gru", "lstm", "graph_gru", "graph_self", "linear", "sgru", "slstm", "sgraph")
+# across sensors (see shared.py); an _id suffix adds a learned vector per sensor
+BASES = (
+    "gru",
+    "lstm",
+    "graph_gru",
+    "graph_self",
+    "linear",
+    "sgru",
+    "slstm",
+    "sgraph",
+    "sgru_id",
+    "sgraph_id",
+)
 STATIC = ("persistence", "ha")
 TRIALS = STATIC + BASES + tuple(f"{base}_time" for base in BASES)
 SCHEDULERS = ("none", "plateau")
@@ -130,7 +141,7 @@ def model_for(name, config, weights):
         from .recurrent import LSTM
 
         return LSTM(config.sensors, config.hidden, config.horizon, extra)
-    if base in ("sgru", "slstm", "sgraph"):
+    if base in ("sgru", "slstm", "sgraph", "sgru_id", "sgraph_id"):
         from .shared import SharedRecurrent
 
         return SharedRecurrent(
@@ -138,8 +149,9 @@ def model_for(name, config, weights):
             config.hidden,
             config.horizon,
             extra,
-            weights if base == "sgraph" else None,
+            weights if base.startswith("sgraph") else None,
             kind="lstm" if base == "slstm" else "gru",
+            embedding=config.embedding if base.endswith("_id") else 0,
         )
     if base == "linear":
         return LinearAR(config.sensors, config.history, config.horizon, extra)

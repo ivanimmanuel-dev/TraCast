@@ -31,6 +31,9 @@ CORE = 16
 PAIRS = [
     ("sgraph_time", "sgru_time"),
     ("sgraph", "sgru"),
+    ("slstm_time", "sgru_time"),
+    ("sgru_id_time", "sgru_time"),
+    ("sgraph_id_time", "sgraph_time"),
     ("sgru_time", "gru_time"),
     ("sgraph_time", "graph_gru_time"),
     ("graph_gru_time", "gru_time"),
@@ -203,6 +206,9 @@ def figures(summary, out):
         "graph_gru_time": "Dense Graph-GRU + calendar",
         "sgru_time": "Shared GRU + calendar",
         "sgraph_time": "Shared Graph-GRU + calendar",
+        "slstm_time": "Shared LSTM + calendar",
+        "sgru_id_time": "Shared GRU + sensor vector",
+        "sgraph_id_time": "Shared Graph-GRU + sensor vector",
     }
     styles = {
         "persistence": ("#667085", ":"),
@@ -212,6 +218,9 @@ def figures(summary, out):
         "graph_gru_time": ("#9333ea", "-"),
         "sgru_time": ("#d97706", "--"),
         "sgraph_time": ("#087e8b", "--"),
+        "slstm_time": ("#be123c", "--"),
+        "sgru_id_time": ("#a16207", "-."),
+        "sgraph_id_time": ("#0f766e", "-."),
     }
     sizes = summary["sizes"]
     out = Path(out)
