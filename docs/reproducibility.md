@@ -2,7 +2,7 @@
 
 ## Environment
 
-The tested environment uses Python 3.11 on Windows x64. Recorded experiments used Python 3.11.9, PyTorch 2.5.1+cpu, Flower 1.42.0, and Ray 2.55.1. The runtime and test dependencies are pinned in `requirements-lock.txt`.
+The tested environment uses Python 3.11 on Windows x64; the CI workflow also runs the test suite on Ubuntu, where the commands below use `python3.11` and `.venv/bin/python`. Recorded experiments used Python 3.11.9, PyTorch 2.5.1+cpu, Flower 1.42.0, and Ray 2.55.1. The runtime and test dependencies are pinned in `requirements-lock.txt`.
 
 Run from the repository directory:
 
@@ -50,6 +50,26 @@ To repeat one trial:
 
 Compare test metrics, validation histories, and `state_sha256`. The recorded Graph-GRU and LSTM seed-42 repeats matched exactly; see [repeatability.json](../reports/benchmark/repeatability.json). Timing and memory vary between executions.
 
+## Longer training, calendar inputs, baselines
+
+Five epochs is too short (validation error is still falling), so [benchmark-extended.json](../configs/benchmark-extended.json) trains longer. Same sensors, split, windows and loss.
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.benchmark --config configs/benchmark-extended.json --out runs/benchmark-extended
+```
+
+| Setting | What it does |
+|---|---|
+| `epochs`, `patience` | Stop after `patience` epochs with no validation-MAE gain, or at `epochs`. The best-validation checkpoint is the one scored. `patience: null` (the default) runs every epoch. |
+| `scheduler`, `scheduler_patience` | `plateau` halves the learning rate after `scheduler_patience` epochs with no gain. `none` (the default) keeps it fixed. |
+| `_time` suffix on a model name | Adds time of day (sine, cosine) and a weekend flag to every input step. Without the suffix the batch is cut down to speeds. |
+| `ha` | Historical average: training mean per sensor, weekday and 5-minute slot. Slots never seen fall back to the time-of-day mean, then the sensor mean. Uses no recent readings. |
+| `linear` | One linear layer from the flattened input window to all forecasts, same loss. |
+
+With the new settings left at their defaults the original protocol is unchanged: the seed-42 GRU and Graph-GRU runs from `configs/benchmark.json` give the recorded test MAE and `state_sha256`.
+
+Each trial also saves per-day error sums for the test period. `summary.json` uses them to resample test days (training seeds averaged first) for MAE intervals and paired gaps between models. That covers which days were held out; the seed SD covers initialization and shuffling.
+
 ## Flower simulation
 
 This configuration assigns two sensors to each of three clients and uses seven days of readings. It trains for three rounds, with one local epoch per round:
@@ -78,6 +98,8 @@ The preset runs twelve sequential experiments on twelve sensors and fourteen day
 | Congestion-grouped ranks | 5 | 7, 42, 2026 |
 
 Sensors rank by the fraction of observed training speeds below 40 mph. Balanced groups interleave ranks; congestion groups take consecutive rank blocks. Each client owns four sensors. All cases share temporal boundaries. Ranking, scaling, and distribution histograms use training rows only.
+
+Each case also trains a local-only arm. Every client starts from the shared initial weights, does the same local work as in federated training (same seeds, fresh optimizer each round) and never communicates. It keeps the round with its own best validation MAE, and the clients' test statistics are pooled so the score compares with the federated and pooled ones.
 
 The pooled dataset retains canonical sensor order across partition rules. The study checks identical pooled results and model hashes for equal budgets, plus identical federated model prefixes across round budgets. Per-case records include client sample counts, training and validation convergence, horizon metrics, selected test scores, and communication estimates.
 
@@ -115,6 +137,7 @@ These commands read the committed experiment records and rebuild the README, fig
 | [subset.json](../configs/subset.json) | Runs the sixteen-sensor GRU for five epochs over the full timeline. |
 | [graph-pilot.json](../configs/graph-pilot.json) | Compares GRU and Graph-GRU after one epoch on seven days. |
 | [benchmark.json](../configs/benchmark.json) | Compares recurrent models and the graph ablation over three seeds. |
+| [benchmark-extended.json](../configs/benchmark-extended.json) | Trains longer with early stopping and adds calendar inputs, a historical average and a linear model; 5 seeds. |
 | [federated-smoke.json](../configs/federated-smoke.json) | Runs three Flower rounds and a matched centralized GRU. |
 | [federated-study.json](../configs/federated-study.json) | Compares round budgets and client sensor groupings over three seeds. |
 
@@ -123,7 +146,10 @@ These commands read the committed experiment records and rebuild the README, fig
 | Files | Responsibility |
 |---|---|
 | [data.py](../src/tracast/data.py) | Fetches and validates METR-LA, splits timestamps, fits scalers, and creates sequences. |
-| [model.py](../src/tracast/model.py), [recurrent.py](../src/tracast/recurrent.py) | Define the GRU, LSTM, and forecast-error accumulator. |
+| [model.py](../src/tracast/model.py), [recurrent.py](../src/tracast/recurrent.py) | Define the GRU, LSTM, linear model, and forecast-error accumulators. |
+| [baselines.py](../src/tracast/baselines.py), [stats.py](../src/tracast/stats.py) | Fit the historical average; resample test days for intervals. |
+| [provenance.py](../src/tracast/provenance.py) | Records the Git commit and whether the working tree had changes. |
+| [cli.py](../src/tracast/cli.py) | The `tracast` command: data tools plus `benchmark`, `federated`, `study`, and `compare`. |
 | [topology.py](../src/tracast/topology.py), [graph_model.py](../src/tracast/graph_model.py) | Build the distance graph and combine neighbor readings with the GRU. |
 | [experiment.py](../src/tracast/experiment.py), [benchmark.py](../src/tracast/benchmark.py) | Train and evaluate centralized models and record their results. |
 | [federated_task.py](../src/tracast/federated_task.py) | Defines sensor ownership, local datasets, shared training, and pooled metrics. |

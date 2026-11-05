@@ -9,14 +9,15 @@ Each study has its own sensor selection and training budget. Compare models with
 | Study | Data and training | Read first |
 |---|---|---|
 | Recurrent models and graph features | 16 sensors selected from the distance graph; full March–June timeline; 5 epochs; 3 seeds | [Benchmark](benchmark/report.md) |
-| Federated rounds and sensor grouping | 12 sensors in file order; 14 days; 3 clients; 1/3/5 rounds; 3 seeds | [Findings](federated-study/findings.md) |
+| Longer training, calendar inputs, baselines | Same 16 sensors and timeline; up to 60 epochs with early stopping; 5 seeds | [Extended benchmark](benchmark-extended/report.md) |
+| Federated rounds and sensor grouping | 12 sensors in file order; 14 days; 3 clients; 1/3/5 rounds; 3 seeds; includes a local-only arm | [Findings](federated-study/findings.md) |
 | Centralized GRU baseline | First 8 sensors for 7 days and 2 epochs, or first 16 sensors for the full timeline and 5 epochs; seed 42 | [Results](centralized-baseline.md) |
 | Three-client Flower baseline | First 6 sensors; 7 days; 3 rounds; 1 local epoch; seed 42 | [Results](federated-smoke/report.md) |
 | One-epoch graph comparison | Same 16 graph-selected sensors; 7 days; seed 42 | [Results](graph-pilot/report.md) |
 
 ## Reading the records
 
-The benchmark's [results.json](benchmark/results.json) contains individual trials; its [summary.json](benchmark/summary.json) aggregates them by model. The federated study's [cases.json](federated-study/cases.json) collects all twelve experiments; its [summary.json](federated-study/summary.json) aggregates them by sensor grouping and round budget. The [case folders](federated-study/cases) retain each run's individual files and runtime log. For example, `b3-s42` means balanced groups, three rounds, and seed 42; `c5-s7` means congestion-grouped sensors, five rounds, and seed 7.
+The benchmark's [results.json](benchmark/results.json) contains individual trials; its [summary.json](benchmark/summary.json) aggregates them by model. The [extended benchmark](benchmark-extended/summary.json) has the same layout plus `day_bootstrap` (test-day intervals and paired gaps). The federated study's [cases.json](federated-study/cases.json) collects all twelve experiments; its [summary.json](federated-study/summary.json) aggregates them by sensor grouping and round budget. The [case folders](federated-study/cases) retain each run's individual files and runtime log. For example, `b3-s42` means balanced groups, three rounds, and seed 42; `c5-s7` means congestion-grouped sensors, five rounds, and seed 7.
 
 | Record | Purpose |
 |---|---|

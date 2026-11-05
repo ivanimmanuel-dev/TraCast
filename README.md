@@ -1,16 +1,59 @@
 # TraCast
 
-TraCast predicts traffic speeds for the next 5–60 minutes using the previous hour of sensor readings. It uses METR-LA, which contains speed measurements from 207 road sensors in Los Angeles.
+TraCast predicts traffic speed 5 to 60 minutes ahead from the last hour of sensor readings. The data is METR-LA: 207 road sensors in Los Angeles, March to June 2012. Everything runs on a CPU laptop.
 
-The experiments compare GRU and LSTM recurrent neural networks, test whether readings from neighboring sensors improve forecasts, and compare federated training with centralized training. The code runs on a CPU laptop.
+I use it to compare a few things: GRU vs LSTM vs a plain linear model, whether the road graph helps, whether knowing the time of day helps, and federated training vs centralized vs training each client alone.
 
 [Research brief](reports/research-brief.pdf) · [Technical report](reports/research-report.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
 
 ## Results
 
-The model comparison uses 16 sensors selected from the published road-distance graph and all available readings from March through June 2012. Each learned model trains for five epochs with three random seeds: 7, 42, and 2026.
+Every model here forecasts 12 steps (60 minutes) from the previous 12, using 16 sensors picked from the DCRNN road-distance graph and the full March to June timeline. The first 70% is train, the next 10% validation, the last 20% test. MAE is mean absolute error and RMSE punishes big misses more; both are in mph.
 
-MAE is the mean absolute forecast error. RMSE is the root mean squared error, which gives larger errors more weight. Both are reported in mph. Parentheses show the sample standard deviation across the three training runs. The persistence baseline repeats the latest available speed at every forecast horizon and is evaluated once.
+### Longer training, calendar inputs, baselines
+
+The five-epoch run below stops while the models are still improving, so here each one trains for up to 60 epochs, stops after 8 epochs with no validation gain, and halves the learning rate after 2. I also added calendar inputs (time of day as sine and cosine plus a weekend flag, marked "+ calendar"), a historical-average baseline (the training mean for each sensor, weekday, and 5-minute slot), and a linear model. 5 seeds: 7, 42, 2026, 123, 999.
+
+| Model | MAE (SD) | MAE range over test days | 15 min | 30 min | 60 min | RMSE (SD) | Parameters | Epochs run |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Persistence | 4.100 | 3.681–4.469 | 3.316 | 4.048 | 5.290 | 8.549 | 0 | – |
+| Historical average | 3.751 | 3.300–4.185 | 3.751 | 3.751 | 3.752 | 7.405 | 0 | – |
+| Linear | 3.622 (0.001) | 3.218–3.988 | 2.967 | 3.602 | 4.572 | 7.386 (0.005) | 37,056 | 43 |
+| Linear + calendar | 3.597 (0.003) | 3.196–3.962 | 2.961 | 3.584 | 4.512 | 7.373 (0.007) | 43,968 | 39 |
+| GRU | 3.255 (0.026) | 2.892–3.602 | 2.805 | 3.243 | 3.889 | 6.873 (0.085) | 11,136 | 37 |
+| GRU + calendar | 3.007 (0.025) | 2.687–3.313 | 2.730 | 3.023 | 3.391 | 6.373 (0.078) | 11,424 | 42 |
+| LSTM | 3.271 (0.013) | 2.906–3.617 | 2.845 | 3.259 | 3.885 | 6.913 (0.046) | 12,736 | 32 |
+| Graph-GRU | 3.193 (0.038) | 2.844–3.527 | 2.779 | 3.195 | 3.765 | 6.743 (0.134) | 15,760 | 37 |
+| Graph-GRU + calendar | 3.016 (0.031) | 2.695–3.324 | 2.727 | 3.026 | 3.422 | 6.403 (0.095) | 16,048 | 35 |
+| Graph-GRU (self only) | 3.231 (0.037) | 2.872–3.574 | 2.829 | 3.229 | 3.793 | 6.854 (0.109) | 15,760 | 33 |
+| Graph-GRU (self only) + calendar | 2.985 (0.039) | 2.666–3.292 | 2.732 | 3.002 | 3.327 | 6.363 (0.162) | 16,048 | 45 |
+
+MAE and RMSE are test means in mph, and the 15/30/60 min columns are MAE at those horizons. The range column resamples the 24 test days, so it shows how much a score depends on which days ended up in the test set. Persistence and the historical average aren't trained, so they run once.
+
+Graph-GRU (self only) + calendar is lowest at 2.985 mph (persistence 4.100, historical average 3.751), but GRU + calendar and Graph-GRU + calendar are within 0.031 mph of it, so I can't rank them. Training longer helped: the GRU went from 3.409 at five epochs to 3.255. Calendar inputs gave the biggest jump: the GRU changes by -0.249 mph (95% CI -0.324 to -0.181). Graph-GRU minus its self-only version (the same model with the neighbor averages zeroed) is -0.038 mph (95% CI -0.062 to -0.018) without calendar inputs and +0.031 mph (95% CI +0.008 to +0.055) with calendar inputs. The sign flips, so the graph doesn't give a reliable gain.
+
+| Difference in MAE (first - second) | Estimate (mph) | 95% CI over test days |
+|---|---:|---:|
+| GRU + calendar - GRU | -0.249 | -0.324 to -0.181 |
+| Linear + calendar - linear | -0.025 | -0.035 to -0.015 |
+| Graph-GRU + calendar - Graph-GRU | -0.177 | -0.229 to -0.130 |
+| LSTM - GRU | +0.016 | -0.021 to +0.057 |
+| Graph-GRU - self only | -0.038 | -0.062 to -0.018 |
+| Graph-GRU - self only, both with calendar | +0.031 | +0.008 to +0.055 |
+| Graph-GRU - GRU, both with calendar | +0.010 | -0.007 to +0.025 |
+| GRU - historical average | -0.496 | -0.672 to -0.320 |
+| GRU + calendar - historical average | -0.744 | -0.926 to -0.573 |
+| Historical average - persistence | -0.349 | -0.551 to -0.135 |
+
+Negative means the first model is better. Both models in a row are scored on the same windows and the same resampled days. These intervals are about which days were held out; the seed SDs in the table above cover random initialization.
+
+![Test error by forecast horizon, longer-training study; shading is seed SD](reports/figures/extended-horizons.png)
+
+[Per-seed metrics and timings](reports/benchmark-extended/results.json) · [Protocol and comparisons](reports/benchmark-extended/report.md)
+
+### First pass: five epochs
+
+My first run trained each model for five epochs with three seeds (7, 42, 2026). Persistence repeats the last reading, so it runs once. Numbers in parentheses are the standard deviation across seeds.
 
 | Model | MAE (SD) | RMSE (SD) | Parameters |
 |---|---:|---:|---:|
@@ -20,36 +63,40 @@ MAE is the mean absolute forecast error. RMSE is the root mean squared error, wh
 | Graph-GRU | 3.364 (0.036) | 7.107 (0.106) | 15,760 |
 | Graph-GRU (self only) | 3.368 (0.023) | 7.073 (0.047) | 15,760 |
 
-LSTM and Graph-GRU reach nearly the same mean MAE, while LSTM uses fewer parameters. The self-only version of Graph-GRU keeps the same architecture but excludes readings from neighboring sensors. Removing those readings changes mean MAE by only 0.0043 mph; it helps in one seed and hurts in two. Most of Graph-GRU's improvement over the smaller GRU remains without the neighbor readings.
+LSTM and Graph-GRU end up with about the same MAE, but the LSTM has fewer parameters. "Self only" is Graph-GRU with the neighbor averages set to zero (same architecture, same parameter count). Taking the averages out changes MAE by only 0.0043 mph (it helped in one seed and hurt in two), and most of Graph-GRU's lead over the GRU stays. One catch: every model, the plain GRU too, already gets all 16 sensors through its input layer, so this tests the graph averages and not whether neighboring sensors matter.
 
-Five epochs averaged 11.1 s for GRU, 10.9 s for LSTM, and 12.7 s for Graph-GRU on a Ryzen 7 5825U. Whole-process peak memory was about 320 MiB.
+Five epochs turned out to be too short. In 12 of 12 runs the best validation epoch was the last one, so the models were still improving when training stopped. The longer-training study above fixes that.
 
-![Test error by forecast horizon; shading shows seed SD](reports/figures/forecast-horizons.png)
+Training took 11.1 s for the GRU, 10.9 s for the LSTM and 12.7 s for Graph-GRU on a Ryzen 7 5825U, with about 320 MiB peak memory.
+
+![Test error by forecast horizon; shading is seed SD](reports/figures/forecast-horizons.png)
 
 [Per-seed metrics and timings](reports/benchmark/results.json) · [Benchmark protocol](reports/benchmark/report.md)
 
 ## Federated learning
 
-The Flower simulation assigns a different set of sensors to each of three clients. During each round, every client trains a copy of the same GRU on its own readings. The server then averages their model weights, weighted by each client's number of training examples. Each example contains readings from one sensor.
+The Flower simulation gives each of three clients its own set of sensors. Every round, each client trains its copy of the same GRU on its own readings, and the server averages the weights, weighted by how many training examples each client has (one example is one sensor's readings).
 
-The centralized comparison trains the same model on the combined client datasets. Both methods start from the same weights, use the same sensor normalization and missing-value masks, and process the same total number of training examples. All three simulated clients run on one machine.
+I compare it with two other setups. Centralized trains the same model on all the clients' data together, from the same starting weights, with the same normalization, masks and number of examples. Local-only trains each client by itself with the same amount of local work and no communication. All three clients run on one machine.
 
-This study uses twelve sensors, fourteen days of readings, and three random seeds. Each client trains for one local epoch per round. Sensors are ranked by the share of training readings below 40 mph. Balanced groups spread these ranks across clients; congestion-grouped clients receive consecutive blocks of ranks.
+Twelve sensors, fourteen days, three seeds, one local epoch per round. Sensors are ranked by how often their training speeds fall below 40 mph. Balanced groups spread those ranks across the clients, and congestion-grouped clients get consecutive blocks.
 
-| Sensor grouping | Rounds | Federated MAE | Centralized MAE | Model weights transferred |
-|---|---:|---:|---:|---:|
-| Balanced | 1 | 4.047 | 3.792 | 180,288 B |
-| Balanced | 3 | 3.809 | 3.765 | 450,720 B |
-| Balanced | 5 | 3.774 | 3.750 | 721,152 B |
-| Congestion-grouped | 5 | 3.836 | 3.750 | 721,152 B |
+| Sensor grouping | Rounds | Federated MAE | Centralized MAE | Local-only MAE | Model weights transferred |
+|---|---:|---:|---:|---:|---:|
+| Balanced | 1 | 4.047 | 3.792 | 4.003 | 180,288 B |
+| Balanced | 3 | 3.809 | 3.765 | 3.826 | 450,720 B |
+| Balanced | 5 | 3.774 | 3.750 | 3.796 | 721,152 B |
+| Congestion-grouped | 5 | 3.836 | 3.750 | 3.769 | 721,152 B |
 
-Increasing training from one to five rounds reduces mean MAE by 0.273 mph for the balanced groups and transfers four times as many model-weight bytes. The byte estimates include weights sent for training, validation, and final test evaluation; they exclude message and transport overhead.
+At 5 rounds with balanced groups, federated averaging gets 3.774 mph, local-only 3.796, and centralized 3.750. With congestion-grouped clients it is 3.836 against 3.769. The gaps are about as big as the seed spread, so here training alone is roughly as good as federating.
+
+Going from 1 to 5 rounds cuts balanced MAE by 0.273 mph and sends 4 times as many model-weight bytes. The byte counts cover weights sent for training, validation and the final test; message overhead isn't counted.
 
 [Round convergence, RMSE, client counts, and partition controls](reports/federated-study/findings.md)
 
 ## Run
 
-The tested environment uses Python 3.11 and CPU PyTorch on Windows x64. Run these commands from the repository directory:
+The recorded experiments ran on Python 3.11 and CPU PyTorch on Windows x64. CI runs the tests on Windows and Ubuntu. From the repo folder:
 
 ```powershell
 py -3.11 -m venv .venv
@@ -65,14 +112,17 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m tracast.federated --config configs/federated-smoke.json --out runs/flower-smoke
 ```
 
-Run the complete model comparison and federated study with:
+The full model comparison, the longer-training study and the federated study:
 
 ```powershell
 .\.venv\Scripts\python.exe -m tracast.benchmark --config configs/benchmark.json --out runs/benchmark
+.\.venv\Scripts\python.exe -m tracast.benchmark --config configs/benchmark-extended.json --out runs/benchmark-extended
 .\.venv\Scripts\python.exe -m tracast.federated_study --config configs/federated-study.json --out runs/federated-study
 ```
 
-The benchmark fetches topology files automatically. Use a fresh output directory for each run. [Configuration, inspection, repeats, and measurement definitions](docs/reproducibility.md).
+On Linux or WSL use `python3.11` and `.venv/bin/python`. The installed `tracast` command runs everything too, e.g. `tracast benchmark --config configs/benchmark-extended.json --out runs/benchmark-extended`, and `tracast --help` lists the subcommands.
+
+The benchmark downloads the topology files itself. Use a fresh output folder for each run. More in the [run guide](docs/reproducibility.md).
 
 ## Pipeline
 
@@ -83,26 +133,25 @@ flowchart TD
     V --> S[Chronological 70/10/20 split]
     S --> N[Training-only scalers and causal fill]
     N --> W[12 input steps → 12 forecast steps]
-    W --> R[Persistence / GRU / LSTM]
+    W --> R[Persistence / historical average / linear / GRU / LSTM]
     W --> G
     G --> H[Shared node projection → GRU]
     R --> E[Validation selection → test MAE/RMSE]
     H --> E
 ```
 
-The pipeline assigns the earliest 70% of readings to training, the next 10% to validation, and the final 20% to testing. Every input and forecast sequence stays within one split. Normalization uses observed training readings only, and zero or missing target readings are excluded from the loss and error metrics.
-
-The graph contains 16 sensors and 85 directed relationships derived from published distance data. Sensor selection and graph weights use those distances independently of the traffic-speed measurements. Validation MAE selects the saved model before it is evaluated on the test period.
+Windows never cross a split boundary. Normalization uses training data only, and zero or missing targets are left out of the loss and the metrics. The graph has 16 sensors and 85 directed edges from the published distance data; the sensors and edge weights come from distances, not from speeds. The saved model is the one with the best validation MAE, and test scores come after that.
 
 ## Reports
 
-The [report index](reports/README.md) explains the study directories, result files, and provenance records.
+The [report index](reports/README.md) explains the folders, result files and provenance records.
 
 | Experiment | Results |
 |---|---|
 | Recurrent encoders and graph ablation | [Methods](reports/benchmark/report.md), [summary](reports/benchmark/summary.json), [exact repeats](reports/benchmark/repeatability.json) |
+| Longer training, calendar inputs, baselines | [Protocol](reports/benchmark-extended/report.md), [summary](reports/benchmark-extended/summary.json) |
 | Federated budgets and client distributions | [Findings](reports/federated-study/findings.md), [summary](reports/federated-study/summary.json) |
 | Centralized GRU baseline | [Results](reports/centralized-baseline.md) |
 | Three-client Flower baseline | [Results](reports/federated-smoke/report.md), [exact repeats](reports/federated-smoke/determinism.json) |
 
-The studies cover sensor subsets and a fixed test period. Variation across seeds measures how training changes on those dates. The repository includes the configurations, file hashes, normalization statistics, training histories, and forecast metrics needed to inspect each result. Raw datasets and model checkpoints remain local.
+Everything uses one sensor subset and one fixed test period, so the seed SDs only show how much training varies on those dates. Each result has its config, file hashes, normalization stats, training histories and metrics in the repo. Raw data and model checkpoints stay local.

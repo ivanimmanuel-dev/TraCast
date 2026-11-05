@@ -1,0 +1,4 @@
+{
+  "note": "All 47 trials completed. The run stopped at the convergence plot because early-stopped runs have different lengths; the plots were then regenerated from results.json after fixing benchmark.plots. No trial or metric changed.",
+  "status": "complete"
+}

@@ -43,7 +43,7 @@ def main():
     protocol = load(REPORTS / "benchmark/protocol.json")
     manifest = load(REPORTS / "benchmark/manifest.json")
     table = "\n".join(
-        f"| {LABELS[n]} | {value(models[n]['mae'])} | {value(models[n]['rmse'])} | {models[n]['parameter_count']:,} | {value(models[n]['train_seconds'],2)} | {value(models[n]['inference_ms_per_window'],4)} |"
+        f"| {LABELS[n]} | {value(models[n]['mae'])} | {value(models[n]['rmse'])} | {models[n]['parameter_count']:,} | {value(models[n]['train_seconds'], 2)} | {value(models[n]['inference_ms_per_window'], 4)} |"
         for n in ORDER
     )
     graph_delta = (
@@ -82,7 +82,7 @@ Technical report - October 2026
 
 ## Abstract
 
-TraCast evaluates traffic-speed forecasting on METR-LA with chronological evaluation, training-only normalization, and masked targets. A fixed 16-sensor subset is selected from the published DCRNN road-distance graph. GRU, LSTM, and Graph-GRU models receive the same training windows and five-epoch budgets across seeds 7, 42, and 2026. Mean test MAE is {models['gru']['mae']['mean']:.3f} mph for GRU, {models['lstm']['mae']['mean']:.3f} for LSTM, and {models['graph_gru']['mae']['mean']:.3f} for Graph-GRU, compared with {models['persistence']['mae']['mean']:.3f} for persistence. Removing graph neighbors changes mean MAE by {abs(graph_delta):.4f} mph, with mixed seed-level effects. A separate Flower study evaluates shared univariate forecasting across disjoint sensor partitions and records accuracy, convergence, sample counts, and parameter communication.
+TraCast evaluates traffic-speed forecasting on METR-LA with chronological evaluation, training-only normalization, and masked targets. A fixed 16-sensor subset is selected from the published DCRNN road-distance graph. GRU, LSTM, and Graph-GRU models receive the same training windows and five-epoch budgets across seeds 7, 42, and 2026. Mean test MAE is {models["gru"]["mae"]["mean"]:.3f} mph for GRU, {models["lstm"]["mae"]["mean"]:.3f} for LSTM, and {models["graph_gru"]["mae"]["mean"]:.3f} for Graph-GRU, compared with {models["persistence"]["mae"]["mean"]:.3f} for persistence. Removing graph neighbors changes mean MAE by {abs(graph_delta):.4f} mph, with mixed seed-level effects. A separate Flower study evaluates shared univariate forecasting across disjoint sensor partitions and records accuracy, convergence, sample counts, and parameter communication.
 
 ## 1. Introduction
 
@@ -102,9 +102,9 @@ Zero and NaN readings are missing. Inputs forward-fill within their split and us
 
 ## 4. Distance graph and architecture
 
-The author-distributed distance table is pinned to revision `{protocol['graph']['revision']}` and checked by SHA-256. Endpoints outside the canonical 207 METR-LA sensors are excluded. The finite costs between these aligned sensors determine the population standard deviation s used by the kernel. For a supplied directed cost D[i,j], W[i,j] = exp(-(D[i,j]/s)^2), retaining values at least 0.1 and removing self pairs. No speed correlation, validation score, or test target enters graph construction.
+The author-distributed distance table is pinned to revision `{protocol["graph"]["revision"]}` and checked by SHA-256. Endpoints outside the canonical 207 METR-LA sensors are excluded. The finite costs between these aligned sensors determine the population standard deviation s used by the kernel. For a supplied directed cost D[i,j], W[i,j] = exp(-(D[i,j]/s)^2), retaining values at least 0.1 and removing self pairs. No speed correlation, validation score, or test target enters graph construction.
 
-A breadth-first traversal from the first canonical sensor selects a connected 16-sensor subset using the union of edge directions, with stronger weights first and ID tie-breaking. Its induced graph contains {protocol['graph']['subset_directed_edges']} directed relationships. Full IDs, coordinates, weights, source hashes, and the kernel scale are in [protocol.json](benchmark/protocol.json). The figure joins supplied sensor coordinates to show directed distance relationships.
+A breadth-first traversal from the first canonical sensor selects a connected 16-sensor subset using the union of edge directions, with stronger weights first and ID tie-breaking. Its induced graph contains {protocol["graph"]["subset_directed_edges"]} directed relationships. Full IDs, coordinates, weights, source hashes, and the kernel scale are in [protocol.json](benchmark/protocol.json). The figure joins supplied sensor coordinates to show directed distance relationships.
 
 Graph-GRU computes separate row-normalized incoming and outgoing means. At each sensor and time step, a shared Linear(3,4) plus ReLU transforms its own normalized speed and two neighbor means into four features. The 16 node embeddings flatten to 64 features, enter a one-layer GRU with hidden width 32, and feed a linear head producing 12 x 16 forecasts. The self-only ablation sets both neighbor operators to zero while retaining the same learned projection, recurrent encoder, head, initialization rule, and parameter count.
 
@@ -134,7 +134,7 @@ Values are mean (sample SD) across three training seeds. Persistence is determin
 
 ### Graph ablation
 
-Graph-GRU minus self-only MAE differences by seed are {', '.join(f'{d:+.6f}' for d in ablation)} mph. Their mean is {graph_delta:+.6f} mph. Graph-GRU improves over the raw-input GRU in all three runs, but the edge contribution is small and changes sign. The self-only projection retains most of the mean MAE improvement over the smaller GRU reference. LSTM has nearly the same mean MAE as Graph-GRU, with fewer parameters and lower seed dispersion in this configuration.
+Graph-GRU minus self-only MAE differences by seed are {", ".join(f"{d:+.6f}" for d in ablation)} mph. Their mean is {graph_delta:+.6f} mph. Graph-GRU improves over the raw-input GRU in all three runs, but the edge contribution is small and changes sign. The self-only projection retains most of the mean MAE improvement over the smaller GRU reference. LSTM has nearly the same mean MAE as Graph-GRU, with fewer parameters and lower seed dispersion in this configuration.
 
 Whole-process peak memory was approximately 320 MiB for all architectures, dominated by the runtime and preprocessing.
 
@@ -152,7 +152,7 @@ The fixed train/validation/test period, short local federated budgets, simulated
 
 ## 9. Reproducibility
 
-[README commands](../README.md) fetch hash-checked inputs, run tests, execute the model benchmark, and launch Flower. Experiment records retain resolved configuration, seeds, source/data/dependency hashes, sensor IDs, adjacency, split ranges, scaler values, per-horizon counts, histories, timing definitions, and checkpoint hashes. The benchmark source commit is `{manifest['git_commit']}`; source content hashes identify its executed working tree. Timings and process IDs are not treated as deterministic numerical outputs.
+[README commands](../README.md) fetch hash-checked inputs, run tests, execute the model benchmark, and launch Flower. Experiment records retain resolved configuration, seeds, source/data/dependency hashes, sensor IDs, adjacency, split ranges, scaler values, per-horizon counts, histories, timing definitions, and checkpoint hashes. The benchmark source commit is `{manifest["git_commit"]}`; source content hashes identify its executed working tree. Timings and process IDs are not treated as deterministic numerical outputs.
 
 The benchmark and Flower runs use separate output directories and never overwrite completed experiments. Raw HDF5 files, topology CSVs, checkpoints, generated client partitions, and local Flower state are excluded from Git. Unit tests cover schema validation, chronological boundaries, train-only scaling, masking, horizon pooling, graph direction/alignment, changed-edge predictions, LSTM gradients, actual Flower aggregation and message dispatch, and failed launch states. The experiment CLIs provide the real-data integration runs.
 
@@ -263,7 +263,7 @@ The benchmark and Flower runs use separate output directories and never overwrit
             styles["CaptionSmall"],
         ),
         body(
-            f"LSTM and Graph-GRU reached nearly equal mean MAE. Graph-GRU improved over GRU by {models['gru']['mae']['mean']-models['graph_gru']['mae']['mean']:.4f} mph, while removing graph neighbors changed mean MAE by only {abs(graph_delta):.4f} mph. The edge effect changed sign across seeds."
+            f"LSTM and Graph-GRU reached nearly equal mean MAE. Graph-GRU improved over GRU by {models['gru']['mae']['mean'] - models['graph_gru']['mae']['mean']:.4f} mph, while removing graph neighbors changed mean MAE by only {abs(graph_delta):.4f} mph. The edge effect changed sign across seeds."
         ),
         heading("Data and evaluation"),
         body(

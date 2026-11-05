@@ -19,6 +19,19 @@ Congestion-grouped clients had +0.0616 mph higher mean MAE than balanced clients
 
 ![Communication trade-offs and validation convergence](tradeoffs.png)
 
+## Local-only comparison
+
+Each case also trains every client alone with no communication. A client starts from the shared initial weights, does the same local work as in federated training (one epoch per round, same seeds, fresh optimizer each round) and keeps the round with its own best validation MAE. The clients' test errors are pooled, so the numbers compare with the federated and pooled ones. Mean MAE in mph, seed SD in parentheses.
+
+| Client partition | Rounds | FedAvg MAE | Local-only MAE | Pooled MAE |
+|---|---:|---:|---:|---:|
+| balanced | 1 | 4.0470 (0.0599) | 4.0031 (0.0413) | 3.7924 (0.0101) |
+| balanced | 3 | 3.8093 (0.0357) | 3.8256 (0.0324) | 3.7653 (0.0344) |
+| balanced | 5 | 3.7742 (0.0138) | 3.7958 (0.0484) | 3.7497 (0.0467) |
+| congestion | 5 | 3.8358 (0.0288) | 3.7686 (0.0534) | 3.7497 (0.0467) |
+
+Balanced clients: federated averaging is 0.0163 mph below local-only at three rounds, 0.0216 below at five, and 0.0439 above at one. Congestion-grouped at five rounds it is 0.0672 above. The gaps are about the size of the seed spread, so this doesn't show that communication beats training alone for this small model and 14-day slice. Pooled is lowest in every row.
+
 ## Partition rule and data controls
 
 Both rules use the same first twelve sensors in canonical traffic-file order and the first 4,032 timestamps. The same 70/10/20 chronological row boundaries apply to every client and case. Per-sensor normalization and zero/NaN target masks use the existing pipeline.
@@ -44,24 +57,24 @@ The pooled reference uses the same shared univariate architecture, initial model
 
 The pooled reference's complete numerical output and state hash match exactly across balanced and congestion ownership for every seed. Global model-state hashes from the one- and three-round cases match the corresponding prefixes of the five-round cases. [summary.json](summary.json) records all checks.
 
-All twelve cases completed. Their total measured wall time was 687.0 seconds (11.45 minutes), including launch overhead, simulation, selected test scoring, the pooled reference, and plots. Cases ran sequentially with one client actor active, two reserved Ray CPUs, one PyTorch thread, and a 128 MiB Ray object-store cap. Whole-study peak RAM was not measured.
+All twelve cases completed. Their total measured wall time was 814.5 seconds (13.57 minutes), including launch overhead, simulation, selected test scoring, the pooled reference, the local-only arm, and plots. Cases ran sequentially with one client actor active, two reserved Ray CPUs, one PyTorch thread, and a 128 MiB Ray object-store cap. Whole-study peak RAM was not measured.
 
 ## Per-seed records
 
 | Case | Selected round | FedAvg MAE | FedAvg RMSE | Pooled MAE | Case wall seconds |
 |---|---:|---:|---:|---:|---:|
-| b1-s7 | 1 | 4.111763 | 7.906256 | 3.792999 | 56.0 |
-| b3-s7 | 2 | 3.850131 | 7.556947 | 3.759755 | 49.9 |
-| b5-s7 | 5 | 3.758373 | 7.521437 | 3.712816 | 61.8 |
-| c5-s7 | 4 | 3.810094 | 7.494595 | 3.712816 | 65.5 |
-| b1-s42 | 1 | 3.993612 | 7.710778 | 3.782038 | 38.7 |
-| b3-s42 | 3 | 3.783720 | 7.507262 | 3.734071 | 52.1 |
-| b5-s42 | 3 | 3.783720 | 7.507262 | 3.734071 | 68.3 |
-| c5-s42 | 2 | 3.866865 | 7.533776 | 3.734071 | 66.1 |
-| b1-s2026 | 1 | 4.035705 | 7.758775 | 3.802187 | 43.7 |
-| b3-s2026 | 3 | 3.794028 | 7.522578 | 3.802187 | 55.3 |
-| b5-s2026 | 4 | 3.780410 | 7.531418 | 3.802187 | 67.6 |
-| c5-s2026 | 3 | 3.830434 | 7.510014 | 3.802187 | 62.0 |
+| b1-s7 | 1 | 4.111763 | 7.906256 | 3.792999 | 63.8 |
+| b3-s7 | 2 | 3.850131 | 7.556947 | 3.759755 | 67.0 |
+| b5-s7 | 5 | 3.758373 | 7.521437 | 3.712816 | 78.8 |
+| c5-s7 | 4 | 3.810094 | 7.494595 | 3.712816 | 72.9 |
+| b1-s42 | 1 | 3.993612 | 7.710778 | 3.782038 | 47.9 |
+| b3-s42 | 3 | 3.783720 | 7.507262 | 3.734071 | 64.8 |
+| b5-s42 | 3 | 3.783720 | 7.507262 | 3.734071 | 75.5 |
+| c5-s42 | 2 | 3.866865 | 7.533776 | 3.734071 | 77.4 |
+| b1-s2026 | 1 | 4.035705 | 7.758775 | 3.802187 | 49.6 |
+| b3-s2026 | 3 | 3.794028 | 7.522578 | 3.802187 | 64.0 |
+| b5-s2026 | 4 | 3.780410 | 7.531418 | 3.802187 | 77.5 |
+| c5-s2026 | 3 | 3.830434 | 7.510014 | 3.802187 | 75.3 |
 
 Each [case directory](cases) contains config, source/data/dependency hashes, client metadata, all round metrics, selected test scores, pooled histories, status, and the runtime transcript. Raw partitions, model checkpoints, and local Flower service state stay outside Git.
 
