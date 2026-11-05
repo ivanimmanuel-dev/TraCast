@@ -1,0 +1,276 @@
+"""Run the same benchmark on nested sensor subsets and put the results side by side.
+
+The subsets are prefixes of one graph ordering (topology.order), so the 16 sensors
+sit inside the 32, and so on up to all 207. Every model gets the same number of
+updates at every size. Two comparisons come out of it:
+
+* own population: each model scored on all the sensors it was trained on. The
+  sensor set changes with the size, so these scores are not comparable across sizes.
+* common core: every model scored on the first 16 sensors only. The targets are the
+  same for every size, so this is the fair way to ask whether more sensors help.
+"""
+
+import argparse
+from dataclasses import asdict, replace
+from pathlib import Path
+import json
+import os
+import platform
+import sys
+
+import numpy as np
+from importlib.metadata import version
+
+from .benchmark import BenchmarkConfig, run as run_benchmark
+from .experiment import write_json
+from .provenance import git_state
+
+CORE = 16
+
+
+def load_config(path):
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    counts = raw.pop("sensor_counts")
+    if (
+        not counts
+        or sorted(set(counts)) != counts
+        or counts[0] < CORE
+        or counts[-1] > 207
+    ):
+        raise ValueError("sensor_counts must increase from at least 16 up to 207")
+    return counts, BenchmarkConfig(**raw)
+
+
+def run(counts, config, data, graph_dir, out):
+    """Run every size in turn; sizes that already finished are skipped."""
+    out = Path(out).resolve()
+    out.mkdir(parents=True, exist_ok=True)
+    git = git_state()
+    write_json(
+        out / "scaling-config.json",
+        {"sensor_counts": counts, "benchmark": asdict(config), **git},
+    )
+    for count in counts:
+        folder = out / f"n{count:03d}"
+        status = folder / "status.json"
+        if status.exists() and json.loads(status.read_text())["status"] == "complete":
+            print(f"{count} sensors: already done", flush=True)
+            continue
+        if folder.exists():
+            folder.rename(
+                out / f"n{count:03d}.unfinished-{len(list(out.glob('*.unfinished-*')))}"
+            )
+        sized = replace(
+            config,
+            sensors=count,
+            core_sizes=[k for k in (CORE, 32, 64, 128) if k < count],
+        )
+        print(f"=== {count} sensors ===", flush=True)
+        run_benchmark(sized, data, graph_dir, folder)
+    return summarize(out)
+
+
+def _stats(values):
+    return {
+        "mean": float(np.mean(values)),
+        "sd": float(np.std(values, ddof=1)) if len(values) > 1 else None,
+        "n": len(values),
+    }
+
+
+def summarize(out):
+    """Collect every size's results into one table: model x sensor count."""
+    out = Path(out)
+    table = {}
+    for folder in sorted(out.glob("n[0-9][0-9][0-9]")):
+        if json.loads((folder / "status.json").read_text())["status"] != "complete":
+            continue
+        count = int(folder.name[1:])
+        for model in dict.fromkeys(
+            r["model"] for r in json.loads((folder / "results.json").read_text())
+        ):
+            runs = [
+                r
+                for r in json.loads((folder / "results.json").read_text())
+                if r["model"] == model
+            ]
+            horizons = {
+                h["minutes"]: _stats([r["test"]["per_horizon"][i]["mae"] for r in runs])
+                for i, h in enumerate(runs[0]["test"]["per_horizon"])
+            }
+            core = (
+                _stats([r["test"]["mae"] for r in runs])
+                if count == CORE
+                else _stats([r["test"]["core"][str(CORE)]["mae"] for r in runs])
+            )
+            table.setdefault(model, {})[str(count)] = {
+                "mae": _stats([r["test"]["mae"] for r in runs]),
+                "rmse": _stats([r["test"]["rmse"] for r in runs]),
+                "core16_mae": core,
+                "core16_horizons": {
+                    str(m): _stats(
+                        [
+                            (
+                                r["test"]
+                                if count == CORE
+                                else r["test"]["core"][str(CORE)]
+                            )["per_horizon"][i]["mae"]
+                            for r in runs
+                        ]
+                    )
+                    for i, m in enumerate(horizons)
+                },
+                "horizon_mae": {str(m): v for m, v in horizons.items()},
+                "parameters": runs[0]["parameter_count"],
+                "train_seconds": _stats([r["train_seconds"] for r in runs]),
+                "epochs_run": _stats([len(r["history"]) for r in runs])
+                if runs[0]["history"]
+                else None,
+                "inference_ms_per_window": _stats(
+                    [r["inference"]["median_ms_per_window"] for r in runs]
+                ),
+                "peak_memory_mib": _stats(
+                    [r["peak_memory"]["bytes"] / 1024**2 for r in runs]
+                ),
+                "seeds": [r["seed"] for r in runs],
+            }
+    summary = {
+        "sizes": sorted({int(c) for m in table.values() for c in m}),
+        "models": table,
+        "environment": {
+            "platform": platform.platform(),
+            "processor": platform.processor(),
+            "logical_cpus": os.cpu_count(),
+            "python": sys.version.split()[0],
+            "torch": version("torch"),
+            "numpy": version("numpy"),
+        },
+        "note": (
+            "mae is on every sensor a model was trained on, so it is not comparable "
+            "across sizes; core16_mae scores every model on the same first 16 sensors."
+        ),
+        **git_state(),
+    }
+    write_json(out / "scaling-summary.json", summary)
+    return summary
+
+
+def figures(summary, out):
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    labels = {
+        "persistence": "Persistence",
+        "ha": "Historical average",
+        "linear_time": "Linear + calendar",
+        "gru_time": "Dense GRU + calendar",
+        "graph_gru_time": "Dense Graph-GRU + calendar",
+        "sgru_time": "Shared GRU + calendar",
+        "sgraph_time": "Shared Graph-GRU + calendar",
+    }
+    styles = {
+        "persistence": ("#667085", ":"),
+        "ha": ("#a16207", ":"),
+        "linear_time": ("#16a34a", "-"),
+        "gru_time": ("#1d4ed8", "-"),
+        "graph_gru_time": ("#9333ea", "-"),
+        "sgru_time": ("#d97706", "--"),
+        "sgraph_time": ("#087e8b", "--"),
+    }
+    sizes = summary["sizes"]
+    out = Path(out)
+
+    def draw(ax, key, field, title, ylabel, log=False):
+        for model, by_size in summary["models"].items():
+            xs = [s for s in sizes if str(s) in by_size]
+            ys = [_pick(by_size[str(s)], key, field) for s in xs]
+            if any(y is None for y in ys):
+                continue
+            color, line = styles.get(model, ("#444444", "-"))
+            ax.plot(
+                xs,
+                ys,
+                marker="o",
+                markersize=4,
+                color=color,
+                linestyle=line,
+                label=labels.get(model, model),
+            )
+        ax.set(
+            title=title,
+            xlabel="Sensors used to train",
+            ylabel=ylabel,
+            xscale="log",
+            xticks=sizes,
+            xticklabels=sizes,
+        )
+        if log:
+            ax.set_yscale("log")
+        ax.minorticks_off()
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4), constrained_layout=True)
+    draw(
+        axes[0],
+        "mae",
+        "mean",
+        "Own population (not comparable across sizes)",
+        "Test MAE (mph)",
+    )
+    draw(
+        axes[1],
+        "core16_mae",
+        "mean",
+        "Same 16 target sensors for every size",
+        "Test MAE on the first 16 sensors (mph)",
+    )
+    axes[1].legend(fontsize=8)
+    fig.savefig(out / "scaling-accuracy.png", dpi=170)
+    plt.close(fig)
+
+    fig, axes = plt.subplots(1, 4, figsize=(15, 3.6), constrained_layout=True)
+    draw(axes[0], "train_seconds", "mean", "Training time", "seconds", log=True)
+    draw(axes[1], "peak_memory_mib", "mean", "Peak process memory", "MiB", log=True)
+    draw(axes[2], "parameters", None, "Parameters", "count", log=True)
+    draw(
+        axes[3],
+        "inference_ms_per_window",
+        "mean",
+        "Inference",
+        "ms per window",
+        log=True,
+    )
+    axes[3].legend(fontsize=7)
+    fig.savefig(out / "scaling-cost.png", dpi=170)
+    plt.close(fig)
+
+
+def _pick(entry, key, field):
+    value = entry[key]
+    if value is None:
+        return None
+    return value if field is None else value[field]
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        description="Scaling study over nested sensor subsets"
+    )
+    parser.add_argument("--config", default="configs/scaling.json")
+    parser.add_argument("--data", default="data/raw/metr-la.h5")
+    parser.add_argument("--topology", default="data/topology")
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--summarize-only", action="store_true")
+    args = parser.parse_args(argv)
+    counts, config = load_config(args.config)
+    if args.summarize_only:
+        summary = summarize(args.out)
+    else:
+        summary = run(counts, config, args.data, args.topology, args.out)
+    figures(summary, args.out)
+    print(json.dumps({m: sorted(v) for m, v in summary["models"].items()}, indent=1))
+
+
+if __name__ == "__main__":
+    main()

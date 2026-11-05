@@ -11,6 +11,7 @@ from .experiment import Config, plots, run, write_json
 # these keep their own parsers; everything after the name is forwarded
 DELEGATED = {
     "benchmark": ("tracast.benchmark", "centralized model comparison"),
+    "scaling": ("tracast.scaling", "benchmark across nested sensor counts"),
     "federated": ("tracast.federated", "three-client Flower simulation"),
     "study": ("tracast.federated_study", "federated round-budget study"),
     "compare": ("tracast.compare_runs", "check two federated runs for exact repeats"),
