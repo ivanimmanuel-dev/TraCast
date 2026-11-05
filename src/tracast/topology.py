@@ -103,6 +103,43 @@ def connected_subset(weights, sensor_ids, count):
     return [sensor_ids[i] for i in chosen], weights[np.ix_(chosen, chosen)].copy()
 
 
+def order(weights, sensor_ids):
+    """One breadth-first ordering of every sensor, component by component.
+
+    It is the same walk as connected_subset (start at the first sensor, follow
+    edges in either direction, stronger first, ties by ID), run to the end of the
+    first component. Sensors the walk never reaches follow in canonical order,
+    each one starting its own walk. Any prefix of the result is a subset, and
+    the prefixes are nested, so 16 sensors sit inside 32, 64 and so on.
+    """
+    if weights.shape != (len(sensor_ids), len(sensor_ids)):
+        raise ValueError("Invalid graph shape")
+    undirected = np.maximum(weights, weights.T)
+    done, result = set(), []
+    for start in range(len(sensor_ids)):
+        if start in done:
+            continue
+        done.add(start)
+        queue = deque([start])
+        while queue:
+            node = queue.popleft()
+            result.append(node)
+            neighbors = [i for i in np.flatnonzero(undirected[node]) if i not in done]
+            neighbors.sort(key=lambda i: (-float(undirected[node, i]), sensor_ids[i]))
+            for other in neighbors:
+                done.add(other)
+                queue.append(other)
+    return result
+
+
+def nested_subset(weights, sensor_ids, count):
+    """The first count sensors of order(), with their induced graph."""
+    if not 1 <= count <= len(sensor_ids):
+        raise ValueError("Invalid subset size")
+    chosen = order(weights, sensor_ids)[:count]
+    return [sensor_ids[i] for i in chosen], weights[np.ix_(chosen, chosen)].copy()
+
+
 def load(directory, columns, count, threshold=0.1):
     directory = Path(directory)
     for name, expected in FILES.items():
@@ -114,7 +151,7 @@ def load(directory, columns, count, threshold=0.1):
         directory / "distances_la_2012.csv", dtype={"from": str, "to": str}
     )
     weights, metadata = adjacency(distances, ids, threshold)
-    chosen, subgraph = connected_subset(weights, ids, count)
+    chosen, subgraph = nested_subset(weights, ids, count)
     locations = pd.read_csv(
         directory / "graph_sensor_locations.csv", dtype={"sensor_id": str}
     )
@@ -130,7 +167,7 @@ def load(directory, columns, count, threshold=0.1):
             "revision": REVISION,
             "files": FILES,
             "sensor_ids": chosen,
-            "subset_rule": "BFS from first canonical sensor; union of directions; descending weight then sensor ID",
+            "subset_rule": "prefix of one BFS ordering from the first canonical sensor; union of directions; descending weight then sensor ID; sensors outside the first component follow in canonical order",
             "subset_directed_edges": int(np.count_nonzero(subgraph)),
             "adjacency": subgraph.tolist(),
             "locations": coordinates.to_dict(orient="index"),
