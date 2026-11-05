@@ -158,11 +158,14 @@ Communication leaves out serialization, metrics, config and transport overhead. 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements-report.txt
 .\.venv\Scripts\python.exe tools/presentation.py
+.\.venv\Scripts\python.exe tools/pages.py
+.\.venv\Scripts\python.exe tools/architecture.py
+.\.venv\Scripts\python.exe tools/data_audit.py
 .\.venv\Scripts\python.exe tools/federated_page.py
 .\.venv\Scripts\python.exe tools/build_research.py
 ```
 
-These read the saved results and rebuild the README, the figures, the federated findings page, the technical report and the two-page PDF. They don't train anything. `tools/export_records.py` swaps local paths for `$REPO` and `$PYTHON_ENV` in saved records, and the export receipt keeps the before and after hashes. A manifest describes the code at the time of its run, so its source hashes can differ from the current checkout.
+`pages.py` writes the scaling, intervals, drift and audit pages, `architecture.py` draws the shared-model schematic and `data_audit.py` needs the raw data to recompute the data facts. Run `pages.py` before `presentation.py`, because the README reads what it writes. These read the saved results and rebuild the README, the figures, the federated findings page, the technical report and the two-page PDF. They don't train anything. `tools/export_records.py` swaps local paths for `$REPO` and `$PYTHON_ENV` in saved records, and the export receipt keeps the before and after hashes. A manifest describes the code at the time of its run, so its source hashes can differ from the current checkout.
 
 ## Configs
 

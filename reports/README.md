@@ -10,6 +10,9 @@ Each experiment has its own sensors and training budget, so compare models withi
 |---|---|---|
 | Five-epoch benchmark | 16 graph-picked sensors, full timeline, 5 epochs, 3 seeds | [Benchmark](benchmark/report.md) |
 | Longer training, calendar inputs, baselines | Same sensors and timeline, up to 60 epochs with early stopping, 5 seeds | [Extended benchmark](benchmark-extended/report.md) |
+| Scaling to all 207 sensors | Nested subsets of 16 to 207 sensors, dense and shared-weight models, 2 seeds | [Scaling report](scaling/report.md) |
+| Prediction intervals | 90% intervals on the 16-sensor GRU, six interval methods plus a quantile network, 3 seeds | [Intervals report](uncertainty/report.md) |
+| Drift and adaptation | Day-by-day replay of the test period with four adaptation strategies, two settings, 3 seeds | [Drift report](shift/report.md) |
 | Federated study | 12 sensors, 14 days, 3 clients, 1/3/5 rounds, 3 seeds, with a local-only arm | [Findings](federated-study/findings.md) |
 | Centralized GRU baseline | First 8 sensors for 7 days and 2 epochs, or first 16 sensors for the full timeline and 5 epochs; seed 42 | [Results](centralized-baseline.md) |
 | Flower smoke run | First 6 sensors, 7 days, 3 rounds, 1 local epoch, seed 42 | [Results](federated-smoke/report.md) |
@@ -29,6 +32,8 @@ The benchmark's [results.json](benchmark/results.json) has every trial and its [
 | `clients.json` | Each client's sensors, sample counts, normalization and speed distribution |
 | `repeatability.json`, `determinism.json` | Comparisons of repeated runs |
 | `status.json`, `flower.log` | Whether the run finished, and Flower's output |
+
+The scaling folder has `scaling-summary.json` (the accuracy run), `cost-summary.json` (a separate short run with nothing else on the machine, which is where the cost numbers come from) and each size's manifest. The intervals and drift folders have `summary.json`, `config.json` and one result file per seed. [data-audit.json](data-audit.json) holds the facts about the data that the experiments rely on, and [docs/audit.md](../docs/audit.md) explains what was checked.
 
 A manifest describes the code at the time of its run, so its source hashes can differ from the current checkout. `$REPO` and `$PYTHON_ENV` stand in for local paths in saved records, and the [export receipts](export-provenance.json) keep the hashes from before the swap.
 

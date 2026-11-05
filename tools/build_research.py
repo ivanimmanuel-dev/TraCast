@@ -16,6 +16,7 @@ from reportlab.platypus import (
 from reportlab.graphics.shapes import Drawing, Rect, String, Line, Polygon
 
 import presentation as P
+from pages import readme_blocks
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
@@ -42,6 +43,8 @@ Technical report, November 2026
 ## Summary
 
 {summary}
+
+{new_summary}
 
 ## 1. What I wanted to find out
 
@@ -137,20 +140,20 @@ As a check, the centralized reference is identical for both ownership rules, and
 
 ![Communication and convergence](federated-study/tradeoffs.png)
 
-## 7. What I take from this
+{new_sections}## 10. What I take from this
 
 - **Give the model the clock.** Time of day and a weekend flag beat every architecture change I tried. By 30 minutes ahead, a plain historical average already beats persistence.
 - **The graph wasn't worth it here.** The neighbor averages helped a little without the clock and hurt a little with it, and Graph-GRU with the clock is not clearly different from a GRU with the clock.
 - **Check training length before comparing models.** After five epochs the LSTM and Graph-GRU both looked better than the GRU by about {five_epoch_gain:.3f} mph. With proper training the LSTM is level with the GRU ({lstm_gap:+.3f}) and Graph-GRU is {graph_gap:.3f} ahead, a lead that disappears once the clock is added.
 - **Federated averaging didn't beat training alone** for this small model and short slice, and pooling the data was best.
-
+{take_new}
 What this doesn't cover: one 16-sensor subset picked by a graph walk (not representative of every road, and neighbors outside the subset are missing), one 24-day test window (scores move by about 0.3 mph with the choice of days, though the gaps between models are much tighter), no hyperparameter search, and a federated task that is univariate and simulated on one machine, so its errors shouldn't be compared with the centralized tables. Timings are rough, and the byte counts only cover model weights.
 
-## 8. Reproducing it
+## 11. Reproducing it
 
 The [README](../README.md) and the [run guide](../docs/reproducibility.md) have the commands. They fetch checksum-verified data and use pinned dependencies. Each experiment's folder in `reports/` has its config, source and data hashes, sensor IDs, split ranges, scaler values, histories and per-horizon counts. Unit tests run on small constructed arrays, and the experiment commands are the real-data runs.
 
-## References
+{next_section}## References
 
 1. Li, Y., Yu, R., Shahabi, C., Liu, Y. (2018). Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting. ICLR. https://arxiv.org/abs/1707.01926
 2. Cho, K. et al. (2014). Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation. EMNLP. https://arxiv.org/abs/1406.1078
@@ -236,6 +239,30 @@ def build_report():
         for n in ORDER
     )
     balanced, grouped = conditions["balanced-5"], conditions["congestion-5"]
+    blocks = readme_blocks()
+
+    def for_report(text, number):
+        """README text moved into the report: numbered heading, links relative to reports/."""
+        head, _, rest = text.partition("\n")
+        return f"## {number}. {head[3:]}\n{rest}".replace("](reports/", "](")
+
+    numbered = [
+        for_report(blocks[key], number)
+        for key, number in (("scaling", 7), ("uncertainty", 8), ("shift", 9))
+        if blocks[key]
+    ]
+    new_sections = "\n".join(numbered) + "\n" if numbered else ""
+    bullets = blocks["bullets"]
+    new_summary = (
+        "Three later experiments extend this. " + " ".join(b[2:] for b in bullets)
+        if bullets
+        else ""
+    )
+    take_new = "".join(b + "\n" for b in bullets)
+    next_section = (
+        blocks["next"].replace("## What's next", "## 12. Where this could go next")
+        + "\n"
+    )
     text = REPORT.format(
         summary=summary,
         revision=protocol["graph"]["revision"],
@@ -265,6 +292,10 @@ def build_report():
         congestion_mae=grouped["fedavg_mae"]["mean"] - balanced["fedavg_mae"]["mean"],
         congestion_rmse=balanced["fedavg_rmse"]["mean"]
         - grouped["fedavg_rmse"]["mean"],
+        new_summary=new_summary,
+        new_sections=new_sections,
+        take_new=take_new,
+        next_section=next_section,
     )
     (REPORTS / "research-report.md").write_bytes(text.encode())
     (REPORTS / "benchmark/report.md").write_text(
@@ -435,6 +466,17 @@ def build_brief(first_pass, ext, fed):
                     strokeColor=None,
                 )
             )
+    extra = readme_blocks()["bullets"]
+    later = []
+    if extra:
+        later.append(heading("Bigger networks, intervals and drift"))
+        for bullet in extra:
+            later.append(
+                Paragraph(bold(bullet[2:]), styles["BulletSmall"], bulletText="\u2022")
+            )
+        figure = REPORTS / "uncertainty/uncertainty-conditions.png"
+        if figure.exists():
+            later.append(Image(str(figure), width=330, height=120))
     story += [
         drawing,
         body(
@@ -449,12 +491,13 @@ def build_brief(first_pass, ext, fed):
             f"{fed['compare']} {fed['verdict']}"
         ),
         body(fed["cost"]),
+        *later,
         heading("What this doesn't cover"),
         body(
             "One 16-sensor subset, one 24-day test window, no hyperparameter search, and "
-            "a federated task that is univariate and simulated on one machine."
+            "a federated task that is univariate and simulated on one machine. The later "
+            "experiments have their own limits in their reports."
         ),
-        heading("Code"),
         body(
             '<link href="https://github.com/ivanimmanuel-dev/TraCast">github.com/ivanimmanuel-dev/TraCast</link><br/>'
             "The technical report has the details; DATA.md has the data sources."
@@ -477,7 +520,7 @@ def build_brief(first_pass, ext, fed):
         leftMargin=36,
         rightMargin=36,
         topMargin=30,
-        bottomMargin=38,
+        bottomMargin=34,
         title="TraCast research brief",
         author="ivanimmanuel-dev",
     )

@@ -482,11 +482,45 @@ def shift_findings(summary):
             )
         )
     cheap, full = std["strategies"]["head_daily"], std["strategies"]["retrain_weekly"]
+
+    def share(setting):
+        base = setting["strategies"]["static"]["mae"]
+        return (base - setting["strategies"]["head_daily"]["mae"]) / (
+            base - setting["strategies"]["retrain_weekly"]["mae"]
+        )
+
     out.append(
         f"- **Cost:** over the {len(std['strategies']['static']['daily_mae'])} test days, fine-tuning the output layer "
         f"daily takes {cheap['adapt_seconds']:.0f} s and fine-tuning the whole network weekly takes "
-        f"{full['adapt_seconds']:.0f} s, about x{full['adapt_seconds'] / cheap['adapt_seconds']:.0f} more."
+        f"{full['adapt_seconds']:.0f} s, about x{full['adapt_seconds'] / cheap['adapt_seconds']:.0f} more. "
+        f"The cheaper one keeps {share(std):.0%} of the weekly fine-tune's gain in the standard setting and "
+        f"{share(stale):.0%} in the stale one."
     )
+    for name, setting in (("standard", std), ("stale", stale)):
+        daily = setting["strategies"]["static"]["daily_mae"]
+        first, last = sum(daily[:7]) / 7, sum(daily[-7:]) / 7
+        regimes = setting["regimes"]
+        gain = {
+            group: regimes[group]["static"] - regimes[group]["head_daily"]
+            for group in ("least_shifted_third", "most_shifted_third")
+            if group in regimes
+        }
+        text = (
+            f"- **{name.capitalize()} model over time:** the static model's MAE is {first:.3f} in the first "
+            f"week of the test period and {last:.3f} in the last ({last - first:+.3f}; both weeks hold each "
+            f"weekday once). "
+            + (
+                "So there is no sign of the error growing with time since training."
+                if last <= first
+                else "So the error does grow with time since training."
+            )
+        )
+        if len(gain) == 2:
+            text += (
+                f" Fine-tuning the output layer gains {gain['most_shifted_third']:.3f} mph on the third of days "
+                f"furthest from the training distribution and {gain['least_shifted_third']:.3f} on the third closest to it."
+            )
+        out.append(text)
     return out
 
 
@@ -609,7 +643,7 @@ def shift_page(summary, config):
                 total += 1
                 agree += (best_val < chosen["static_val_mae"]) == helped_test
     validation_text = (
-        f"The validation replay is the only thing that picked the settings, so it is worth checking that it points "
+        f"The validation replay is the only thing that picked the settings, so I checked that it points "
         f"the right way: for the three cheap strategies, in {agree} of {total} seed and setting combinations the "
         f"validation replay and the test period agreed on whether adapting beats the static model."
     )
@@ -847,6 +881,120 @@ NEXT = """## What's next
 """
 
 
+def unc_readme_bullet(summary):
+    m = summary["mean"]["methods"]
+    pooled, cqr = m["conformal_pooled"], m["cqr"]
+    return (
+        f"- **Prediction intervals that are right on average can fail when it matters.** At a nominal "
+        f"{pct(1 - summary['alpha'])}, split conformal covers {pct(pooled['overall']['coverage'], 1)} of the "
+        f"test speeds, but only {pct(pooled['origin_congested']['coverage'])} when the last speed was below "
+        f"40 mph (against {pct(pooled['origin_free_flow']['coverage'])} in free flow). A quantile network with a "
+        f"conformal correction holds {pct(cqr['origin_congested']['coverage'])} there at the same average width."
+    )
+
+
+def shift_readme_bullet(summary):
+    std, stale = summary["settings"]["standard"], summary["settings"]["stale"]
+
+    def gain(setting, kind):
+        return -setting["strategies"][kind]["vs_static"]["estimate"]
+
+    naive = min(
+        std["strategies"][k]["vs_static"]["estimate"] for k in ("bias_ema", "bias_slot")
+    )
+    return (
+        f"- **Adapting a deployed model helps a little, and cheap adaptation can hurt.** Fine-tuning the output "
+        f"layer daily improves MAE by {gain(std, 'head_daily'):.3f} mph and fine-tuning the whole network weekly by "
+        f"{gain(std, 'retrain_weekly'):.3f} (for a model trained on only the first 40% of the timeline: "
+        f"{gain(stale, 'head_daily'):.3f} and {gain(stale, 'retrain_weekly'):.3f}), at "
+        f"{std['strategies']['head_daily']['adapt_seconds']:.0f} s and "
+        f"{std['strategies']['retrain_weekly']['adapt_seconds']:.0f} s for the 24 test days. Averaging past "
+        f"errors into the forecast was worse than doing nothing ({naive:+.3f} mph at best)."
+    )
+
+
+def scale_readme_text(scaling, cost):
+    sizes = scaling["sizes"]
+    small, large = sizes[0], sizes[-1]
+    models, gaps = scaling["models"], scaling["day_bootstrap"]
+    graph = [
+        gaps[str(k)]["sgraph_time_vs_sgru_time"]["estimate"]
+        for k in sizes
+        if str(k) in gaps
+    ]
+    vs = [(k, gaps[str(k)]["sgru_time_vs_gru_time"]) for k in sizes if str(k) in gaps]
+    better = [(k, g) for k, g in vs if g["ci95"][1] < 0]
+    names = ("gru_time", "graph_gru_time", "sgru_time", "sgraph_time")
+    change = {
+        n: models[n][str(large)]["core16_mae"]["mean"]
+        - models[n][str(small)]["core16_mae"]["mean"]
+        for n in names
+    }
+    dense = [change["gru_time"], change["graph_gru_time"]]
+    shared = [change["sgru_time"], change["sgraph_time"]]
+    source = cost or scaling
+    text = (
+        f"The graph helps the shared models at every size ({min(graph):+.3f} to {max(graph):+.3f} mph), "
+        f"which the dense models can't show because they already read every sensor."
+    )
+    if better:
+        text += (
+            f" Sharing the weights also wins once the network is big: at {join_and(k for k, _ in better)} "
+            f"sensors the shared GRU beats the dense one by "
+            f"{-max(g['estimate'] for _, g in better):.3f} to {-min(g['estimate'] for _, g in better):.3f} mph "
+            f"with {models['sgru_time'][str(large)]['parameters']:,} parameters instead of "
+            f"{models['gru_time'][str(large)]['parameters']:,}."
+        )
+    text += (
+        f" What it costs is compute: at {large} sensors the shared Graph-GRU needs "
+        f"{epoch_seconds(source['models']['sgraph_time'][str(large)]):.1f} s per epoch against "
+        f"{epoch_seconds(source['models']['graph_gru_time'][str(large)]):.1f} s for the dense one. And more "
+        f"sensors did not make the first {small} better: trained on all {large}, the dense models are "
+        f"{min(dense):+.3f} to {max(dense):+.3f} mph worse on those {small} targets, the shared ones "
+        f"{min(shared):+.3f} to {max(shared):+.3f}."
+    )
+    return text
+
+
+def unc_readme_text(summary):
+    m, _, rel, total = unc_facts(summary)
+    pooled, cqr, aci = m["conformal_pooled"], m["cqr"], m["conformal_aci"]
+    share = pooled["origin_congested"]["targets"] / total
+    return (
+        f"At a nominal {pct(1 - summary['alpha'])}, split conformal covers {pct(pooled['overall']['coverage'], 1)} "
+        f"of the test speeds, calibrated across all twelve horizons, while the Gaussian baselines overshoot it "
+        f"({pct(m['gaussian_train']['overall']['coverage'], 1)}) and drift away from the diagonal at other levels. "
+        f"But when the last speed was below 40 mph ({pct(share)} of the targets), split conformal covers "
+        f"{pct(pooled['origin_congested']['coverage'])} and ACI {pct(aci['origin_congested']['coverage'])}, against "
+        f"{pct(pooled['origin_free_flow']['coverage'])} in free flow: one quantile for everything is too small "
+        f"exactly when traffic is bad. The quantile network with a conformal correction learns widths that depend "
+        f"on the traffic state and holds {pct(cqr['origin_congested']['coverage'])} there, at the same average "
+        f"width ({cqr['overall']['width']:.1f} against {pooled['overall']['width']:.1f} mph) and with an interval "
+        f"score of {cqr['overall']['interval_score']:.1f} against {pooled['overall']['interval_score']:.1f}."
+    )
+
+
+def shift_readme_text(summary):
+    std, stale = summary["settings"]["standard"], summary["settings"]["stale"]
+
+    def gain(setting, kind):
+        return -setting["strategies"][kind]["vs_static"]["estimate"]
+
+    gap = stale["strategies"]["static"]["mae"] - std["strategies"]["static"]["mae"]
+    recovered = gain(stale, "retrain_weekly") / gap
+    return (
+        f"Fine-tuning the output layer daily improves the usual model's MAE by {gain(std, 'head_daily'):.3f} mph "
+        f"and fine-tuning the whole network weekly by {gain(std, 'retrain_weekly'):.3f}, and both intervals over "
+        f"test days exclude zero. For a stale model the gains are {gain(stale, 'head_daily'):.3f} and "
+        f"{gain(stale, 'retrain_weekly'):.3f}, so weekly fine-tuning wins back {pct(recovered)} of the "
+        f"{gap:.3f} mph the stale model lost. The output-layer update costs "
+        f"{std['strategies']['head_daily']['adapt_seconds']:.0f} s over the 24 test days against "
+        f"{std['strategies']['retrain_weekly']['adapt_seconds']:.0f} s for the weekly one. Averaging past errors "
+        f"into the forecast made things worse. The drift in these four months is mild, and the static model's "
+        f"error didn't grow with time since training, so the gains are small."
+    )
+
+
 def readme_blocks():
     """Bullets and short sections for the README, from whichever studies have run."""
     blocks = {
@@ -866,7 +1014,7 @@ def readme_blocks():
         small, large = sizes[0], sizes[-1]
         models = scaling["models"]
         found = scale_findings(scaling, cost)
-        blocks["bullets"] += [found[0], found[1]]
+        blocks["bullets"] += [found[0], found[2]]
         rows = [
             ("ha", "Historical average"),
             ("gru_time", "Dense GRU"),
@@ -884,7 +1032,7 @@ def readme_blocks():
         blocks["scaling"] = (
             f"## Scaling to all {large} sensors\n\n"
             f"Everything above uses {small} sensors from one highway. I ran the same comparison on nested "
-            f"sets of {', '.join(map(str, sizes))} sensors (each set contains the one before it), plus two "
+            f"sets of {join_and(sizes)} sensors (each set contains the one before it), plus two "
             f"new models that share one small GRU across every sensor, so their size doesn't depend on how "
             f"many sensors there are. Test MAE in mph on the same first {small} sensors, whatever size "
             f"the model was trained on:\n\n{head}\n|---|"
@@ -892,7 +1040,7 @@ def readme_blocks():
             * len(sizes)
             + f"\n{table}\n\n"
             f"![Accuracy by sensor count](reports/scaling/scaling-accuracy.png)\n\n"
-            f"{found[0][2:]} {found[1][2:]} {found[3][2:]}\n\n"
+            f"{scale_readme_text(scaling, cost)}\n\n"
             f"The sizes' own-population scores, the cost in time and memory, and the limits are in the "
             f"[scaling report](reports/scaling/report.md).\n"
         )
@@ -904,8 +1052,7 @@ def readme_blocks():
             f"| {m[n]['origin_congested']['coverage']:.3f} | {m[n]['overall']['interval_score']:.1f} |"
             for n in ("gaussian_train", "conformal_pooled", "conformal_aci", "cqr")
         )
-        found = unc_findings(unc)
-        blocks["bullets"] += [found[1], found[2]]
+        blocks["bullets"] += [unc_readme_bullet(unc)]
         blocks["uncertainty"] = (
             "## Prediction intervals\n\n"
             "A point forecast doesn't say how sure the model is, so I built 90% prediction intervals "
@@ -917,15 +1064,14 @@ def readme_blocks():
             "|---|---:|---:|---:|---:|\n"
             f"{rows}\n\n"
             "![Coverage by traffic condition](reports/uncertainty/uncertainty-conditions.png)\n\n"
-            f"{found[0][2:]} {found[1][2:]} {found[2][2:]}\n\n"
+            f"{unc_readme_text(unc)}\n\n"
             "The other methods, the reliability plot, coverage by horizon and day, and the limits are "
             "in the [intervals report](reports/uncertainty/report.md).\n"
         )
 
     if shf:
         std, stale = shf["settings"]["standard"], shf["settings"]["stale"]
-        found = shift_findings(shf)
-        blocks["bullets"] += [found[0]]
+        blocks["bullets"] += [shift_readme_bullet(shf)]
         rows = []
         for kind, label in SHIFT_LABELS.items():
             a, b = std["strategies"][kind], stale["strategies"][kind]
@@ -949,7 +1095,7 @@ def readme_blocks():
             "| Strategy | Standard model | Stale model | Adaptation seconds (standard) |\n"
             "|---|---:|---:|---:|\n" + "\n".join(rows) + "\n\n"
             "![MAE change against the static model](reports/shift/shift-gain.png)\n\n"
-            f"{found[0][2:]} {found[1][2:]} {found[3][2:]}\n\n"
+            f"{shift_readme_text(shf)}\n\n"
             "The data drift statistics, the regime breakdown and the limits are in the "
             "[drift report](reports/shift/report.md).\n"
         )
