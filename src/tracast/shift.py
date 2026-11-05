@@ -8,6 +8,8 @@ is no later than that forecast's last input row. The strategies:
 * static          the model as trained, never touched
 * bias_ema        a running average of the recent residuals, added to the forecast
                   (no gradients, almost free)
+* bias_slot       the same, kept separately for every time of day, so it learns
+                  "this model has been too slow at 17:00 lately" instead of a blur
 * head_daily      every day, fine-tune only the output layer on the last few days of
                   known windows
 * retrain_weekly  every week, fine-tune the whole network on everything known so far
@@ -37,7 +39,7 @@ from .provenance import git_state
 from . import topology
 from .stats import day_bootstrap
 
-STRATEGIES = ("static", "bias_ema", "head_daily", "retrain_weekly")
+STRATEGIES = ("static", "bias_ema", "bias_slot", "head_daily", "retrain_weekly")
 
 
 @dataclass
@@ -47,6 +49,7 @@ class ShiftConfig:
     seeds: list[int] = field(default_factory=lambda: [7, 42, 2026])
     settings: dict = field(default_factory=lambda: {"standard": 0.7, "stale": 0.4})
     etas: list[float] = field(default_factory=lambda: [0.005, 0.01, 0.02, 0.05, 0.1])
+    slot_etas: list[float] = field(default_factory=lambda: [0.1, 0.3, 0.5])
     head_days: int = 14
     head_lrs: list[float] = field(default_factory=lambda: [0.0001, 0.0005, 0.002])
     head_epochs: int = 1
@@ -191,6 +194,38 @@ def bias_ema(static, target, mask, eta):
             seen = mask[j, k]
             bias[k, seen] += eta * (residual[j, k, seen] - bias[k, seen])
         out[i] = static[i] + bias
+    return out
+
+
+def target_slots(dataset, idx):
+    """Time-of-day slot (weekday and weekend apart) of every target of every window."""
+    first = dataset.times.values[dataset.history + idx]
+    steps = np.arange(dataset.horizon) * np.timedelta64(5, "m")
+    stamps = pd.DatetimeIndex((first[:, None] + steps[None, :]).ravel())
+    slot = (stamps.hour * 60 + stamps.minute) // 5 + 288 * (stamps.dayofweek >= 5)
+    return np.asarray(slot).reshape(len(idx), dataset.horizon)
+
+
+def bias_slot(static, target, mask, slots, eta):
+    """bias_ema with one running average per time-of-day slot, horizon step and sensor.
+
+    The update has the same delay as bias_ema (the step-k target of window j arrives
+    before window j + 1 + k is forecast), and a slot is only updated by outcomes that
+    belong to it, so it learns from the same time of an earlier day.
+    """
+    windows, horizons, sensors = static.shape
+    residual = target - static
+    table = np.zeros((576, horizons, sensors))
+    out = np.empty_like(static)
+    steps = np.arange(horizons)
+    for i in range(windows):
+        for k in steps:
+            j = i - 1 - k
+            if j >= 0:
+                seen = mask[j, k]
+                row = table[slots[j, k], k]
+                row[seen] += eta * (residual[j, k, seen] - row[seen])
+        out[i] = static[i] + table[slots[i], steps]
     return out
 
 
@@ -366,6 +401,17 @@ def run_setting(config, data, graph_dir, name, fraction, seed, out):
         for eta in config.etas
     }
     eta = min(etas, key=etas.get)
+    val_slots = target_slots(dataset, val_idx)
+    slot_etas = {
+        e: float(
+            np.abs(
+                bias_slot(val_static, val_target, val_mask, val_slots, e) - val_target
+            )[val_mask].mean()
+        )
+        for e in config.slot_etas
+    }
+    slot_eta = min(slot_etas, key=slot_etas.get)
+    val_static_mae = float(np.abs(val_static - val_target)[val_mask].mean())
     head = {}
     for lr in config.head_lrs:
         pred, _, _ = replay(
@@ -394,6 +440,13 @@ def run_setting(config, data, graph_dir, name, fraction, seed, out):
         "adapt_seconds": time.perf_counter() - begin,
         "updates": len(test_idx),
     }
+    begin = time.perf_counter()
+    slotted = bias_slot(static, target, mask, target_slots(dataset, test_idx), slot_eta)
+    results["bias_slot"] = {
+        **score(slotted, target, mask, codes),
+        "adapt_seconds": time.perf_counter() - begin,
+        "updates": len(test_idx),
+    }
     for kind in ("head_daily", "retrain_weekly"):
         pred, seconds, updates = replay(
             model, dataset, test_idx, mean, std, config, kind, seed, lr
@@ -410,9 +463,12 @@ def run_setting(config, data, graph_dir, name, fraction, seed, out):
         "rows": prep["rows"],
         "chosen": {
             "eta": eta,
+            "slot_eta": slot_eta,
             "head_lr": lr,
             "eta_val_mae": etas,
+            "slot_eta_val_mae": slot_etas,
             "head_val_mae": head,
+            "static_val_mae": val_static_mae,
         },
         "strategies": results,
         "regimes": daily_regimes(
@@ -534,13 +590,15 @@ def figures(summary, out):
     out = Path(out)
     colors = {
         "static": "#667085",
-        "bias_ema": "#16a34a",
+        "bias_ema": "#a16207",
+        "bias_slot": "#16a34a",
         "head_daily": "#087e8b",
         "retrain_weekly": "#dc2626",
     }
     labels = {
         "static": "Static",
         "bias_ema": "Residual average",
+        "bias_slot": "Residual average by time of day",
         "head_daily": "Head fine-tune (daily)",
         "retrain_weekly": "Full fine-tune (weekly)",
     }

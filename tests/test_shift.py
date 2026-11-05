@@ -169,6 +169,7 @@ def test_the_whole_experiment_runs_on_a_small_series(series, tmp_path, monkeypat
         seeds=[7, 42],
         settings={"standard": 0.7, "stale": 0.4},
         etas=[0.05, 0.2],
+        slot_etas=[0.3],
         head_lrs=[0.001],
         retrain_every=1,
         retrain_epochs=1,
@@ -178,10 +179,45 @@ def test_the_whole_experiment_runs_on_a_small_series(series, tmp_path, monkeypat
     for s in summary["settings"].values():
         assert set(s["strategies"]) == set(shift.STRATEGIES)
         assert s["strategies"]["static"]["adapt_seconds"] == 0
-        for kind in ("bias_ema", "head_daily", "retrain_weekly"):
+        for kind in ("bias_ema", "bias_slot", "head_daily", "retrain_weekly"):
             low, high = s["strategies"][kind]["vs_static"]["ci95"]
             assert low <= s["strategies"][kind]["vs_static"]["estimate"] <= high
         assert {"least_shifted_third", "most_shifted_third"} <= set(s["regimes"])
     shift.figures(summary, tmp_path)
     for name in ("shift-drift.png", "shift-daily.png", "shift-gain.png"):
         assert (tmp_path / name).stat().st_size > 0
+
+
+def test_slot_bias_learns_a_daily_pattern_the_blurred_average_cannot():
+    steps = 40
+    slots = (np.arange(400) % steps)[:, None] + np.zeros((400, 3), dtype=int)
+    pattern = np.where(slots % 2 == 0, 4.0, -4.0)[:, :, None]  # alternates every slot
+    target = np.full((400, 3, 2), 50.0)
+    static = target - pattern
+    mask = np.ones(target.shape, dtype=bool)
+    learned = shift.bias_slot(static, target, mask, slots, 0.5)
+    blurred = shift.bias_ema(static, target, mask, 0.05)
+    assert np.abs(learned - target)[200:].mean() < 0.3
+    assert np.abs(blurred - target)[200:].mean() > 3.0
+    start = 150
+    changed = target.copy()
+    changed[start:] += 100.0
+    other = shift.bias_slot(static, changed, mask, slots, 0.5)
+    for k in range(3):
+        np.testing.assert_array_equal(
+            learned[: start + k + 1, k], other[: start + k + 1, k]
+        )
+    assert not np.array_equal(learned[:, 0], other[:, 0])
+
+
+def test_target_slots_follow_the_clock(series):
+    windows = Windows(series, Scaler().fit(series))
+    slots = shift.target_slots(windows, np.array([0, 1]))
+    assert slots.shape == (2, 12)
+    assert (
+        slots[0, 0] == 12 and slots[0, 1] == 13 and slots[1, 0] == 13
+    )  # first target is row 12
+    # a weekend target lands in the second block of 288 slots
+    index = pd.date_range("2012-03-05", periods=1900, freq="5min")  # starts on a Monday
+    weekend_window = int(np.flatnonzero(index.dayofweek >= 5)[0]) - windows.history
+    assert shift.target_slots(windows, np.array([weekend_window]))[0, 0] >= 288
