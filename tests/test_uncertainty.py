@@ -116,6 +116,16 @@ def test_a_full_seed_runs_every_method_and_keeps_calibration_out_of_training(
     # quantile methods only exist at the primary level
     assert set(result["reliability"]["cqr"]) == {"0.1"}
     assert set(result["reliability"]["conformal_pooled"]) == {"0.1", "0.3"}
+    # the step-size sweep: gamma 0 never moves the level, so it is split conformal
+    sweep = result["aci_sweep"]
+    assert set(sweep) == {str(g) for g in cfg.gamma_sweep}
+    still = sweep["0.0"]["overall"]
+    assert still["coverage"] == pytest.approx(
+        result["methods"]["conformal_pooled"]["overall"]["coverage"]
+    )
+    assert still["width"] == pytest.approx(
+        result["methods"]["conformal_pooled"]["overall"]["width"]
+    )
     # a higher nominal level gives wider intervals
     pooled = result["reliability"]["conformal_pooled"]
     assert pooled["0.1"]["width"] > pooled["0.3"]["width"]

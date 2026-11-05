@@ -61,6 +61,9 @@ class UncertaintyConfig:
         default_factory=lambda: [0.05, 0.1, 0.2, 0.3, 0.5]
     )
     gamma: float = 0.005
+    gamma_sweep: list[float] = field(
+        default_factory=lambda: [0.0, 0.001, 0.005, 0.02, 0.05]
+    )
     rolling_days: int = 7
     congestion_mph: float = 40.0
 
@@ -292,6 +295,25 @@ def run_seed(cfg, data, graph_dir, seed, out):
             f"width {methods[name]['overall']['width']:.2f} mph",
             flush=True,
         )
+    # how much the ACI step size matters; the main table keeps the preset gamma
+    sweep = {}
+    for gamma in cfg.gamma_sweep:
+        low, high = C.adaptive_intervals(
+            test["pred"],
+            test["target"],
+            test["mask"],
+            C.abs_residuals(cal["pred"], cal["target"]),
+            cal["mask"],
+            cfg.alpha,
+            gamma,
+        )
+        scored = C.evaluate_intervals(
+            low, high, test["target"], test["mask"], cfg.alpha, groups
+        )
+        sweep[str(gamma)] = {
+            key: scored[key]
+            for key in ("overall", "origin_congested", "origin_free_flow")
+        }
     keep = test["mask"]
     result = {
         "seed": seed,
@@ -304,6 +326,7 @@ def run_seed(cfg, data, graph_dir, seed, out):
         "test_targets": int(keep.sum()),
         "methods": methods,
         "reliability": reliability,
+        "aci_sweep": sweep,
     }
     write_json(out / "result.json", result)
     return result
@@ -343,7 +366,14 @@ def run(cfg, data, graph_dir, out):
             else run_seed(cfg, data, graph_dir, seed, folder)
         )
     mean, sd = average(
-        [{"methods": r["methods"], "reliability": r["reliability"]} for r in results]
+        [
+            {
+                "methods": r["methods"],
+                "reliability": r["reliability"],
+                "aci_sweep": r["aci_sweep"],
+            }
+            for r in results
+        ]
     )
     summary = {
         "alpha": cfg.alpha,
