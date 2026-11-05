@@ -20,7 +20,14 @@
   "calibration": 0.05,
   "congestion_mph": 40.0,
   "gamma": 0.005,
-  "git_commit": "440fd0e9620a23d8d17a4eaaccc675ed06d39312",
+  "gamma_sweep": [
+    0.0,
+    0.001,
+    0.005,
+    0.02,
+    0.05
+  ],
+  "git_commit": "8954afc1f80ca531095d1d8113755e7bf2ec77ca",
   "git_dirty": false,
   "model": "gru_time",
   "reliability_alphas": [

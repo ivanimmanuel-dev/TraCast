@@ -48,13 +48,27 @@ Split conformal is calibrated across horizons, with coverage between 0.904 and 0
 
 ## Why plain conformal fails in congestion
 
-Split conformal guarantees coverage on average over windows that look alike. Here it uses one quantile for everything, but the errors are not alike: when traffic is already congested the next hour is much harder to predict, so the residuals are bigger. One quantile that is right on average is too small in congestion and too big in free flow, which is exactly what the table shows (63% against 93%). Doing it per sensor doesn't help in congestion (62%) because the problem is the traffic state, not the sensor, although it does lift the weakest sensor from 0.705 to 0.848. ACI and rolling recalibration react to drift in time, which isn't what is wrong here: they leave the congestion gap in place (66% and 62%).
+Split conformal guarantees coverage on average over windows that look alike. Here it uses one quantile for everything, but the errors are not alike: when traffic is already congested the next hour is much harder to predict, so the residuals are bigger. One quantile that is right on average is too small in congestion and too big in free flow, which is exactly what the table shows (63% against 93%). Doing it per sensor doesn't help in congestion (62%) because the problem is the traffic state, not the sensor, although it does lift the weakest sensor from 0.705 to 0.848. ACI and rolling recalibration react to drift in time, which isn't what is wrong here: at the preset step size they leave the congestion gap in place (66% and 62%); the step-size sweep further down shows what a bigger step does.
 
 The quantile network learns the state-dependent width itself. In congestion its intervals are 43 mph wide on average against 11 in free flow, and the conformal correction then fixes the overall level. At the same average width, that moves congestion coverage from 63% to 88%.
 
 ![Coverage on each test day](uncertainty-daily.png)
 
 Day by day, coverage for split conformal ranges from 0.854 to 0.971. The ACI and rolling versions have nearly the same range (0.865 to 0.963 and 0.844 to 0.974), so there is no strong drift in coverage over these 24 days for them to correct. CQR's range is 0.868 to 0.921.
+
+## How much the ACI step size matters
+
+ACI moves its level by gamma after every window. A step of 0 never moves it, which is plain split conformal, and the main table uses 0.005, a value I picked without tuning it. This sweep on the same test windows is a sensitivity check, not a way to choose the step. Averages over the seeds:
+
+| gamma | Coverage | Width (mph) | Free flow | Congested | Interval score |
+|---|---:|---:|---:|---:|---:|
+| 0 | 0.905 | 13.9 | 0.930 | 0.627 | 32.0 |
+| 0.001 | 0.903 | 13.6 | 0.928 | 0.626 | 32.0 |
+| 0.005 | 0.900 | 13.9 | 0.922 | 0.659 | 32.1 |
+| 0.02 | 0.900 | 16.2 | 0.908 | 0.813 | 31.5 |
+| 0.05 | 0.900 | 19.6 | 0.903 | 0.876 | 32.7 |
+
+Overall coverage stays between 0.900 and 0.905 and coverage in congestion between 0.626 and 0.876. A bigger step does raise congestion coverage, from 63% with no adaptation to 88% at gamma 0.05. But it does that by widening every interval, not only the ones in congestion: the average width goes from 13.9 to 19.6 mph, free-flow coverage drops from 93% to 90%, and the interval score only moves between 31.5 and 32.7. ACI follows runs of misses over time, but it keeps one level for all sensors at a horizon, so when a jam makes some sensors miss it widens the intervals of the free-flowing ones too. The quantile network with the conformal correction reaches 88% in congestion at 13.8 mph with a score of 19.7. The lowest interval score is at gamma 0.02 (31.5).
 
 ## Limits
 
