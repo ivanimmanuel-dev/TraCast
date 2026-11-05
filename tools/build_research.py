@@ -260,7 +260,9 @@ def build_report():
     )
     take_new = "".join(b + "\n" for b in bullets)
     next_section = (
-        blocks["next"].replace("## What's next", "## 12. Where this could go next")
+        blocks["next"]
+        .replace("## What's next", "## 12. Where this could go next")
+        .replace("](reports/", "](")
         + "\n"
     )
     text = REPORT.format(
@@ -476,7 +478,7 @@ def build_brief(first_pass, ext, fed):
             )
         figure = REPORTS / "uncertainty/uncertainty-conditions.png"
         if figure.exists():
-            later.append(Image(str(figure), width=330, height=120))
+            later.append(Image(str(figure), width=240, height=87))
     story += [
         drawing,
         body(

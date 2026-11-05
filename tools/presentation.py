@@ -437,7 +437,7 @@ TraCast forecasts traffic speed 5 to 60 minutes ahead from the last hour of sens
 
 I wanted to know four things. Do recurrent models beat simple baselines? Does the road graph help? Does knowing the time of day help? And does federated training lose anything compared with training on all the data in one place? Then I scaled it up to all 207 sensors, put prediction intervals on the forecasts and checked what happens when traffic drifts.
 
-[Technical report](reports/research-report.md) · [Two-page brief](reports/research-brief.pdf) · [Scaling](reports/scaling/report.md) · [Intervals](reports/uncertainty/report.md) · [Drift](reports/shift/report.md) · [Audit](docs/audit.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
+[Technical report](reports/research-report.md) · [Two-page brief](reports/research-brief.pdf) · [Scaling](reports/scaling/report.md) · [Shared variants](reports/variants/report.md) · [Intervals](reports/uncertainty/report.md) · [Drift](reports/shift/report.md) · [Audit](docs/audit.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
 
 ## What I found
 
@@ -498,8 +498,9 @@ Then the experiments:
 # federated study
 .\\.venv\\Scripts\\python.exe -m tracast.federated_study --config configs/federated-study.json --out runs/federated-study
 
-# all 207 sensors, prediction intervals, drift (the scaling run takes a few hours)
+# all 207 sensors, shared-model variants, prediction intervals, drift (the scaling run takes a few hours)
 .\\.venv\\Scripts\\python.exe -m tracast.cli scaling --config configs/scaling.json --out runs/scaling
+.\\.venv\\Scripts\\python.exe -m tracast.cli scaling --config configs/variants.json --out runs/variants
 .\\.venv\\Scripts\\python.exe -m tracast.cli uncertainty --config configs/uncertainty.json --out runs/uncertainty
 .\\.venv\\Scripts\\python.exe -m tracast.cli shift --config configs/shift.json --out runs/shift
 ```

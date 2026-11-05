@@ -4,7 +4,7 @@ TraCast forecasts traffic speed 5 to 60 minutes ahead from the last hour of sens
 
 I wanted to know four things. Do recurrent models beat simple baselines? Does the road graph help? Does knowing the time of day help? And does federated training lose anything compared with training on all the data in one place? Then I scaled it up to all 207 sensors, put prediction intervals on the forecasts and checked what happens when traffic drifts.
 
-[Technical report](reports/research-report.md) · [Two-page brief](reports/research-brief.pdf) · [Scaling](reports/scaling/report.md) · [Intervals](reports/uncertainty/report.md) · [Drift](reports/shift/report.md) · [Audit](docs/audit.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
+[Technical report](reports/research-report.md) · [Two-page brief](reports/research-brief.pdf) · [Scaling](reports/scaling/report.md) · [Shared variants](reports/variants/report.md) · [Intervals](reports/uncertainty/report.md) · [Drift](reports/shift/report.md) · [Audit](docs/audit.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
 
 ## What I found
 
@@ -14,6 +14,7 @@ I wanted to know four things. Do recurrent models beat simple baselines? Does th
 - **Federated averaging is about as good as training each client alone.** At 5 rounds with balanced groups, federated averaging gets 3.774 mph, local-only 3.796 and centralized 3.750. With congestion-grouped clients it is 3.836 against 3.769.
 - **In the shared models the graph helps, at 5 of 5 sizes.** Adding the neighbor averages changes MAE by -0.057 to -0.029 mph. Without them a shared model sees nothing about its neighbors, so this is a clean test of the graph, which the dense models can't give.
 - **Sharing the weights wins once the network is big.** At 128 and 207 sensors the shared GRU beats the dense GRU by 0.157 to 0.242 mph (the interval excludes zero), and at 16, 32 and 64 they are level. It does that with 4,044 parameters instead of 105,396.
+- **In a shared model, telling the sensors apart matters more than the graph.** A learned 4-number vector per sensor changes test MAE by -0.208 to -0.107 mph at 16 and 64 sensors, the graph's neighbor averages by -0.055 to -0.050 and an LSTM instead of a GRU by -0.030 to -0.020 (negative is better).
 - **Prediction intervals that are right on average can fail when it matters.** At a nominal 90%, split conformal covers 90.5% of the test speeds, but only 63% when the last speed was below 40 mph (against 93% in free flow). A quantile network with a conformal correction holds 88% there at the same average width.
 - **Adapting a deployed model helps a little, and cheap adaptation can hurt.** Fine-tuning the output layer daily improves MAE by 0.031 mph and fine-tuning the whole network weekly by 0.042 (for a model trained on only the first 40% of the timeline: 0.072 and 0.188), at 3 s and 27 s for the 24 test days. Averaging past errors into the forecast was worse than doing nothing (+0.094 mph at best).
 
@@ -52,6 +53,8 @@ Everything above uses 16 sensors from one highway. I ran the same comparison on 
 
 The graph helps the shared models at every size (-0.057 to -0.029 mph), which the dense models can't show because they already read every sensor. Sharing the weights also wins once the network is big: at 128 and 207 sensors the shared GRU beats the dense one by 0.157 to 0.242 mph with 4,044 parameters instead of 105,396. What it costs is compute: at 207 sensors the shared Graph-GRU needs 23.9 s per epoch against 2.1 s for the dense one. And more sensors did not make the first 16 better: trained on all 207, the dense models are +0.471 to +0.494 mph worse on those 16 targets, the shared ones +0.192 to +0.220.
 
+Two variants of the shared models are in the [variants report](reports/variants/report.md), tested at 16 and 64 sensors. A learned vector of 4 numbers per sensor, which lets the shared network tell sensors apart, changes the test MAE on the sensors the models train on by -0.208 to -0.107 mph (negative is better), a bigger effect than the graph has, and with it the shared GRU scores 3.045 on the first 16 sensors when trained on 64, against 3.233 for the dense GRU. The catch is that a model with those vectors can't forecast a sensor it wasn't trained on. Swapping the GRU for an LSTM changes it by -0.030 to -0.020.
+
 The sizes' own-population scores, the cost in time and memory, and the limits are in the [scaling report](reports/scaling/report.md).
 
 ## Prediction intervals
@@ -67,7 +70,7 @@ A point forecast doesn't say how sure the model is, so I built 90% prediction in
 
 ![Coverage by traffic condition](reports/uncertainty/uncertainty-conditions.png)
 
-At a nominal 90%, split conformal covers 90.5% of the test speeds, calibrated across all twelve horizons, while the Gaussian baselines overshoot it (93.8%) and drift away from the diagonal at other levels. But when the last speed was below 40 mph (8% of the targets), split conformal covers 63% and ACI 66%, against 93% in free flow: one quantile for everything is too small exactly when traffic is bad. The quantile network with a conformal correction learns widths that depend on the traffic state and holds 88% there, at the same average width (13.8 against 13.9 mph) and with an interval score of 19.7 against 32.0.
+At a nominal 90%, split conformal covers 90.5% of the test speeds, calibrated across all twelve horizons, while the Gaussian baselines overshoot it (93.8%) and drift away from the diagonal at other levels. But when the last speed was below 40 mph (8% of the targets), split conformal covers 63% and ACI 66%, against 93% in free flow: one quantile for everything is too small exactly when traffic is bad. The quantile network with a conformal correction learns widths that depend on the traffic state and holds 88% there, at the same average width (13.8 against 13.9 mph) and with an interval score of 19.7 against 32.0. Letting ACI adapt faster does lift congestion coverage to 88%, but only by widening every interval (the average goes from 13.9 to 19.6 mph).
 
 The other methods, the reliability plot, coverage by horizon and day, and the limits are in the [intervals report](reports/uncertainty/report.md).
 
@@ -136,8 +139,9 @@ Then the experiments:
 # federated study
 .\.venv\Scripts\python.exe -m tracast.federated_study --config configs/federated-study.json --out runs/federated-study
 
-# all 207 sensors, prediction intervals, drift (the scaling run takes a few hours)
+# all 207 sensors, shared-model variants, prediction intervals, drift (the scaling run takes a few hours)
 .\.venv\Scripts\python.exe -m tracast.cli scaling --config configs/scaling.json --out runs/scaling
+.\.venv\Scripts\python.exe -m tracast.cli scaling --config configs/variants.json --out runs/variants
 .\.venv\Scripts\python.exe -m tracast.cli uncertainty --config configs/uncertainty.json --out runs/uncertainty
 .\.venv\Scripts\python.exe -m tracast.cli shift --config configs/shift.json --out runs/shift
 ```
@@ -146,7 +150,7 @@ On Linux or WSL use `python3.11` and `.venv/bin/python`. The installed `tracast`
 
 ## What's next
 
-- Give the bigger networks more capacity (a larger hidden size, a learned vector per sensor) and train them to convergence. The same-16 scores got worse as the population grew, and I held the capacity and the update budget fixed, so this is the first thing to try.
+- Give the bigger networks more capacity (a larger hidden size; the [variants report](reports/variants/report.md) tried a learned vector per sensor at 16 and 64 sensors only) and train them to convergence. The same-16 scores got worse as the population grew, and I held the capacity and the update budget fixed, so this is the first thing to try.
 - Hold out sensors: train the shared model on some sensors and test it on ones it has never seen. Sharing weights makes that possible, and the dense models can't do it at all.
 - Multi-hop or learned graph features in the shared model, since one-hop averages were enough to help but are the simplest choice.
 - Intervals that are joint across horizons and sensors, and conformal methods with guarantees conditional on the traffic state instead of only on average.
