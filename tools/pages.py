@@ -22,6 +22,86 @@ def pct(x, places=0):
     return f"{100 * x:.{places}f}%"
 
 
+# --- audit ---------------------------------------------------------------------------
+
+AUDIT = """# Audit
+
+Before building on the code I went through it looking for leakage, wrong assumptions and things that would break at a bigger scale. This page says what I checked, what I found and what is still open. Nothing in here is a result of the models; the numbers about the data come from `tools/data_audit.py` ([data-audit.json](../reports/data-audit.json)).
+
+## Bugs found and fixed
+
+- **The sensor-subset code couldn't do all 207 sensors.** It walked the graph from the first sensor and raised an error if that walk didn't reach enough sensors. The graph has {components} components, so asking for all of them failed. The new `order()` finishes the first component and then adds the leftover sensors in file order, and every subset is a prefix of that one list. The old rule is the same walk, so the 16-sensor subset is unchanged (a test checks it against the old function, and the seed-42 benchmark runs still give the recorded model hashes).
+- **The dense graph ablation could not isolate the graph.** The "self only" model still got every sensor's readings through its input layer, so it was never really without neighbors. The earlier write-up said so, but the experiment couldn't fix it. The shared-weight models can: a shared GRU sees only its own sensor, and the shared Graph-GRU adds the two neighbor averages, nothing else.
+- **A plotting crash after a long run** (found earlier): early-stopped runs have different lengths and the convergence plot assumed equal ones. Fixed, with a test.
+
+I didn't find anything else that was wrong in the original pipeline, and I'd rather say that than pad this list.
+
+## Leakage checks
+
+None found. These are checked by tests, not just by reading the code (`tests/test_leakage.py` and the tests next to each module):
+
+- Rewrite every test row and the trained weights, the validation curve and the chosen epoch stay bit-for-bit the same. Only the test score changes.
+- Rewrite the calibration rows (the part used for conformal intervals) and training and checkpoint choice don't move either.
+- The scalers, the training windows, the historical average and the calendar features come from training rows or from the clock only.
+- The graph comes from published distances and never from speeds, and the chosen sensors don't depend on speeds.
+- In the day-by-day replay a window counts as known only once its last target row has been observed. The tests corrupt the not-yet-arrived targets and check that no strategy's forecasts change, and that the online interval methods never read an outcome before it arrives.
+
+One choice worth knowing about: in the replay experiment, missing readings are forward-filled across the split boundaries (the past is known when a model runs for real). The other experiments fill within each split, which is slightly more conservative at the start of validation and test. It only affects the first few windows of a split.
+
+## What the data looks like
+
+- **Graph:** {edges} directed edges, {components} components (sizes {component_sizes}), and the sensor order in the data file matches the graph file.
+- **Timestamps:** the slowest weekday hours are {weekday_slow} (the evening and morning rush) and weekends are slowest around {weekend_slow}, so the timestamps behave like local Los Angeles time even though the file doesn't say.
+- **Missing readings** (NaN or zero) are {train_missing} of the readings in the training period and {val_missing} in validation but {test_missing} in the test period, and {test_bad} sensors have more than 30% missing in the test period against none in training. So the test period isn't just later, it is noisier. Every experiment masks missing targets, so scores only cover observed readings, but a model sees more stale (forward-filled) inputs in the test period than it was trained on.
+- **Congestion:** {train_cong} of observed training readings are below 40 mph, {test_cong} in the test period.
+- **The first 16 sensors** sit on one highway corridor ([map](../reports/scaling/scaling-subsets.png)), which is a limit on what the earlier results say about the whole network.
+
+## Limits that are still open
+
+- Zero counts as missing, which also drops real stopped traffic.
+- One city and one four-month period, with one test window of {test_days} days.
+- Overlapping windows (one per five minutes) are strongly correlated, so the number of independent test points is far smaller than the number of windows. The test-day intervals are my way of respecting that, and they are wide for that reason.
+- Seeds: two to five per cell depending on the experiment.
+
+## Speed and memory
+
+Nothing in the data pipeline was slow enough to change. The dense models cost about the same at every sensor count. The shared models do one recurrent pass per sensor and window, so their time per update grows roughly with the sensor count; that cost is measured in the [scaling report](../reports/scaling/report.md).
+"""
+
+
+def build_audit():
+    audit = load("reports/data-audit.json")
+    if audit is None:
+        return None
+    splits = audit["splits"]
+    sizes = audit["graph"]["components"]
+    test_rows = splits["test"]["rows"]
+
+    def pcts(x):
+        return pct(x, 1)
+
+    text = AUDIT.format(
+        components=len(sizes),
+        edges=audit["graph"]["directed_edges"],
+        component_sizes=" and ".join(map(str, sizes)),
+        weekday_slow=", ".join(
+            f"{h}:00" for h in audit["slowest_hours_of_day"]["weekday"][:3]
+        ),
+        weekend_slow=", ".join(
+            f"{h}:00" for h in audit["slowest_hours_of_day"]["weekend"][:2]
+        ),
+        train_missing=pcts(splits["train"]["missing_share"]),
+        val_missing=pcts(splits["val"]["missing_share"]),
+        test_missing=pcts(splits["test"]["missing_share"]),
+        test_bad=splits["test"]["sensors_over_30_percent_missing"],
+        train_cong=pcts(splits["train"]["share_below_40_mph"]),
+        test_cong=pcts(splits["test"]["share_below_40_mph"]),
+        test_days=round(test_rows / 288),
+    )
+    (ROOT / "docs/audit.md").write_bytes(text.encode())
+    return audit
+
+
 # --- scaling -------------------------------------------------------------------------
 
 SCALE_LABELS = {
@@ -276,6 +356,264 @@ def build_scaling():
     return summary
 
 
+# --- drift and adaptation ------------------------------------------------------------
+
+SHIFT_LABELS = {
+    "static": "Static model",
+    "bias_ema": "Residual average",
+    "bias_slot": "Residual average by time of day",
+    "head_daily": "Output layer fine-tuned daily",
+    "retrain_weekly": "Whole network fine-tuned weekly",
+}
+SETTING_TEXT = {
+    "standard": "Standard setting: the model is trained on the first 70% of the timeline, as everywhere else",
+    "stale": "Stale setting: the model is trained on only the first 40%, so a long stretch it has never seen sits between its training and the test period",
+}
+
+
+def shift_table(setting):
+    base = setting["strategies"]["static"]["mae"]
+    rows = []
+    for kind, label in SHIFT_LABELS.items():
+        e = setting["strategies"][kind]
+        sd = f" ({e['mae_sd']:.3f})" if e["mae_sd"] is not None else ""
+        if kind == "static":
+            change = ""
+        else:
+            g = e["vs_static"]
+            change = (
+                f"{g['estimate']:+.3f} ({g['ci95'][0]:+.3f} to {g['ci95'][1]:+.3f})"
+            )
+        seconds = "0" if kind == "static" else f"{e['adapt_seconds']:.1f}"
+        rows.append(
+            f"| {label} | {e['mae']:.3f}{sd} | {change} | {e['per_horizon_mae'][-1]:.3f} "
+            f"| {seconds} | {e['updates'] if kind != 'static' else ''} |"
+        )
+    return "\n".join(rows), base
+
+
+def drift_rows(blocks):
+    return "\n".join(
+        f"| {b['start']}{' (train)' if b['in_train'] else ''} | {b['mean_speed']:.1f} "
+        f"| {pct(b['congested_share'], 1)} | {pct(b['missing_share'], 1)} | {b['js_vs_train_bits']:.4f} |"
+        for b in blocks
+    )
+
+
+def regime_rows(setting):
+    names = {
+        "least_shifted_third": "Least shifted third of days",
+        "most_shifted_third": "Most shifted third of days",
+        "weekday": "Weekdays",
+        "weekend": "Weekends",
+    }
+    rows = []
+    for key, label in names.items():
+        r = setting["regimes"].get(key)
+        if r:
+            rows.append(
+                f"| {label} | " + " | ".join(f"{r[k]:.3f}" for k in SHIFT_LABELS) + " |"
+            )
+    return "\n".join(rows)
+
+
+def shift_findings(summary):
+    std, stale = summary["settings"]["standard"], summary["settings"]["stale"]
+    out = []
+
+    def best(setting):
+        kinds = [k for k in SHIFT_LABELS if k != "static"]
+        return min(kinds, key=lambda k: setting["strategies"][k]["mae"])
+
+    for name, setting in (("standard", std), ("stale", stale)):
+        top = best(setting)
+        e = setting["strategies"][top]
+        g = e["vs_static"]
+        apart = g["ci95"][1] < 0
+        out.append(
+            f"- **{name.capitalize()} model:** the best strategy is "
+            f"{SHIFT_LABELS[top].lower()}, {g['estimate']:+.3f} mph against the static model "
+            f"({setting['strategies']['static']['mae']:.3f}), and the test-day interval "
+            f"{'excludes' if apart else 'includes'} zero ({g['ci95'][0]:+.3f} to {g['ci95'][1]:+.3f})."
+        )
+    gap = stale["strategies"]["static"]["mae"] - std["strategies"]["static"]["mae"]
+    recovered = {
+        k: (stale["strategies"]["static"]["mae"] - stale["strategies"][k]["mae"]) / gap
+        for k in SHIFT_LABELS
+        if k != "static"
+    }
+    if gap > 0:
+        out.append(
+            f"- **A stale model is {gap:.3f} mph worse than a fresh one**, and adapting wins back "
+            + ", ".join(
+                f"{pct(v)} ({SHIFT_LABELS[k].lower()})"
+                for k, v in recovered.items()
+                if v > 0
+            )
+            + (
+                " of that gap."
+                if any(v > 0 for v in recovered.values())
+                else "none of it."
+            )
+        )
+    cheap, full = std["strategies"]["head_daily"], std["strategies"]["retrain_weekly"]
+    out.append(
+        f"- **Cost:** over the {len(std['strategies']['static']['daily_mae'])} test days, fine-tuning the output layer "
+        f"daily takes {cheap['adapt_seconds']:.0f} s and fine-tuning the whole network weekly takes "
+        f"{full['adapt_seconds']:.0f} s, about x{full['adapt_seconds'] / cheap['adapt_seconds']:.0f} more."
+    )
+    return out
+
+
+SHIFT = """# Drift and adaptation
+
+A forecaster is trained once on the past and then used for a long time. Traffic changes, so I wanted to know three things: does the model get worse as time moves away from its training data, does adapting it help, and is it worth the compute.
+
+## What changes in the data
+
+Statistics of the 16 sensors in blocks of 14 days. The last column is how far the block's speed distribution is from the training period's (Jensen-Shannon divergence in bits, 0 means identical).
+
+| Block starting | Mean speed (mph) | Readings below 40 mph | Missing readings | Distance from training |
+|---|---:|---:|---:|---:|
+{drift}
+
+{drift_text}
+
+![Drift in the data](shift-drift.png)
+
+## Setup
+
+The test period is replayed one day at a time, the way a deployed model would run. At the start of each day a strategy may use only data that has already been observed: a window counts as known once its last target is in the past, and a test corrupts the not-yet-arrived targets to check that nothing leaks. The strategies:
+
+- **Static model**: trained once, never touched.
+- **Residual average**: add a running average of the model's recent errors (per horizon and sensor) to its forecast. No training, almost free.
+- **Residual average by time of day**: the same, but one average for every time of day (weekday and weekend separately), because errors depend on the hour.
+- **Output layer fine-tuned daily**: every morning, fine-tune only the last layer on the most recent 14 days of known windows.
+- **Whole network fine-tuned weekly**: every 7 days, fine-tune all the weights on everything known so far.
+
+The model is the dense GRU with calendar inputs on 16 sensors, 3 seeds. I used two settings: the standard one (trained on the first 70%, like everywhere else) and a stale one (trained on only the first 40%, so there are {gap_days} days it has never seen before the test period starts, which the adaptive strategies can use once they are known). The learning rate for the output layer and the averaging rate of the cheap strategies are chosen by replaying the validation part, never the test part. Costs are wall-clock seconds on the laptop.
+
+## Results
+
+Test MAE in mph (SD over seeds), the change against the static model with a 95% interval from resampling test days (negative is better), the 60-minute MAE, and the adaptation cost over the whole test period.
+
+**{standard_text}.**
+
+| Strategy | MAE | Change vs static | MAE at 60 min | Adaptation seconds | Updates |
+|---|---:|---:|---:|---:|---:|
+{standard_table}
+
+**{stale_text}.**
+
+| Strategy | MAE | Change vs static | MAE at 60 min | Adaptation seconds | Updates |
+|---|---:|---:|---:|---:|---:|
+{stale_table}
+
+{findings}
+
+![MAE change against the static model](shift-gain.png)
+
+{validation_text}
+
+![Test MAE per day](shift-daily.png)
+
+## Where does adapting help
+
+Test MAE by kind of day, standard setting. "Shifted" ranks the test days by how far their speed distribution is from the training period's.
+
+| Days | {strategy_heads} |
+|---|{strategy_rule}
+{regimes_standard}
+
+Same for the stale setting:
+
+| Days | {strategy_heads} |
+|---|{strategy_rule}
+{regimes_stale}
+
+## Limits
+
+- One network, one model and 24 test days. A difference of a few hundredths of a mph is about the size of the day-to-day variation, which is why the intervals matter more than the averages.
+- The drift in these four months is mild (see the table at the top), so the standard setting has little to adapt to. The stale setting is a way to get a bigger gap, but it is a constructed one, not natural drift.
+- The strategies and their settings are small choices from a short list. Other adaptation methods (replay buffers, learning-rate schedules, change detection) could do better, and the retraining baseline is fine-tuning from the current weights, not training from scratch.
+- Adaptation costs are for this CPU. Retraining scales with the amount of data it uses, the cheap strategies don't.
+- No change-point detection: every strategy updates on a fixed schedule whether or not anything changed.
+
+## Reproduce
+
+```powershell
+.\\.venv\\Scripts\\python.exe -m tracast.cli shift --config configs/shift.json --out runs/shift
+```
+
+Files: [summary.json](summary.json), [config.json](config.json), per-seed results in `standard-seed-*.json` and `stale-seed-*.json`.
+"""
+
+
+def shift_page(summary, config):
+    std, stale = summary["settings"]["standard"], summary["settings"]["stale"]
+    table_s, _ = shift_table(std)
+    table_t, _ = shift_table(stale)
+    blocks = std["drift"]
+    train_blocks = [b for b in blocks if b["in_train"]]
+    later = [b for b in blocks if not b["in_train"]]
+
+    def mean(items, key):
+        return sum(b[key] * b["rows"] for b in items) / sum(b["rows"] for b in items)
+
+    drift_text = (
+        f"In the training blocks {pct(mean(train_blocks, 'missing_share'), 1)} of the readings are missing, "
+        f"after them {pct(mean(later, 'missing_share'), 1)}. The share of readings below 40 mph goes from "
+        f"{pct(mean(train_blocks, 'congested_share'), 1)} to {pct(mean(later, 'congested_share'), 1)}, "
+        f"and the mean speed from {mean(train_blocks, 'mean_speed'):.1f} to {mean(later, 'mean_speed'):.1f} mph. "
+        f"These are small shifts, so any adaptation gain here will be small too."
+    )
+    stale_rows = stale["rows"]
+    gap_days = round((stale_rows["test"][0] - stale_rows["val"][1]) / 288)
+    kinds = list(SHIFT_LABELS)
+    # did the validation replay predict the direction of the test change?
+    agree, total = 0, 0
+    for setting in (std, stale):
+        for kind, val_key in (
+            ("bias_ema", "eta_val_mae"),
+            ("bias_slot", "slot_eta_val_mae"),
+            ("head_daily", "head_val_mae"),
+        ):
+            helped_test = setting["strategies"][kind]["vs_static"]["estimate"] < 0
+            for chosen in setting["chosen"]:
+                best_val = min(chosen[val_key].values())
+                total += 1
+                agree += (best_val < chosen["static_val_mae"]) == helped_test
+    validation_text = (
+        f"The validation replay is the only thing that picked the settings, so it is worth checking that it points "
+        f"the right way: for the three cheap strategies, in {agree} of {total} seed and setting combinations the "
+        f"validation replay and the test period agreed on whether adapting beats the static model."
+    )
+    return SHIFT.format(
+        drift=drift_rows(blocks),
+        drift_text=drift_text,
+        gap_days=gap_days,
+        standard_text=SETTING_TEXT["standard"],
+        stale_text=SETTING_TEXT["stale"],
+        standard_table=table_s,
+        stale_table=table_t,
+        findings="\n".join(shift_findings(summary)),
+        validation_text=validation_text,
+        strategy_heads=" | ".join(SHIFT_LABELS[k] for k in kinds),
+        strategy_rule="---:|" * len(kinds),
+        regimes_standard=regime_rows(std),
+        regimes_stale=regime_rows(stale),
+    )
+
+
+def build_shift():
+    summary = load("reports/shift/summary.json")
+    if summary is None:
+        return None
+    config = load("reports/shift/config.json")
+    (REPORTS / "shift/report.md").write_bytes(shift_page(summary, config).encode())
+    return summary
+
+
 # --- uncertainty ---------------------------------------------------------------------
 
 UNC_LABELS = {
@@ -472,5 +810,7 @@ def build_uncertainty():
 
 
 if __name__ == "__main__":
+    build_audit()
     build_scaling()
     build_uncertainty()
+    build_shift()
