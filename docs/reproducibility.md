@@ -76,6 +76,34 @@ With these left at their defaults the original protocol is unchanged: the seed-4
 
 Each trial also saves per-day error sums for the test period. `summary.json` uses them to resample test days (training seeds averaged first) for MAE intervals and paired gaps between models. That covers which days were held out; the seed SD covers initialization and shuffling.
 
+## Bigger networks, uncertainty and drift
+
+### Scaling to all 207 sensors
+
+The same benchmark at 16, 32, 64, 128 and 207 sensors. The sensors are prefixes of one graph ordering, so each size contains the one before it, and every model gets the same number of updates at every size.
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.cli scaling --config configs/scaling.json --out runs/scaling
+```
+
+Sizes that already finished are skipped when you rerun into the same folder, so it can be stopped and resumed. `scaling-summary.json` has every model and size in one table. It scores each model twice: on all the sensors it was trained on (these sets differ by size, so they can't be compared across sizes) and on the same first 16 sensors (the same targets at every size, so this is the comparison that says whether more sensors help). The `s*` model names (`sgru`, `slstm`, `sgraph`) share one recurrent net across sensors; see [shared.py](../src/tracast/shared.py). `train_stride` makes an epoch a random 1/k of the training windows.
+
+### Prediction intervals
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.cli uncertainty --config configs/uncertainty.json --out runs/uncertainty
+```
+
+One point forecaster per seed, then every interval method built from it. The split is train 70%, validation 5% (picks the checkpoint), calibration 5% (sits just before the test period, never used for training or picking a checkpoint) and test 20%. Methods are described at the top of [uncertainty.py](../src/tracast/uncertainty.py), and the guarantees and what breaks them are in [conformal.py](../src/tracast/conformal.py).
+
+### Drift and adaptation
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.cli shift --config configs/shift.json --out runs/shift
+```
+
+Replays the test period one day at a time. A strategy may only use windows whose last target has already been observed when the day starts (`known_windows` in [shift.py](../src/tracast/shift.py)), and the tests corrupt the not-yet-arrived targets to check that. The cheap strategies' settings are picked by replaying validation, never test.
+
 ## Federated experiments
 
 ### Flower smoke run
@@ -145,6 +173,9 @@ These read the saved results and rebuild the README, the figures, the federated 
 | [graph-pilot.json](../configs/graph-pilot.json) | GRU vs Graph-GRU after one epoch on seven days |
 | [benchmark.json](../configs/benchmark.json) | Recurrent models and the graph ablation, three seeds |
 | [benchmark-extended.json](../configs/benchmark-extended.json) | Longer training with early stopping, calendar inputs, a historical average and a linear model, five seeds |
+| [scaling.json](../configs/scaling.json) | 16 to 207 sensors, dense and shared models, two seeds |
+| [uncertainty.json](../configs/uncertainty.json) | Prediction intervals for the dense GRU with calendar inputs, three seeds |
+| [shift.json](../configs/shift.json) | Static model vs three adaptation strategies, standard and stale settings, three seeds |
 | [federated-smoke.json](../configs/federated-smoke.json) | Three Flower rounds and a matched centralized GRU |
 | [federated-study.json](../configs/federated-study.json) | Round budgets and client groupings, three seeds |
 
@@ -157,6 +188,10 @@ These read the saved results and rebuild the README, the figures, the federated 
 | [baselines.py](../src/tracast/baselines.py), [stats.py](../src/tracast/stats.py) | Historical average; test-day resampling for intervals |
 | [provenance.py](../src/tracast/provenance.py) | Git commit and whether the working tree had changes |
 | [cli.py](../src/tracast/cli.py) | The `tracast` command |
+| [shared.py](../src/tracast/shared.py) | Recurrent forecasters that share weights across sensors, with and without graph neighbors |
+| [scaling.py](../src/tracast/scaling.py) | Runs the benchmark at several sensor counts and builds the comparison tables and figures |
+| [conformal.py](../src/tracast/conformal.py), [uncertainty.py](../src/tracast/uncertainty.py) | Conformal interval methods and the experiment that compares them with baselines |
+| [shift.py](../src/tracast/shift.py) | Day-by-day replay with adaptation strategies, plus drift diagnostics |
 | [topology.py](../src/tracast/topology.py), [graph_model.py](../src/tracast/graph_model.py) | Build the distance graph and mix neighbor readings into the GRU |
 | [experiment.py](../src/tracast/experiment.py), [benchmark.py](../src/tracast/benchmark.py) | Train and score the centralized models and save the results |
 | [federated_task.py](../src/tracast/federated_task.py) | Sensor ownership, local datasets, shared training, pooled metrics |
