@@ -86,7 +86,21 @@ The same benchmark at 16, 32, 64, 128 and 207 sensors. The sensors are prefixes 
 .\.venv\Scripts\python.exe -m tracast.cli scaling --config configs/scaling.json --out runs/scaling
 ```
 
-Sizes that already finished are skipped when you rerun into the same folder, so it can be stopped and resumed. `scaling-summary.json` has every model and size in one table. It scores each model twice: on all the sensors it was trained on (these sets differ by size, so they can't be compared across sizes) and on the same first 16 sensors (the same targets at every size, so this is the comparison that says whether more sensors help). The `s*` model names (`sgru`, `slstm`, `sgraph`) share one recurrent net across sensors; see [shared.py](../src/tracast/shared.py). `train_stride` makes an epoch a random 1/k of the training windows.
+Sizes that already finished are skipped when you rerun into the same folder, so it can be stopped and resumed. `scaling-summary.json` has every model and size in one table. It scores each model twice: on all the sensors it was trained on (these sets differ by size, so they can't be compared across sizes) and on the same first 16 sensors (the same targets at every size, so this is the comparison that says whether more sensors help). The `s*` model names (`sgru`, `slstm`, `sgraph`) share one recurrent net across sensors; see [shared.py](../src/tracast/shared.py). `train_stride` makes an epoch a random 1/k of the training windows. A `_id` suffix (`sgru_id`, `sgraph_id`) adds a learned vector per sensor to a shared model.
+
+The cost numbers in the scaling report come from a separate short run with nothing else on the machine:
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.cli scaling --config configs/scaling-cost.json --out runs/scaling-cost
+```
+
+### Shared model variants
+
+The LSTM cell and the per-sensor vectors, tested one at a time against the shared GRU and Graph-GRU at 16 and 64 sensors. The two reference models are trained again in the same run, so every gap is measured on identical windows.
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.cli scaling --config configs/variants.json --out runs/variants
+```
 
 ### Prediction intervals
 
@@ -94,7 +108,7 @@ Sizes that already finished are skipped when you rerun into the same folder, so 
 .\.venv\Scripts\python.exe -m tracast.cli uncertainty --config configs/uncertainty.json --out runs/uncertainty
 ```
 
-One point forecaster per seed, then every interval method built from it. The split is train 70%, validation 5% (picks the checkpoint), calibration 5% (sits just before the test period, never used for training or picking a checkpoint) and test 20%. Methods are described at the top of [uncertainty.py](../src/tracast/uncertainty.py), and the guarantees and what breaks them are in [conformal.py](../src/tracast/conformal.py).
+One point forecaster per seed, then every interval method built from it. The split is train 70%, validation 5% (picks the checkpoint), calibration 5% (sits just before the test period, never used for training or picking a checkpoint) and test 20%. Methods are described at the top of [uncertainty.py](../src/tracast/uncertainty.py), and the guarantees and what breaks them are in [conformal.py](../src/tracast/conformal.py). `gamma_sweep` in the config lists the ACI step sizes that are also evaluated, as a sensitivity check next to the preset `gamma` used in the main table.
 
 ### Drift and adaptation
 
@@ -165,7 +179,7 @@ Communication leaves out serialization, metrics, config and transport overhead. 
 .\.venv\Scripts\python.exe tools/build_research.py
 ```
 
-`pages.py` writes the scaling, intervals, drift and audit pages, `architecture.py` draws the shared-model schematic and `data_audit.py` needs the raw data to recompute the data facts. Run `pages.py` before `presentation.py`, because the README reads what it writes. These read the saved results and rebuild the README, the figures, the federated findings page, the technical report and the two-page PDF. They don't train anything. `tools/export_records.py` swaps local paths for `$REPO` and `$PYTHON_ENV` in saved records, and the export receipt keeps the before and after hashes. A manifest describes the code at the time of its run, so its source hashes can differ from the current checkout.
+`pages.py` writes the scaling, shared-variants, intervals, drift and audit pages, `architecture.py` draws the shared-model schematic and `data_audit.py` needs the raw data to recompute the data facts. Run `pages.py` before `presentation.py`, because the README reads what it writes. These read the saved results and rebuild the README, the figures, the federated findings page, the technical report and the two-page PDF. They don't train anything. `tools/export_records.py` swaps local paths for `$REPO` and `$PYTHON_ENV` in saved records, and the export receipt keeps the before and after hashes. A manifest describes the code at the time of its run, so its source hashes can differ from the current checkout.
 
 ## Configs
 
@@ -177,6 +191,8 @@ Communication leaves out serialization, metrics, config and transport overhead. 
 | [benchmark.json](../configs/benchmark.json) | Recurrent models and the graph ablation, three seeds |
 | [benchmark-extended.json](../configs/benchmark-extended.json) | Longer training with early stopping, calendar inputs, a historical average and a linear model, five seeds |
 | [scaling.json](../configs/scaling.json) | 16 to 207 sensors, dense and shared models, two seeds |
+| [scaling-cost.json](../configs/scaling-cost.json) | The same sizes and models for 3 epochs and one seed, run alone to measure time and memory |
+| [variants.json](../configs/variants.json) | Shared LSTM and shared models with a vector per sensor, at 16 and 64 sensors, two seeds |
 | [uncertainty.json](../configs/uncertainty.json) | Prediction intervals for the dense GRU with calendar inputs, three seeds |
 | [shift.json](../configs/shift.json) | Static model vs three adaptation strategies, standard and stale settings, three seeds |
 | [federated-smoke.json](../configs/federated-smoke.json) | Three Flower rounds and a matched centralized GRU |

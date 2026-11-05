@@ -772,7 +772,7 @@ Split conformal is calibrated across horizons, with coverage between {hmin:.3f} 
 
 ## Why plain conformal fails in congestion
 
-Split conformal guarantees coverage on average over windows that look alike. Here it uses one quantile for everything, but the errors are not alike: when traffic is already congested the next hour is much harder to predict, so the residuals are bigger. One quantile that is right on average is too small in congestion and too big in free flow, which is exactly what the table shows ({cong_cov} against {free_cov}). Doing it per sensor doesn't help in congestion ({sensor_cong}) because the problem is the traffic state, not the sensor, although it does lift the weakest sensor from {weak_pooled} to {weak_sensor}. ACI and rolling recalibration react to drift in time, which isn't what is wrong here: they leave the congestion gap in place ({aci_cong} and {roll_cong}).
+Split conformal guarantees coverage on average over windows that look alike. Here it uses one quantile for everything, but the errors are not alike: when traffic is already congested the next hour is much harder to predict, so the residuals are bigger. One quantile that is right on average is too small in congestion and too big in free flow, which is exactly what the table shows ({cong_cov} against {free_cov}). Doing it per sensor doesn't help in congestion ({sensor_cong}) because the problem is the traffic state, not the sensor, although it does lift the weakest sensor from {weak_pooled} to {weak_sensor}. ACI and rolling recalibration react to drift in time, which isn't what is wrong here: at the preset step size they leave the congestion gap in place ({aci_cong} and {roll_cong}); the step-size sweep further down shows what a bigger step does.
 
 The quantile network learns the state-dependent width itself. In congestion its intervals are {cqr_cong_w:.0f} mph wide on average against {free_w:.0f} in free flow, and the conformal correction then fixes the overall level. At the same average width, that moves congestion coverage from {cong_cov} to {cqr_cong}.
 
@@ -780,7 +780,7 @@ The quantile network learns the state-dependent width itself. In congestion its 
 
 Day by day, coverage for split conformal ranges from {dmin:.3f} to {dmax:.3f}. The ACI and rolling versions have nearly the same range ({aci_range}), so there is no strong drift in coverage over these {days} days for them to correct. CQR's range is {cqr_range}.
 
-## Limits
+{aci_sweep}## Limits
 
 - Conformal coverage is guaranteed when calibration and test windows are exchangeable. Here neighbouring windows overlap, the daily pattern repeats and the test period may drift, so coverage is measured, not guaranteed. The calibration part is only {cal_days} days.
 - One point model, 16 sensors that all sit on one highway corridor, one test period of {days} days.
@@ -796,6 +796,57 @@ Day by day, coverage for split conformal ranges from {dmin:.3f} to {dmax:.3f}. T
 ```
 
 Files: [summary.json](summary.json), [config.json](config.json), per-seed results in `seed-7.json`, `seed-42.json` and `seed-2026.json`. Method code is in `src/tracast/conformal.py` and `src/tracast/uncertainty.py`; the tests build noise with a known answer and check that the online methods never read an outcome that hasn't arrived.
+"""
+
+
+def aci_sweep_section(summary, preset):
+    sweep = summary["mean"].get("aci_sweep")
+    if not sweep:
+        return ""
+    gammas = sorted(sweep, key=float)
+    rows = chr(10).join(
+        f"| {float(g):g} | {sweep[g]['overall']['coverage']:.3f} | {sweep[g]['overall']['width']:.1f} "
+        f"| {sweep[g]['origin_free_flow']['coverage']:.3f} | {sweep[g]['origin_congested']['coverage']:.3f} "
+        f"| {sweep[g]['overall']['interval_score']:.1f} |"
+        for g in gammas
+    )
+    overall = [sweep[g]["overall"]["coverage"] for g in gammas]
+    cong = [sweep[g]["origin_congested"]["coverage"] for g in gammas]
+    best = min(gammas, key=lambda g: sweep[g]["overall"]["interval_score"])
+    scores = [sweep[g]["overall"]["interval_score"] for g in gammas]
+    still, top = sweep[gammas[0]], sweep[gammas[-1]]
+    cqr = summary["mean"]["methods"]["cqr"]
+    rise = top["origin_congested"]["coverage"] - still["origin_congested"]["coverage"]
+    if rise > 0.05:
+        verdict_text = (
+            f"A bigger step does raise congestion coverage, from {pct(still['origin_congested']['coverage'])} "
+            f"with no adaptation to {pct(top['origin_congested']['coverage'])} at gamma {float(gammas[-1]):g}. "
+            f"But it does that by widening every interval, not only the ones in congestion: the average "
+            f"width goes from {still['overall']['width']:.1f} to {top['overall']['width']:.1f} mph, free-flow "
+            f"coverage drops from {pct(still['origin_free_flow']['coverage'])} to "
+            f"{pct(top['origin_free_flow']['coverage'])}, and the interval score only moves between "
+            f"{min(scores):.1f} and {max(scores):.1f}. ACI follows runs of misses over time, but it keeps one "
+            f"level for all sensors at a horizon, so when a jam makes some sensors miss it widens the "
+            f"intervals of the free-flowing ones too. The "
+            f"quantile network with the conformal correction reaches {pct(cqr['origin_congested']['coverage'])} "
+            f"in congestion at {cqr['overall']['width']:.1f} mph with a score of "
+            f"{cqr['overall']['interval_score']:.1f}."
+        )
+    else:
+        verdict_text = (
+            f"No step size moves congestion coverage by more than {rise:.3f}. One level per horizon "
+            f"can't know what the traffic state is, however fast it moves."
+        )
+    return f"""## How much the ACI step size matters
+
+ACI moves its level by gamma after every window. A step of 0 never moves it, which is plain split conformal, and the main table uses {preset:g}, a value I picked without tuning it. This sweep on the same test windows is a sensitivity check, not a way to choose the step. Averages over the seeds:
+
+| gamma | Coverage | Width (mph) | Free flow | Congested | Interval score |
+|---|---:|---:|---:|---:|---:|
+{rows}
+
+Overall coverage stays between {min(overall):.3f} and {max(overall):.3f} and coverage in congestion between {min(cong):.3f} and {max(cong):.3f}. {verdict_text} The lowest interval score is at gamma {float(best):g} ({sweep[best]["overall"]["interval_score"]:.1f}).
+
 """
 
 
@@ -854,6 +905,7 @@ def uncertainty_page(summary, config):
         cqr_range=rng("cqr"),
         diag_p=pct(pooled["target_congested_diagnostic"]["coverage"]),
         diag_c=pct(cqr["target_congested_diagnostic"]["coverage"]),
+        aci_sweep=aci_sweep_section(summary, config["gamma"]),
     )
 
 
@@ -872,7 +924,7 @@ def build_uncertainty():
 
 NEXT = """## What's next
 
-- Give the bigger networks more capacity (a larger hidden size, a learned vector per sensor) and train them to convergence. The same-16 scores got worse as the population grew, and I held the capacity and the update budget fixed, so this is the first thing to try.
+- Give the bigger networks more capacity (a larger hidden size; the [variants report](reports/variants/report.md) tried a learned vector per sensor at 16 and 64 sensors only) and train them to convergence. The same-16 scores got worse as the population grew, and I held the capacity and the update budget fixed, so this is the first thing to try.
 - Hold out sensors: train the shared model on some sensors and test it on ones it has never seen. Sharing weights makes that possible, and the dense models can't do it at all.
 - Multi-hop or learned graph features in the shared model, since one-hop averages were enough to help but are the simplest choice.
 - Intervals that are joint across horizons and sensors, and conformal methods with guarantees conditional on the traffic state instead of only on average.
@@ -971,6 +1023,25 @@ def unc_readme_text(summary):
         f"on the traffic state and holds {pct(cqr['origin_congested']['coverage'])} there, at the same average "
         f"width ({cqr['overall']['width']:.1f} against {pooled['overall']['width']:.1f} mph) and with an interval "
         f"score of {cqr['overall']['interval_score']:.1f} against {pooled['overall']['interval_score']:.1f}."
+        + sweep_sentence(summary)
+    )
+
+
+def sweep_sentence(summary):
+    sweep = summary["mean"].get("aci_sweep")
+    if not sweep:
+        return ""
+    gammas = sorted(sweep, key=float)
+    still, top = sweep[gammas[0]], sweep[gammas[-1]]
+    if (
+        top["origin_congested"]["coverage"] - still["origin_congested"]["coverage"]
+        <= 0.05
+    ):
+        return ""
+    return (
+        f" Letting ACI adapt faster does lift congestion coverage to {pct(top['origin_congested']['coverage'])}, "
+        f"but only by widening every interval (the average goes from {still['overall']['width']:.1f} to "
+        f"{top['overall']['width']:.1f} mph)."
     )
 
 
@@ -1102,8 +1173,170 @@ def readme_blocks():
     return blocks
 
 
+# --- shared model variants -----------------------------------------------------------
+
+VARIANT_LABELS = {
+    "sgru_time": "Shared GRU (reference)",
+    "slstm_time": "Shared LSTM",
+    "sgru_id_time": "Shared GRU + sensor vector",
+    "sgraph_time": "Shared Graph-GRU (reference)",
+    "sgraph_id_time": "Shared Graph-GRU + sensor vector",
+}
+VARIANT_GAPS = (
+    ("slstm_time_vs_sgru_time", "LSTM - GRU"),
+    ("sgru_id_time_vs_sgru_time", "GRU + vector - GRU"),
+    ("sgraph_id_time_vs_sgraph_time", "Graph-GRU + vector - Graph-GRU"),
+)
+
+
+def verdict(gap):
+    low, high = gap["ci95"]
+    est = gap["estimate"]
+    if high < 0:
+        return f"better by {-est:.3f} mph (interval {low:+.3f} to {high:+.3f})"
+    if low > 0:
+        return f"worse by {est:.3f} mph (interval {low:+.3f} to {high:+.3f})"
+    return f"not clearly different ({est:+.3f} mph, interval {low:+.3f} to {high:+.3f})"
+
+
+def variant_findings(summary, scaling):
+    sizes, gaps, models = summary["sizes"], summary["day_bootstrap"], summary["models"]
+    out = []
+    for key, label in VARIANT_GAPS:
+        parts = [
+            f"at {k} sensors {verdict(gaps[str(k)][key])}"
+            for k in sizes
+            if key in gaps.get(str(k), {})
+        ]
+        out.append(f"- **{label}:** " + "; ".join(parts) + ".")
+    if scaling:
+        same = [
+            (
+                k,
+                models[n][str(k)]["core16_mae"]["mean"],
+                scaling["models"][n][str(k)]["core16_mae"]["mean"],
+            )
+            for n in ("sgru_time", "sgraph_time")
+            for k in sizes
+            if str(k) in scaling["models"].get(n, {})
+        ]
+        worst = max(abs(a - b) for _, a, b in same)
+        out.append(
+            "- **Check against the scaling study:** the two reference models were trained again here, "
+            + (
+                "and their same-16 scores match the scaling study's to the last digit "
+                "(training is deterministic for a given seed)."
+                if worst < 1e-9
+                else f"and their same-16 scores differ from the scaling study's by up to {worst:.4f} mph."
+            )
+        )
+    return out
+
+
+VARIANTS = """# Shared model variants
+
+The shared models in the [scaling study](../scaling/report.md) use a GRU and give every sensor the same weights, so a sensor is only told apart from the others by its own speeds. This page tests two things I left out there, one at a time: swapping the GRU for an LSTM, and giving each sensor a learned vector of {dim} numbers so the network can tell sensors apart. The vectors add {dim} parameters per sensor, so those two models do grow with the network, just slowly.
+
+The setup is the scaling study's: the same nested sensor sets (here {sizes}), the same splits and masking, {epochs} epochs that each use a random third of the training windows, the best epoch on validation kept, seeds {seeds}. The shared GRU and shared Graph-GRU are trained again as references, so every gap below is measured inside this run on identical windows.
+
+## Results
+
+Test MAE in mph on the same first {small} sensors, mean (SD over seeds):
+
+{core_table}
+
+Parameters at {large} sensors: {params}.
+
+Gaps on identical windows (first minus second, negative favors the first; 95% interval from resampling test days, seeds averaged first):
+
+| Size | {gap_heads} |
+|---|{gap_rule}
+{gap_rows}
+
+{findings}
+
+## Limits
+
+- Only {sizes} sensors, because every extra model is another full training run at each size. Whether the vectors help more (or overfit) at 207 sensors isn't tested here.
+- Two seeds, the same equal-update budget as before, and a fixed {dim}-number vector. A larger vector or a longer run might change the picture.
+- I didn't time these models; the cost comparison in the scaling study covers the GRU versions only.
+
+## Reproduce
+
+```powershell
+.\\.venv\\Scripts\\python.exe -m tracast.cli scaling --config configs/variants.json --out runs/variants
+```
+
+Files: [variants-summary.json](variants-summary.json), [variants-config.json](variants-config.json).
+"""
+
+
+def variants_page(summary, scaling, config):
+    sizes = summary["sizes"]
+    small, large = sizes[0], sizes[-1]
+    models = summary["models"]
+    rows = []
+    for name, label in VARIANT_LABELS.items():
+        by = models.get(name)
+        if by is None:
+            continue
+        cells = [cell(by[str(k)], "core16_mae") if str(k) in by else "" for k in sizes]
+        rows.append(f"| {label} | " + " | ".join(cells) + " |")
+    table = "\n".join(
+        [
+            "| Model | " + " | ".join(map(str, sizes)) + " |",
+            "|---|" + "---:|" * len(sizes),
+        ]
+        + rows
+    )
+    gaps = summary["day_bootstrap"]
+    gap_rows = "\n".join(
+        f"| {k} | "
+        + " | ".join(
+            f"{gaps[str(k)][key]['estimate']:+.3f} ({gaps[str(k)][key]['ci95'][0]:+.3f} to {gaps[str(k)][key]['ci95'][1]:+.3f})"
+            if key in gaps.get(str(k), {})
+            else ""
+            for key, _ in VARIANT_GAPS
+        )
+        + " |"
+        for k in sizes
+    )
+    params = ", ".join(
+        f"{VARIANT_LABELS[n].lower().replace('(reference)', '').strip()} {models[n][str(large)]['parameters']:,}"
+        for n in VARIANT_LABELS
+        if n in models
+    )
+    return VARIANTS.format(
+        dim=config["benchmark"]["embedding"],
+        sizes=join_and(sizes),
+        epochs=config["benchmark"]["epochs"],
+        seeds=join_and(config["benchmark"]["seeds"]),
+        small=small,
+        large=large,
+        core_table=table,
+        params=params,
+        gap_heads=" | ".join(label for _, label in VARIANT_GAPS),
+        gap_rule="---:|" * len(VARIANT_GAPS),
+        gap_rows=gap_rows,
+        findings="\n".join(variant_findings(summary, scaling)),
+    )
+
+
+def build_variants():
+    summary = load("reports/variants/variants-summary.json")
+    config = load("reports/variants/variants-config.json")
+    if summary is None or config is None:
+        return None
+    scaling = load("reports/scaling/scaling-summary.json")
+    (REPORTS / "variants/report.md").write_bytes(
+        variants_page(summary, scaling, config).encode()
+    )
+    return summary
+
+
 if __name__ == "__main__":
     build_audit()
     build_scaling()
     build_uncertainty()
     build_shift()
+    build_variants()

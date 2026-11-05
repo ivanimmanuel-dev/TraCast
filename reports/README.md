@@ -11,6 +11,7 @@ Each experiment has its own sensors and training budget, so compare models withi
 | Five-epoch benchmark | 16 graph-picked sensors, full timeline, 5 epochs, 3 seeds | [Benchmark](benchmark/report.md) |
 | Longer training, calendar inputs, baselines | Same sensors and timeline, up to 60 epochs with early stopping, 5 seeds | [Extended benchmark](benchmark-extended/report.md) |
 | Scaling to all 207 sensors | Nested subsets of 16 to 207 sensors, dense and shared-weight models, 2 seeds | [Scaling report](scaling/report.md) |
+| Shared model variants | LSTM cell and a learned vector per sensor in the shared models, 16 and 64 sensors, 2 seeds | [Variants report](variants/report.md) |
 | Prediction intervals | 90% intervals on the 16-sensor GRU, six interval methods plus a quantile network, 3 seeds | [Intervals report](uncertainty/report.md) |
 | Drift and adaptation | Day-by-day replay of the test period with four adaptation strategies, two settings, 3 seeds | [Drift report](shift/report.md) |
 | Federated study | 12 sensors, 14 days, 3 clients, 1/3/5 rounds, 3 seeds, with a local-only arm | [Findings](federated-study/findings.md) |
