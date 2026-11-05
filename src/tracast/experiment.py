@@ -67,13 +67,17 @@ def seed_all(seed, threads):
     torch.backends.mkldnn.enabled = False
 
 
-def evaluate(model, loader, mean, std, horizon, daily=None):
+def evaluate(model, loader, mean, std, horizon, daily=None, subsets=None):
     """Score model (or persistence when None) on an unshuffled loader.
 
     Persistence repeats the latest speed channels and ignores calendar channels.
-    Pass a DailyMetrics to also collect per-day error sums.
+    Pass a DailyMetrics to also collect per-day error sums. subsets is a list of
+    sensor counts k: the result then has a "core" entry with the scores on the
+    first k sensors, so models trained on different numbers of sensors can be
+    compared on the same targets.
     """
     scores = Metrics(horizon)
+    cores = {k: Metrics(horizon) for k in subsets or ()}
     if model is not None:
         model.eval()
     seen = 0
@@ -85,10 +89,15 @@ def evaluate(model, loader, mean, std, horizon, daily=None):
             else:
                 prediction = model(x) * std + mean
             scores.update(prediction, y, mask)
+            for k, core in cores.items():
+                core.update(prediction[..., :k], y[..., :k], mask[..., :k])
             if daily is not None:
                 daily.update(prediction, y, mask, seen)
             seen += len(x)
-    return scores.result()
+    result = scores.result()
+    if cores:
+        result["core"] = {str(k): core.result() for k, core in cores.items()}
+    return result
 
 
 def plots(train, out):

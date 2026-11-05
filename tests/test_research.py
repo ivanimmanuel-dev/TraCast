@@ -471,8 +471,8 @@ def test_early_stopping_and_plateau_scheduler(frame, tmp_path, monkeypatch):
     seen = iter([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
     real = benchmark.evaluate
 
-    def worsening(model, loader, mean, std, horizon, daily=None):
-        result = real(model, loader, mean, std, horizon, daily)
+    def worsening(model, loader, mean, std, horizon, daily=None, subsets=None):
+        result = real(model, loader, mean, std, horizon, daily, subsets)
         if daily is None and model is not None:
             result = {**result, "mae": next(seen)}
         return result

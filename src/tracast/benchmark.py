@@ -15,7 +15,7 @@ import time
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, RandomSampler
 
 from .baselines import HistoricalAverage, score_table
 from .data import SHA256, Scaler, Windows, load, split, missing_report
@@ -29,7 +29,9 @@ from .stats import day_bootstrap
 from . import topology
 
 # A _time suffix gives a model the calendar inputs. ha and persistence don't train.
-BASES = ("gru", "lstm", "graph_gru", "graph_self", "linear")
+# dense models read every sensor at once; the s* models share one recurrent net
+# across sensors (see shared.py)
+BASES = ("gru", "lstm", "graph_gru", "graph_self", "linear", "sgru", "slstm", "sgraph")
 STATIC = ("persistence", "ha")
 TRIALS = STATIC + BASES + tuple(f"{base}_time" for base in BASES)
 SCHEDULERS = ("none", "plateau")
@@ -62,6 +64,8 @@ class BenchmarkConfig:
     models: list[str] = field(default_factory=lambda: ["gru", "graph_gru"])
     # defaults give the original fixed-epoch protocol
     patience: int | None = None
+    train_stride: int = 1
+    core_sizes: list[int] = field(default_factory=list)
     scheduler: str = "none"
     scheduler_patience: int = 2
 
@@ -103,6 +107,12 @@ class BenchmarkConfig:
             type(self.patience) is not int or self.patience < 1
         ):
             raise ValueError("patience must be null or a positive integer")
+        if type(self.train_stride) is not int or self.train_stride < 1:
+            raise ValueError("train_stride must be a positive integer")
+        if any(
+            type(k) is not int or not 1 <= k <= self.sensors for k in self.core_sizes
+        ):
+            raise ValueError("core_sizes must be sensor counts up to sensors")
         if self.scheduler not in SCHEDULERS:
             raise ValueError(f"scheduler must be one of {SCHEDULERS}")
         if type(self.scheduler_patience) is not int or self.scheduler_patience < 1:
@@ -120,6 +130,17 @@ def model_for(name, config, weights):
         from .recurrent import LSTM
 
         return LSTM(config.sensors, config.hidden, config.horizon, extra)
+    if base in ("sgru", "slstm", "sgraph"):
+        from .shared import SharedRecurrent
+
+        return SharedRecurrent(
+            config.sensors,
+            config.hidden,
+            config.horizon,
+            extra,
+            weights if base == "sgraph" else None,
+            kind="lstm" if base == "slstm" else "gru",
+        )
     if base == "linear":
         return LinearAR(config.sensors, config.history, config.horizon, extra)
     if base in ("graph_gru", "graph_self"):
@@ -194,6 +215,102 @@ def inference(model, x, horizon, sensors):
     )
 
 
+def make_loaders(datasets, config, generator):
+    """One loader per split; with train_stride k an epoch is a random 1/k of the windows."""
+    loaders = {}
+    for stage, ds in datasets.items():
+        options = {"batch_size": config.batch_size, "num_workers": 0}
+        if stage == "train" and config.train_stride > 1:
+            options["sampler"] = RandomSampler(
+                ds, num_samples=len(ds) // config.train_stride, generator=generator
+            )
+        else:
+            options["shuffle"] = stage == "train"
+            options["generator"] = generator if stage == "train" else None
+        loaders[stage] = DataLoader(ds, **options)
+    return loaders
+
+
+def fit(model, loaders, mean, std, config, label, out, select="val"):
+    """Train with the config's schedule, scoring loaders[select] after every epoch.
+
+    The best-validation weights go to out/best.pt (the caller loads them) and the
+    epoch history to out/history.json.
+    """
+    optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
+    scheduler = (
+        torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, factor=0.5, patience=config.scheduler_patience
+        )
+        if config.scheduler == "plateau"
+        else None
+    )
+    history = []
+    best, stale, stopped_early = float("inf"), 0, False
+    train_seconds, validation_seconds = 0.0, 0.0
+    for epoch in range(1, config.epochs + 1):
+        model.train()
+        rate = optimizer.param_groups[0]["lr"]
+        loss_sum, count_sum, steps = 0.0, 0, 0
+        start = time.perf_counter()
+        for x, y, mask in loaders["train"]:
+            count = int(mask.sum())
+            if not count:
+                continue
+            optimizer.zero_grad(set_to_none=True)
+            prediction = model(x)
+            target = (y - mean) / std
+            loss = (prediction[mask] - target[mask]).abs().mean()
+            if not torch.isfinite(loss):
+                raise ValueError("Nonfinite benchmark loss")
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+            optimizer.step()
+            loss_sum += loss.item() * count
+            count_sum += count
+            steps += 1
+        elapsed = time.perf_counter() - start
+        train_seconds += elapsed
+        if not count_sum:
+            raise ValueError("No supervised training targets")
+        start = time.perf_counter()
+        validation = evaluate(model, loaders[select], mean, std, config.horizon)
+        validation_elapsed = time.perf_counter() - start
+        validation_seconds += validation_elapsed
+        row = {
+            "epoch": epoch,
+            "lr": rate,
+            "train_normalized_mae": loss_sum / count_sum,
+            "observed_targets": count_sum,
+            "optimizer_steps": steps,
+            "train_seconds": elapsed,
+            "validation_seconds": validation_elapsed,
+            "validation": validation,
+        }
+        history.append(row)
+        if validation["mae"] < best:
+            best, stale = validation["mae"], 0
+            torch.save(model.state_dict(), out / "best.pt")
+        else:
+            stale += 1
+        if scheduler is not None:
+            scheduler.step(validation["mae"])
+        write_json(out / "history.json", history)
+        print(
+            f"{label} epoch={epoch} val_MAE={validation['mae']:.6f} train_s={elapsed:.3f}",
+            flush=True,
+        )
+        if config.patience is not None and stale >= config.patience:
+            stopped_early = epoch < config.epochs
+            break
+    return {
+        "history": history,
+        "stopped_early": stopped_early,
+        "train_seconds": train_seconds,
+        "validation_seconds": validation_seconds,
+    }
+
+
 def trial(config, data, graph_dir, name, seed, out):
     config.validate()
     seed_all(seed, config.threads)
@@ -206,92 +323,23 @@ def trial(config, data, graph_dir, name, seed, out):
     try:
         model = model_for(name, config, weights)
         generator = torch.Generator().manual_seed(seed)
-        loaders = {
-            stage: DataLoader(
-                ds,
-                batch_size=config.batch_size,
-                shuffle=stage == "train",
-                num_workers=0,
-                generator=generator if stage == "train" else None,
-            )
-            for stage, ds in datasets.items()
-        }
+        loaders = make_loaders(datasets, config, generator)
         mean, std = torch.from_numpy(scaler.mean), torch.from_numpy(scaler.std)
-        optimizer = (
-            torch.optim.Adam(model.parameters(), lr=config.lr)
-            if model is not None
-            else None
-        )
-        scheduler = (
-            torch.optim.lr_scheduler.ReduceLROnPlateau(
-                optimizer, factor=0.5, patience=config.scheduler_patience
-            )
-            if optimizer is not None and config.scheduler == "plateau"
-            else None
-        )
-        history = []
-        best, stale, stopped_early = float("inf"), 0, False
-        train_seconds, validation_seconds = 0.0, 0.0
-        for epoch in range(1, config.epochs + 1) if model is not None else []:
-            model.train()
-            rate = optimizer.param_groups[0]["lr"]
-            loss_sum, count_sum, steps = 0.0, 0, 0
-            start = time.perf_counter()
-            for x, y, mask in loaders["train"]:
-                count = int(mask.sum())
-                if not count:
-                    continue
-                optimizer.zero_grad(set_to_none=True)
-                prediction = model(x)
-                target = (y - mean) / std
-                loss = (prediction[mask] - target[mask]).abs().mean()
-                if not torch.isfinite(loss):
-                    raise ValueError("Nonfinite benchmark loss")
-                loss.backward()
-                torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
-                optimizer.step()
-                loss_sum += loss.item() * count
-                count_sum += count
-                steps += 1
-            elapsed = time.perf_counter() - start
-            train_seconds += elapsed
-            if not count_sum:
-                raise ValueError("No supervised training targets")
-            start = time.perf_counter()
-            validation = evaluate(model, loaders["val"], mean, std, config.horizon)
-            validation_elapsed = time.perf_counter() - start
-            validation_seconds += validation_elapsed
-            row = {
-                "epoch": epoch,
-                "lr": rate,
-                "train_normalized_mae": loss_sum / count_sum,
-                "observed_targets": count_sum,
-                "optimizer_steps": steps,
-                "train_seconds": elapsed,
-                "validation_seconds": validation_elapsed,
-                "validation": validation,
-            }
-            history.append(row)
-            if validation["mae"] < best:
-                best, stale = validation["mae"], 0
-                torch.save(model.state_dict(), out / "best.pt")
-            else:
-                stale += 1
-            if scheduler is not None:
-                scheduler.step(validation["mae"])
-            write_json(out / "history.json", history)
-            print(
-                f"{name} seed={seed} epoch={epoch} val_MAE={validation['mae']:.6f} train_s={elapsed:.3f}",
-                flush=True,
-            )
-            if config.patience is not None and stale >= config.patience:
-                stopped_early = epoch < config.epochs
-                break
+        if model is not None:
+            trained = fit(model, loaders, mean, std, config, f"{name} seed={seed}", out)
+            history = trained["history"]
+            stopped_early = trained["stopped_early"]
+            train_seconds = trained["train_seconds"]
+            validation_seconds = trained["validation_seconds"]
+        else:
+            history, stopped_early = [], False
+            train_seconds = validation_seconds = 0.0
         if model is not None:
             model.load_state_dict(
                 torch.load(out / "best.pt", map_location="cpu", weights_only=True)
             )
         test_set = datasets["test"]
+        cores = [k for k in config.core_sizes if k < config.sensors]
         codes, labels = test_set.origin_days()
         daily = DailyMetrics(codes, labels)
         start = time.perf_counter()
@@ -301,10 +349,16 @@ def trial(config, data, graph_dir, name, seed, out):
                 train_set.times, train_set.y, train_set.mask
             )
             table = fitted.predict(test_set.times)
-            test = score_table(test_set, table, daily)
+            test = score_table(test_set, table, daily, subsets=cores)
         else:
             test = evaluate(
-                model, loaders["test"], mean, std, config.horizon, daily=daily
+                model,
+                loaders["test"],
+                mean,
+                std,
+                config.horizon,
+                daily=daily,
+                subsets=cores,
             )
         test_seconds = time.perf_counter() - start
         x = next(iter(loaders["test"]))[0]

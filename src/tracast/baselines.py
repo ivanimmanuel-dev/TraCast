@@ -55,7 +55,7 @@ class HistoricalAverage:
         return self.table[week_slots(times)]
 
 
-def score_table(dataset, predicted, daily=None, chunk=2048):
+def score_table(dataset, predicted, daily=None, chunk=2048, subsets=None):
     """Score a per-row prediction table on a Windows dataset's targets.
 
     predicted[r] is the forecast for row r of the dataset's split. It goes through
@@ -64,6 +64,7 @@ def score_table(dataset, predicted, daily=None, chunk=2048):
     if predicted.shape != dataset.y.shape:
         raise ValueError("Prediction table must match the split's rows and sensors")
     metrics = Metrics(dataset.horizon)
+    cores = {k: Metrics(dataset.horizon) for k in subsets or ()}
     steps = np.arange(dataset.horizon)
     for start in range(0, len(dataset), chunk):
         origin = np.arange(start, min(start + chunk, len(dataset)))
@@ -72,6 +73,11 @@ def score_table(dataset, predicted, daily=None, chunk=2048):
         target = torch.from_numpy(dataset.y[rows])
         mask = torch.from_numpy(dataset.mask[rows])
         metrics.update(prediction, target, mask)
+        for k, core in cores.items():
+            core.update(prediction[..., :k], target[..., :k], mask[..., :k])
         if daily is not None:
             daily.update(prediction, target, mask, start)
-    return metrics.result()
+    result = metrics.result()
+    if cores:
+        result["core"] = {str(k): core.result() for k, core in cores.items()}
+    return result
