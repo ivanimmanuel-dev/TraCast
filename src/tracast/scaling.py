@@ -24,8 +24,19 @@ from importlib.metadata import version
 from .benchmark import BenchmarkConfig, run as run_benchmark
 from .experiment import write_json
 from .provenance import git_state
+from .stats import day_bootstrap
 
 CORE = 16
+# (first, second): the estimate is first minus second, scored on identical windows
+PAIRS = [
+    ("sgraph_time", "sgru_time"),
+    ("sgraph", "sgru"),
+    ("sgru_time", "gru_time"),
+    ("sgraph_time", "graph_gru_time"),
+    ("graph_gru_time", "gru_time"),
+    ("sgraph_time", "ha"),
+    ("gru_time", "ha"),
+]
 
 
 def load_config(path):
@@ -81,11 +92,24 @@ def _stats(values):
 def summarize(out):
     """Collect every size's results into one table: model x sensor count."""
     out = Path(out)
-    table = {}
+    table, comparisons = {}, {}
     for folder in sorted(out.glob("n[0-9][0-9][0-9]")):
         if json.loads((folder / "status.json").read_text())["status"] != "complete":
             continue
         count = int(folder.name[1:])
+        trials = json.loads((folder / "results.json").read_text())
+        daily = {
+            model: [r["daily"] for r in trials if r["model"] == model]
+            for model in dict.fromkeys(r["model"] for r in trials)
+            if all("daily" in r for r in trials if r["model"] == model)
+        }
+        found = {
+            f"{a}_vs_{b}": day_bootstrap(daily[a], daily[b])
+            for a, b in PAIRS
+            if a in daily and b in daily
+        }
+        if found:
+            comparisons[str(count)] = found
         for model in dict.fromkeys(
             r["model"] for r in json.loads((folder / "results.json").read_text())
         ):
@@ -137,6 +161,7 @@ def summarize(out):
     summary = {
         "sizes": sorted({int(c) for m in table.values() for c in m}),
         "models": table,
+        "day_bootstrap": comparisons,
         "environment": {
             "platform": platform.platform(),
             "processor": platform.processor(),
@@ -145,6 +170,10 @@ def summarize(out):
             "torch": version("torch"),
             "numpy": version("numpy"),
         },
+        "day_bootstrap_note": (
+            "Gaps in own-population MAE (first minus second, negative favors the first) "
+            "with 95% intervals from resampling test days; training seeds averaged first."
+        ),
         "note": (
             "mae is on every sensor a model was trained on, so it is not comparable "
             "across sizes; core16_mae scores every model on the same first 16 sensors."
@@ -246,6 +275,55 @@ def figures(summary, out):
     plt.close(fig)
 
 
+def subset_map(graph_dir, out, counts=(16, 32, 64, 128, 207)):
+    """Where the nested subsets sit: every sensor coloured by the first size that has it."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import pandas as pd
+
+    from . import topology
+
+    graph_dir = Path(graph_dir)
+    ids = (graph_dir / "graph_sensor_ids.txt").read_text().strip().split(",")
+    distances = pd.read_csv(
+        graph_dir / "distances_la_2012.csv", dtype={"from": str, "to": str}
+    )
+    weights, _ = topology.adjacency(distances, ids)
+    ranking = topology.order(weights, ids)
+    first = {}
+    for rank, node in enumerate(ranking):
+        first[node] = next(c for c in counts if rank < c)
+    places = pd.read_csv(
+        graph_dir / "graph_sensor_locations.csv", dtype={"sensor_id": str}
+    )
+    places = places.set_index("sensor_id").loc[ids]
+    palette = {
+        16: "#dc2626",
+        32: "#d97706",
+        64: "#16a34a",
+        128: "#1d4ed8",
+        207: "#9ca3af",
+    }
+    fig, ax = plt.subplots(figsize=(6.4, 5.2), constrained_layout=True)
+    for count in reversed(counts):
+        nodes = [n for n in range(len(ids)) if first[n] == count]
+        label = f"first {count}" if count == counts[0] else f"added at {count}"
+        ax.scatter(
+            places["longitude"].iloc[nodes],
+            places["latitude"].iloc[nodes],
+            s=26 if count == counts[0] else 14,
+            color=palette[count],
+            label=label,
+            zorder=3,
+        )
+    ax.set(title="Nested sensor subsets", xlabel="Longitude", ylabel="Latitude")
+    ax.legend(fontsize=8)
+    fig.savefig(Path(out) / "scaling-subsets.png", dpi=170)
+    plt.close(fig)
+
+
 def _pick(entry, key, field):
     value = entry[key]
     if value is None:
@@ -269,6 +347,7 @@ def main(argv=None):
     else:
         summary = run(counts, config, args.data, args.topology, args.out)
     figures(summary, args.out)
+    subset_map(args.topology, args.out)
     print(json.dumps({m: sorted(v) for m, v in summary["models"].items()}, indent=1))
 
 

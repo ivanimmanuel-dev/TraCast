@@ -19,6 +19,11 @@ def fake_trial(model, seed, mae, core=None):
         "model": model,
         "seed": seed,
         "test": test,
+        "daily": {
+            "days": [f"d{i}" for i in range(5)],
+            "abs": [100 * (mae + 0.05 * i) for i in range(5)],
+            "count": [100] * 5,
+        },
         "history": [{}] * (0 if model in ("ha", "persistence") else 4),
         "parameter_count": 0 if model in ("ha", "persistence") else 4000,
         "train_seconds": 10.0 + seed,
@@ -71,6 +76,10 @@ def test_summary_separates_own_population_from_the_common_core(tmp_path):
         and summary["models"]["ha"]["16"]["epochs_run"] is None
     )
     assert big["peak_memory_mib"]["mean"] == pytest.approx(300)
+    gaps = summary["day_bootstrap"]["16"]
+    assert gaps["sgru_time_vs_gru_time"]["estimate"] == pytest.approx(0.1)
+    assert gaps["gru_time_vs_ha"]["estimate"] == pytest.approx(3.1 - 3.7)
+    assert "sgraph_time_vs_sgru_time" not in gaps  # sgraph_time wasn't run
     assert "not comparable" in summary["note"]
     assert (tmp_path / "scaling-summary.json").exists()
 
