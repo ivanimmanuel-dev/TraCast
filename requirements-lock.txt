@@ -65,7 +65,7 @@ python-dateutil==3.0.0
 python-dotenv==1.2.4
 pytz==2026.5
 PyYAML==6.0.3
-ray==2.55.1
+ray==2.59.0
 referencing==0.37.0
 requests==2.34.2
 rich==14.3.4
