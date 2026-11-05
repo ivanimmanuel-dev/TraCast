@@ -1,0 +1,29 @@
+{
+  "benchmark": {
+    "sensors": 16,
+    "rows": 34272,
+    "history": 12,
+    "horizon": 12,
+    "hidden": 32,
+    "embedding": 4,
+    "batch_size": 64,
+    "epochs": 60,
+    "lr": 0.001,
+    "threads": 4,
+    "threshold": 0.1,
+    "patience": 8,
+    "scheduler": "plateau",
+    "scheduler_patience": 2,
+    "train_stride": 1
+  },
+  "model": "gru_time",
+  "seeds": [7, 42, 2026],
+  "settings": {"standard": 0.7, "stale": 0.4},
+  "etas": [0.005, 0.01, 0.02, 0.05, 0.1],
+  "head_days": 14,
+  "head_lrs": [0.0001, 0.0005, 0.002],
+  "head_epochs": 1,
+  "retrain_every": 7,
+  "retrain_epochs": 3,
+  "retrain_lr": 0.0005
+}

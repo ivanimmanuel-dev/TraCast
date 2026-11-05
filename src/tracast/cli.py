@@ -13,6 +13,7 @@ DELEGATED = {
     "benchmark": ("tracast.benchmark", "centralized model comparison"),
     "scaling": ("tracast.scaling", "benchmark across nested sensor counts"),
     "uncertainty": ("tracast.uncertainty", "conformal prediction intervals"),
+    "shift": ("tracast.shift", "drift and adaptation experiment"),
     "federated": ("tracast.federated", "three-client Flower simulation"),
     "study": ("tracast.federated_study", "federated round-budget study"),
     "compare": ("tracast.compare_runs", "check two federated runs for exact repeats"),

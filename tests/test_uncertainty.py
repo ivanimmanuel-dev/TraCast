@@ -3,7 +3,6 @@
 import numpy as np
 import pandas as pd
 import pytest
-import torch
 
 from tracast import uncertainty
 from tracast.data import Scaler, Windows, split
