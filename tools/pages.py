@@ -809,6 +809,128 @@ def build_uncertainty():
     return summary
 
 
+# --- README pieces ---------------------------------------------------------------------
+
+NEXT = """## What's next
+
+- Give the bigger networks more capacity (a larger hidden size, a learned vector per sensor) and train them to convergence. The same-16 scores got worse as the population grew, and I held the capacity and the update budget fixed, so this is the first thing to try.
+- Hold out sensors: train the shared model on some sensors and test it on ones it has never seen. Sharing weights makes that possible, and the dense models can't do it at all.
+- Multi-hop or learned graph features in the shared model, since one-hop averages were enough to help but are the simplest choice.
+- Intervals that are joint across horizons and sensors, and conformal methods with guarantees conditional on the traffic state instead of only on average.
+- Federated learning with the shared model. Its size doesn't depend on the sensor count, which suits clients that own different sets of sensors.
+- More data: another year or another city, and drift with real change points (roadworks, a sensor replaced) and a change detector that decides when to adapt.
+"""
+
+
+def readme_blocks():
+    """Bullets and short sections for the README, from whichever studies have run."""
+    blocks = {
+        "bullets": [],
+        "scaling": "",
+        "uncertainty": "",
+        "shift": "",
+        "next": NEXT,
+    }
+    scaling = load("reports/scaling/scaling-summary.json")
+    cost = load("reports/scaling/cost-summary.json")
+    unc = load("reports/uncertainty/summary.json")
+    shf = load("reports/shift/summary.json")
+
+    if scaling:
+        sizes = scaling["sizes"]
+        small, large = sizes[0], sizes[-1]
+        models = scaling["models"]
+        found = scale_findings(scaling, cost)
+        blocks["bullets"] += [found[0], found[2]]
+        rows = [
+            ("ha", "Historical average"),
+            ("gru_time", "Dense GRU"),
+            ("graph_gru_time", "Dense Graph-GRU"),
+            ("sgru_time", "Shared GRU"),
+            ("sgraph_time", "Shared Graph-GRU"),
+        ]
+        table = "\n".join(
+            f"| {label} | "
+            + " | ".join(cell(models[n][str(k)], "core16_mae") for k in sizes)
+            + " |"
+            for n, label in rows
+        )
+        head = "| Trained on this many sensors | " + " | ".join(map(str, sizes)) + " |"
+        blocks["scaling"] = (
+            f"## Scaling to all {large} sensors\n\n"
+            f"Everything above uses {small} sensors from one highway. I ran the same comparison on nested "
+            f"sets of {', '.join(map(str, sizes))} sensors (each set contains the one before it), plus two "
+            f"new models that share one small GRU across every sensor, so their size doesn't depend on how "
+            f"many sensors there are. Test MAE in mph on the same first {small} sensors, whatever size "
+            f"the model was trained on:\n\n{head}\n|---|"
+            + "---:|"
+            * len(sizes)
+            + f"\n{table}\n\n"
+            f"![Accuracy by sensor count](reports/scaling/scaling-accuracy.png)\n\n"
+            f"{found[0]} {found[2][2:]}\n\n"
+            f"The sizes' own-population scores, the cost in time and memory, and the limits are in the "
+            f"[scaling report](reports/scaling/report.md).\n"
+        )
+
+    if unc:
+        m = unc["mean"]["methods"]
+        rows = "\n".join(
+            f"| {UNC_LABELS[n]} | {m[n]['overall']['coverage']:.3f} | {m[n]['overall']['width']:.1f} "
+            f"| {m[n]['origin_congested']['coverage']:.3f} | {m[n]['overall']['interval_score']:.1f} |"
+            for n in ("gaussian_train", "conformal_pooled", "conformal_aci", "cqr")
+        )
+        found = unc_findings(unc)
+        blocks["bullets"] += [found[1], found[2]]
+        blocks["uncertainty"] = (
+            "## Prediction intervals\n\n"
+            "A point forecast doesn't say how sure the model is, so I built 90% prediction intervals "
+            "on the 16-sensor GRU and checked them on the held-out test days. There is a separate "
+            "calibration part between validation and test that never touches training or the choice "
+            "of checkpoint. Methods: a Gaussian baseline, split conformal, adaptive conformal (ACI), "
+            "and a quantile network with a conformal correction (CQR). Averages over 3 seeds:\n\n"
+            "| Method | Coverage | Width (mph) | Coverage when last speed < 40 mph | Interval score |\n"
+            "|---|---:|---:|---:|---:|\n"
+            f"{rows}\n\n"
+            "![Coverage by traffic condition](reports/uncertainty/uncertainty-conditions.png)\n\n"
+            f"{found[0][2:]} {found[1][2:]} {found[2][2:]}\n\n"
+            "The other methods, the reliability plot, coverage by horizon and day, and the limits are "
+            "in the [intervals report](reports/uncertainty/report.md).\n"
+        )
+
+    if shf:
+        std, stale = shf["settings"]["standard"], shf["settings"]["stale"]
+        found = shift_findings(shf)
+        blocks["bullets"] += [found[0]]
+        rows = []
+        for kind, label in SHIFT_LABELS.items():
+            a, b = std["strategies"][kind], stale["strategies"][kind]
+
+            def change(e, kind=kind):
+                if kind == "static":
+                    return ""
+                return f" ({e['vs_static']['estimate']:+.3f})"
+
+            seconds = "0" if kind == "static" else f"{a['adapt_seconds']:.0f}"
+            rows.append(
+                f"| {label} | {a['mae']:.3f}{change(a)} | {b['mae']:.3f}{change(b)} | {seconds} |"
+            )
+        blocks["shift"] = (
+            "## Drift and adaptation\n\n"
+            "A model is trained once and used for months, so I replayed the test period one day at a "
+            "time and let it adapt using only data that had already arrived (the tests check that "
+            "nothing from the future gets in). Test MAE in mph, with the change against the static "
+            "model in brackets, for the usual model and for a stale one trained on only the first 40% "
+            "of the timeline:\n\n"
+            "| Strategy | Standard model | Stale model | Adaptation seconds (standard) |\n"
+            "|---|---:|---:|---:|\n" + "\n".join(rows) + "\n\n"
+            "![MAE change against the static model](reports/shift/shift-gain.png)\n\n"
+            f"{found[0][2:]} {found[1][2:]} {found[3][2:]}\n\n"
+            "The data drift statistics, the regime breakdown and the limits are in the "
+            "[drift report](reports/shift/report.md).\n"
+        )
+    return blocks
+
+
 if __name__ == "__main__":
     build_audit()
     build_scaling()

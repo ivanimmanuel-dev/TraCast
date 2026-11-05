@@ -435,9 +435,9 @@ README = """# TraCast
 
 TraCast forecasts traffic speed 5 to 60 minutes ahead from the last hour of sensor readings. The data is METR-LA: 207 road sensors in Los Angeles, March to June 2012. Everything runs on a CPU laptop.
 
-I wanted to know four things. Do recurrent models beat simple baselines? Does the road graph help? Does knowing the time of day help? And does federated training lose anything compared with training on all the data in one place?
+I wanted to know four things. Do recurrent models beat simple baselines? Does the road graph help? Does knowing the time of day help? And does federated training lose anything compared with training on all the data in one place? Then I scaled it up to all 207 sensors, put prediction intervals on the forecasts and checked what happens when traffic drifts.
 
-[Technical report](reports/research-report.md) · [Two-page brief](reports/research-brief.pdf) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
+[Technical report](reports/research-report.md) · [Two-page brief](reports/research-brief.pdf) · [Scaling](reports/scaling/report.md) · [Intervals](reports/uncertainty/report.md) · [Drift](reports/shift/report.md) · [Audit](docs/audit.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
 
 ## What I found
 
@@ -455,7 +455,7 @@ Test MAE in mph on 16 sensors, forecasting 12 steps (60 minutes) from the previo
 
 My first run trained every model for five epochs. In {at_last} of {n_runs} runs the best validation epoch was the last one, so the models were still improving when training stopped. The numbers above come from a rerun with early stopping (up to {max_epochs} epochs) and {seeds} seeds. The five-epoch results are still in [reports/benchmark](reports/benchmark/report.md).
 
-## How it's set up
+{scaling_section}{uncertainty_section}{shift_section}## How it's set up
 
 The first 70% of the timeline is train, the next 10% validation and the last 20% test, and windows never cross a split boundary. Zero and missing readings are left out of the loss and the metrics, inputs are forward-filled within a split, and normalization uses training data only. The saved model is the one with the best validation MAE; test scores come after that.
 
@@ -497,17 +497,22 @@ Then the experiments:
 
 # federated study
 .\\.venv\\Scripts\\python.exe -m tracast.federated_study --config configs/federated-study.json --out runs/federated-study
+
+# all 207 sensors, prediction intervals, drift (the scaling run takes a few hours)
+.\\.venv\\Scripts\\python.exe -m tracast.cli scaling --config configs/scaling.json --out runs/scaling
+.\\.venv\\Scripts\\python.exe -m tracast.cli uncertainty --config configs/uncertainty.json --out runs/uncertainty
+.\\.venv\\Scripts\\python.exe -m tracast.cli shift --config configs/shift.json --out runs/shift
 ```
 
 On Linux or WSL use `python3.11` and `.venv/bin/python`. The installed `tracast` command runs everything too (`tracast --help` lists the subcommands). Use a fresh output folder for each run. The [run guide](docs/reproducibility.md) has the rest.
 
-## What's where
+{next_section}## What's where
 
-- `src/tracast/`: data loading, models, the benchmark and the federated code
+- `src/tracast/`: data loading, models (dense and shared-weight), the benchmark, scaling, conformal intervals, drift replay and the federated code
 - `tests/`: unit tests on small constructed arrays, no real data needed
 - `configs/`: one JSON file per experiment
 - `reports/`: saved results for every experiment, the technical report and the brief
-- `docs/`: the run guide
+- `docs/`: the run guide and the audit of the code and data
 - `tools/`: scripts that rebuild the README, figures and reports from the saved results
 
 The code is MIT licensed. The data and the DCRNN graph have their own terms, see [DATA.md](DATA.md).
@@ -545,6 +550,9 @@ def findings(ext, first_pass, fed):
 
 
 def build_readme(first_pass, records):
+    from pages import readme_blocks
+
+    blocks = readme_blocks()
     ext = extended()
     fed = federated(load("reports/federated-study/summary.json")["conditions"])
     best_epochs = [
@@ -554,7 +562,7 @@ def build_readme(first_pass, records):
     ]
     m = ext["models"]
     return README.format(
-        findings=NL.join(findings(ext, first_pass, fed)),
+        findings=NL.join(findings(ext, first_pass, fed) + blocks["bullets"]),
         seeds=len(ext["config"]["seeds"]),
         rows=NL.join(
             f"| {EXTENDED_LABELS[n]} | {mean_sd(m[n]['mae'])} | {at(m[n], 15):.3f} "
@@ -569,6 +577,12 @@ def build_readme(first_pass, records):
         fed_compare=fed["compare"],
         fed_verdict=fed["verdict"],
         fed_cost=fed["cost"],
+        scaling_section=blocks["scaling"] + "\n" if blocks["scaling"] else "",
+        uncertainty_section=blocks["uncertainty"] + "\n"
+        if blocks["uncertainty"]
+        else "",
+        shift_section=blocks["shift"] + "\n" if blocks["shift"] else "",
+        next_section=blocks["next"] + "\n",
     )
 
 
