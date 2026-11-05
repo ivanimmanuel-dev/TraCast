@@ -1,6 +1,6 @@
 # Graph-GRU pilot
 
-The pilot uses 16 sensors selected by breadth-first traversal of the published DCRNN distance graph, the first seven days of METR-LA, seed 42, and one training epoch. The selected graph has 85 directed non-self edges. Sensor IDs, distance-kernel scale, adjacency weights, file hashes, and split ranges are recorded in [protocol.json](protocol.json).
+A quick check that the graph code runs: 16 sensors picked by walking the DCRNN distance graph, the first seven days of METR-LA, seed 42 and one epoch. The graph has 85 directed edges. Sensor IDs, the kernel scale, the edge weights, file hashes and split ranges are in [protocol.json](protocol.json).
 
 | Model | Test MAE (mph) | Training updates (s) | Parameters | Peak process memory (MiB) |
 |---|---:|---:|---:|---:|
@@ -8,6 +8,6 @@ The pilot uses 16 sensors selected by breadth-first traversal of the published D
 | GRU | 6.996140 | 0.129335 | 11,136 | 319.94 |
 | Graph-GRU | 7.278309 | 0.269741 | 15,760 | 319.89 |
 
-The Graph-GRU computes directed incoming and outgoing distance-weighted means, combines them with each sensor's own normalized speed through a shared learned projection, and passes the resulting features to a GRU. The graph scale uses published distances among the 207 aligned sensors; no speed correlation or held-out target is used to construct the graph. Missing-value handling, chronological splits, and training-only normalization reuse the existing pipeline.
+Graph-GRU takes directed incoming and outgoing distance-weighted averages, combines them with each sensor's own normalized speed through a shared learned layer and feeds the result to a GRU. The graph uses the published distances between the 207 sensors, so no speed data or held-out target went into building it. Splits, missing-value handling and normalization are the same as everywhere else.
 
-After one epoch, both learned models trail persistence. The [full benchmark](../benchmark/report.md) uses five epochs, the complete date range, three seeds, LSTM, and a self-only graph ablation.
+After one epoch both learned models are behind persistence, which is why the [full benchmark](../benchmark/report.md) uses five epochs, the whole date range, three seeds, an LSTM and a self-only graph ablation.

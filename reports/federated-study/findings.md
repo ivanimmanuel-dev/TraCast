@@ -1,46 +1,39 @@
-# Federated round budgets and client heterogeneity
+# Federated study
 
-This study runs twelve local Flower experiments using twelve sensors, fourteen days of readings, and seeds 7, 42, and 2026. Each of the three clients holds four sensors, and no sensor belongs to two clients. The model is a shared univariate GRU, with 3,756 float32 parameters. Every round contains one local epoch and all three clients participate. The official ClientApp, ServerApp, and FedAvg run through the Flower 1.42.0 CLI/SuperLink and Ray runtime.
+Twelve Flower runs on twelve sensors, fourteen days of readings and seeds 7, 42 and 2026. Three clients hold four sensors each and no sensor is on two clients. The model is a shared univariate GRU with 3,756 parameters, each round is one local epoch, and all three clients take part every round. Flower 1.42.0's `ClientApp`, `ServerApp` and `FedAvg` run through `flwr run` on Ray, all on one machine.
 
 ## Results
 
-The table reports mean errors in mph, with the sample standard deviation across the three seeds in parentheses. The pooled comparison trains on the combined client datasets. Checkpoints are selected by validation MAE within each round budget.
+Mean MAE and RMSE in mph over the three seeds, with the seed SD in parentheses. Pooled is one model trained on all clients' data together; local-only trains each client by itself with the same amount of local work and no communication. The checkpoint with the best validation MAE is the one scored.
 
-| Client partition | Rounds | FedAvg MAE | FedAvg RMSE | Pooled MAE | Pooled RMSE | Parameter bytes |
+| Client partition | Rounds | FedAvg MAE | FedAvg RMSE | Pooled MAE | Local-only MAE | Parameter bytes |
 |---|---:|---:|---:|---:|---:|---:|
-| balanced | 1 | 4.0470 (0.0599) | 7.7919 (0.1019) | 3.7924 (0.0101) | 7.5361 (0.0182) | 180,288 |
-| balanced | 3 | 3.8093 (0.0357) | 7.5289 (0.0254) | 3.7653 (0.0344) | 7.5511 (0.0066) | 450,720 |
-| balanced | 5 | 3.7742 (0.0138) | 7.5200 (0.0121) | 3.7497 (0.0467) | 7.5350 (0.0265) | 721,152 |
-| congestion | 5 | 3.8358 (0.0288) | 7.5128 (0.0197) | 3.7497 (0.0467) | 7.5350 (0.0265) | 721,152 |
+| balanced | 1 | 4.0470 (0.0599) | 7.7919 (0.1019) | 3.7924 (0.0101) | 4.0031 (0.0413) | 180,288 |
+| balanced | 3 | 3.8093 (0.0357) | 7.5289 (0.0254) | 3.7653 (0.0344) | 3.8256 (0.0324) | 450,720 |
+| balanced | 5 | 3.7742 (0.0138) | 7.5200 (0.0121) | 3.7497 (0.0467) | 3.7958 (0.0484) | 721,152 |
+| congestion | 5 | 3.8358 (0.0288) | 7.5128 (0.0197) | 3.7497 (0.0467) | 3.7686 (0.0534) | 721,152 |
 
-Balanced-partition mean MAE fell by 0.2729 mph from one to five rounds, while estimated parameter payload increased fourfold. The three-to-five-round gain was 0.0351 mph. Seed 42 retained the same selected test result at three and five rounds. Five-round FedAvg remained 0.0245 mph above the mean pooled-reference MAE.
+Going from one to five rounds cuts balanced MAE by 0.2729 mph and multiplies the bytes sent by 4. The last two rounds are worth 0.0351 mph. At five rounds FedAvg is 0.0245 mph above the pooled model.
 
-Congestion-grouped clients had +0.0616 mph higher mean MAE than balanced clients at five rounds, but their mean RMSE difference was -0.0072 mph. The distribution change affects the two error measures differently in this experiment.
+Congestion-grouped clients have +0.0616 mph MAE and -0.0072 mph RMSE compared with balanced ones at five rounds, so the change in the training distribution moves the two measures in different directions.
 
-![Communication trade-offs and validation convergence](tradeoffs.png)
+## FedAvg vs training alone
 
-## Local-only comparison
+Local-only starts every client from the shared initial weights and repeats the work it would do in federated training (one epoch per round, same seeds, fresh optimizer each round). Each client keeps the round with its own best validation MAE, and the test errors are pooled across clients so the numbers compare with the others.
 
-Each case also trains every client alone with no communication. A client starts from the shared initial weights, does the same local work as in federated training (one epoch per round, same seeds, fresh optimizer each round) and keeps the round with its own best validation MAE. The clients' test errors are pooled, so the numbers compare with the federated and pooled ones. Mean MAE in mph, seed SD in parentheses.
+With balanced clients, federated averaging is 0.0163 mph below local-only at three rounds, 0.0216 below at five, and 0.0439 above at one. With congestion-grouped clients at five rounds it is 0.0672 above.
 
-| Client partition | Rounds | FedAvg MAE | Local-only MAE | Pooled MAE |
-|---|---:|---:|---:|---:|
-| balanced | 1 | 4.0470 (0.0599) | 4.0031 (0.0413) | 3.7924 (0.0101) |
-| balanced | 3 | 3.8093 (0.0357) | 3.8256 (0.0324) | 3.7653 (0.0344) |
-| balanced | 5 | 3.7742 (0.0138) | 3.7958 (0.0484) | 3.7497 (0.0467) |
-| congestion | 5 | 3.8358 (0.0288) | 3.7686 (0.0534) | 3.7497 (0.0467) |
+The gaps are about the size of the seed spread, so this doesn't show that communication beats training alone for this small model and 14-day slice. Pooled is lowest in every row.
 
-Balanced clients: federated averaging is 0.0163 mph below local-only at three rounds, 0.0216 below at five, and 0.0439 above at one. Congestion-grouped at five rounds it is 0.0672 above. The gaps are about the size of the seed spread, so this doesn't show that communication beats training alone for this small model and 14-day slice. Pooled is lowest in every row.
+![Communication and convergence](tradeoffs.png)
 
-## Partition rule and data controls
+## How sensors were grouped
 
-Both rules use the same first twelve sensors in canonical traffic-file order and the first 4,032 timestamps. The same 70/10/20 chronological row boundaries apply to every client and case. Per-sensor normalization and zero/NaN target masks use the existing pipeline.
+Both rules use the first twelve sensors in file order and the first 4,032 timestamps, with the same 70/10/20 split for every client and case. Sensors are ranked by the fraction of their observed training speeds below 40 mph (training rows only). Balanced groups interleave the ranks across the three clients; congestion groups take consecutive blocks of ranks.
 
-Sensors are ranked by their fraction of observed **training** speeds below 40 mph. The balanced rule interleaves rank positions across three clients; the congestion rule assigns consecutive rank blocks. Ranking uses training readings only. The groups describe simulated sensor ownership; their training distributions are measured below.
+Training speeds are counted in 10 mph bins (0, 10, ... 80, 80+), ignoring missing readings. The mean Jensen-Shannon divergence between each client's histogram and the pooled one is 0.016882 bits for balanced ownership and 0.030693 for congestion grouping. It only depends on training data, so it is the same for every seed.
 
-The observed training-speed histogram bins are 0/10/20/.../80/+inf mph, excluding missing readings. Mean client-to-pooled Jensen-Shannon divergence was 0.016882 bits for balanced ownership and 0.030693 bits for congestion grouping. This training-data statistic is constant across seeds.
-
-| Rule | Client | Sensor IDs | Usable train windows | Observed training fraction below 40 mph |
+| Rule | Client | Sensor IDs | Usable train windows | Share of training speeds below 40 mph |
 |---|---:|---|---:|---:|
 | balanced | 0 | 767541, 767471, 773869, 773062 | 10,779 | 0.0506 |
 | balanced | 1 | 767620, 737529, 717447, 717816 | 10,730 | 0.0760 |
@@ -49,47 +42,39 @@ The observed training-speed histogram bins are 0/10/20/.../80/+inf mph, excludin
 | congestion | 1 | 737529, 767542, 773869, 717447 | 10,780 | 0.0573 |
 | congestion | 2 | 717445, 773062, 717816, 717446 | 10,736 | 0.1984 |
 
-Each training example contains one sensor's input sequence and forecast targets. Client sample counts include only examples with at least one observed target. A window with no observed target contributes to neither local training nor its FedAvg example weight. Validation/test retain every candidate window and pool errors only over valid targets.
+An example is one sensor's input window plus its forecast targets. Only windows with at least one observed target count as training examples (for local training and for the FedAvg weights); validation and test keep every window and mask the missing targets.
 
-The pooled reference uses the same shared univariate architecture, initial model, scalers, masks, and total example exposure. Its dataset follows canonical sensor order regardless of client assignment. Adam resets at each local fit and each pooled epoch block; no optimizer state is federated. Partial batches create different total optimizer-step counts, which are stored in the case records.
+## Checks
 
-## Reproducibility checks
+The pooled model is bit-for-bit the same for balanced and congestion ownership with every seed, and the global model after one or three rounds matches the first rounds of the five-round run. [summary.json](summary.json) has all the checks.
 
-The pooled reference's complete numerical output and state hash match exactly across balanced and congestion ownership for every seed. Global model-state hashes from the one- and three-round cases match the corresponding prefixes of the five-round cases. [summary.json](summary.json) records all checks.
+All twelve cases finished in 814.5 seconds (13.6 minutes) on the Ryzen 7 5825U, including launch, simulation, test scoring, the pooled and local-only models and plots. Cases ran one after another with one client actor, two reserved Ray CPUs, one PyTorch thread and a 128 MiB object store.
 
-All twelve cases completed. Their total measured wall time was 814.5 seconds (13.57 minutes), including launch overhead, simulation, selected test scoring, the pooled reference, the local-only arm, and plots. Cases ran sequentially with one client actor active, two reserved Ray CPUs, one PyTorch thread, and a 128 MiB Ray object-store cap. Whole-study peak RAM was not measured.
+## Communication
 
-## Per-seed records
+The model is 15,024 bytes of float32 values. A round sends three training downloads, three uploads and three validation downloads, which is 135,216 bytes. Testing the chosen model adds 45,072. So the total is (3 x rounds + 1) x 3 x 15,024: 180,288, 450,720 and 721,152 bytes for 1, 3 and 5 rounds. This leaves out array headers, messages, config, framing, latency and energy.
 
-| Case | Selected round | FedAvg MAE | FedAvg RMSE | Pooled MAE | Case wall seconds |
-|---|---:|---:|---:|---:|---:|
-| b1-s7 | 1 | 4.111763 | 7.906256 | 3.792999 | 63.8 |
-| b3-s7 | 2 | 3.850131 | 7.556947 | 3.759755 | 67.0 |
-| b5-s7 | 5 | 3.758373 | 7.521437 | 3.712816 | 78.8 |
-| c5-s7 | 4 | 3.810094 | 7.494595 | 3.712816 | 72.9 |
-| b1-s42 | 1 | 3.993612 | 7.710778 | 3.782038 | 47.9 |
-| b3-s42 | 3 | 3.783720 | 7.507262 | 3.734071 | 64.8 |
-| b5-s42 | 3 | 3.783720 | 7.507262 | 3.734071 | 75.5 |
-| c5-s42 | 2 | 3.866865 | 7.533776 | 3.734071 | 77.4 |
-| b1-s2026 | 1 | 4.035705 | 7.758775 | 3.802187 | 49.6 |
-| b3-s2026 | 3 | 3.794028 | 7.522578 | 3.802187 | 64.0 |
-| b5-s2026 | 4 | 3.780410 | 7.531418 | 3.802187 | 77.5 |
-| c5-s2026 | 3 | 3.830434 | 7.510014 | 3.802187 | 75.3 |
+## Per-seed results
 
-Each [case directory](cases) contains config, source/data/dependency hashes, client metadata, all round metrics, selected test scores, pooled histories, status, and the runtime transcript. Raw partitions, model checkpoints, and local Flower service state stay outside Git.
+| Case | Selected round | FedAvg MAE | FedAvg RMSE | Pooled MAE | Local-only MAE | Wall seconds |
+|---|---:|---:|---:|---:|---:|---:|
+| b1-s7 | 1 | 4.111763 | 7.906256 | 3.792999 | 4.045005 | 63.8 |
+| b3-s7 | 2 | 3.850131 | 7.556947 | 3.759755 | 3.820297 | 67.0 |
+| b5-s7 | 5 | 3.758373 | 7.521437 | 3.712816 | 3.759612 | 78.8 |
+| c5-s7 | 4 | 3.810094 | 7.494595 | 3.712816 | 3.815089 | 72.9 |
+| b1-s42 | 1 | 3.993612 | 7.710778 | 3.782038 | 3.962378 | 47.9 |
+| b3-s42 | 3 | 3.783720 | 7.507262 | 3.734071 | 3.860319 | 64.8 |
+| b5-s42 | 3 | 3.783720 | 7.507262 | 3.734071 | 3.850845 | 75.5 |
+| c5-s42 | 2 | 3.866865 | 7.533776 | 3.734071 | 3.780473 | 77.4 |
+| b1-s2026 | 1 | 4.035705 | 7.758775 | 3.802187 | 4.002003 | 49.6 |
+| b3-s2026 | 3 | 3.794028 | 7.522578 | 3.802187 | 3.796261 | 64.0 |
+| b5-s2026 | 4 | 3.780410 | 7.531418 | 3.802187 | 3.776971 | 77.5 |
+| c5-s2026 | 3 | 3.830434 | 7.510014 | 3.802187 | 3.710226 | 75.3 |
 
-## Communication definition
-
-A model contains 15,024 bytes of float32 tensor values. Each round has three training downloads, three uploads, and three validation downloads: 135,216 bytes. Selected-model test evaluation adds 45,072 bytes. Total payload is therefore (3 x rounds + 1) x 3 x 15,024: 180,288 / 450,720 / 721,152 bytes for 1 / 3 / 5 rounds.
-
-These estimates exclude array headers, metrics, config, message framing, app packaging, transport overhead, latency, and energy. Forecasting scores pool absolute errors, squared errors, and valid target counts across clients.
-
-## Interpretation
-
-Three seeds describe initialization and local-shuffle variation on one test block. The fourteen-day slice, twelve sensors, predefined congestion threshold, and short round budgets limit the conclusion to this setup. The selected model is univariate, so it is separate from the full-date-range multivariate graph benchmark. Client ownership is simulated on a shared host, using standard FedAvg.
+`b3-s42` is balanced groups, three rounds, seed 42; `c5-s7` is congestion groups, five rounds, seed 7. Each [case folder](cases) has the config, hashes, client info, every round's metrics, the test scores, the pooled history and the Flower log. Raw partitions, checkpoints and Flower state stay out of git.
 
 ```powershell
 .\.venv\Scripts\python.exe -m tracast.federated_study --config configs/federated-study.json --out runs/federated-study-new
 ```
 
-[Configuration](config.json) - [All measured cases](cases.json) - [Summary and controls](summary.json) - [Full research report](../research-report.md)
+[Config](config.json) · [All cases](cases.json) · [Summary](summary.json) · [Technical report](../research-report.md)

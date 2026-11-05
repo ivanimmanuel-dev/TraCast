@@ -1,20 +1,20 @@
-# Centralized model benchmark
+# Five-epoch benchmark
 
-The benchmark uses sixteen sensors selected from the METR-LA distance graph, the full March–June 2012 timeline, seeds 7/42/2026, and five epochs per learned model. Each trial runs in a fresh CPU process.
+My first benchmark: 16 sensors picked from the METR-LA distance graph, the full March to June timeline, seeds 7, 42 and 2026, and five epochs per learned model. Each trial runs in a fresh CPU process. It turned out five epochs is too short, which is why there is a [longer-training study](../benchmark-extended/report.md).
 
-The [technical report](../research-report.md#3-data-and-preprocessing) describes preprocessing, graph construction, architecture, training, and interpretation.
+The [technical report](../research-report.md) covers the data, models and results.
 
-| Record | Contents |
+| File | What's in it |
 |---|---|
-| [Summary](summary.json) | Mean and sample SD, horizon metrics, paired differences |
-| [Trials](results.json) | Per-seed scores, convergence, timings, model hashes |
-| [Protocol](protocol.json) | Sensor IDs, splits, scalers, graph weights, missing counts |
-| [Manifest](manifest.json) | Executed source, dependencies, and input hashes |
-| [Configuration](config.json) | Resolved model and training settings |
-| [Repeatability](repeatability.json) | Exact seed-42 Graph-GRU and LSTM repeats |
+| [summary.json](summary.json) | Mean and SD per model, horizon metrics, paired differences |
+| [results.json](results.json) | Per-seed scores, convergence, timings, model hashes |
+| [protocol.json](protocol.json) | Sensor IDs, splits, scalers, graph weights, missing counts |
+| [manifest.json](manifest.json) | Source, dependency and input hashes |
+| [config.json](config.json) | Resolved model and training settings |
+| [repeatability.json](repeatability.json) | Exact repeats of the seed-42 Graph-GRU and LSTM runs |
 
 ![Topology](topology.png)
 
 ![Validation convergence](../figures/validation-convergence.png)
 
-[Run commands](../../docs/reproducibility.md#centralized-models)
+To run it, see the [run guide](../../docs/reproducibility.md#five-epoch-benchmark).
