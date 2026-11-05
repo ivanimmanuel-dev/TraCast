@@ -151,10 +151,31 @@ def missing_report(frame):
     }
 
 
-def split(frame, history=12, horizon=12):
+def split(frame, history=12, horizon=12, calibration=0.0):
+    """Chronological 70/10/20 split; with calibration > 0 the end of validation becomes "cal".
+
+    train is always the first 70% and test the last 20%. Validation then holds the
+    10% - calibration fraction used to pick checkpoints, and cal (right before test)
+    holds the rest, so calibration data never decides which model is kept.
+    """
     n = len(frame)
     a, b = int(n * 0.7), int(n * 0.8)
-    parts = {"train": frame.iloc[:a], "val": frame.iloc[a:b], "test": frame.iloc[b:]}
+    if calibration:
+        if not 0 < calibration < 0.1:
+            raise ValueError("calibration must be a fraction between 0 and 0.1")
+        c = int(n * (0.8 - calibration))
+        parts = {
+            "train": frame.iloc[:a],
+            "val": frame.iloc[a:c],
+            "cal": frame.iloc[c:b],
+            "test": frame.iloc[b:],
+        }
+    else:
+        parts = {
+            "train": frame.iloc[:a],
+            "val": frame.iloc[a:b],
+            "test": frame.iloc[b:],
+        }
     if min(map(len, parts.values())) < history + horizon:
         raise ValueError("Each chronological split needs history + horizon rows")
     return parts

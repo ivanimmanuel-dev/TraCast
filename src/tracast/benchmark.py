@@ -149,7 +149,7 @@ def model_for(name, config, weights):
     raise ValueError(f"Unknown model: {name}")
 
 
-def prepared(config, data, graph_dir, time_features=None):
+def prepared(config, data, graph_dir, time_features=None, calibration=0.0):
     if time_features is None:
         time_features = config.uses_time
     frame = load(data, 207, config.rows)
@@ -157,7 +157,7 @@ def prepared(config, data, graph_dir, time_features=None):
         graph_dir, frame.columns, config.sensors, config.threshold
     )
     frame = frame.loc[:, ids]
-    parts = split(frame, config.history, config.horizon)
+    parts = split(frame, config.history, config.horizon, calibration)
     scaler = Scaler().fit(parts["train"])
     datasets = {
         name: Windows(part, scaler, config.history, config.horizon, time_features)
