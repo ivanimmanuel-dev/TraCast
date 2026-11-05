@@ -1066,6 +1066,49 @@ def shift_readme_text(summary):
     )
 
 
+def variant_numbers(variants, scaling):
+    """The same-16 gains (positive is better) the README sentences quote."""
+    sizes, gaps = variants["sizes"], variants["day_bootstrap"]
+
+    def gain(key):
+        return [-gaps[str(k)][key]["estimate"] for k in sizes]
+
+    vector = gain("sgru_id_time_vs_sgru_time") + gain("sgraph_id_time_vs_sgraph_time")
+    lstm = gain("slstm_time_vs_sgru_time")
+    graph = [
+        -scaling["day_bootstrap"][str(k)]["sgraph_time_vs_sgru_time"]["estimate"]
+        for k in sizes
+        if str(k) in scaling["day_bootstrap"]
+    ]
+    return sizes, vector, lstm, graph
+
+
+def variants_readme_bullet(variants, scaling):
+    sizes, vector, lstm, graph = variant_numbers(variants, scaling)
+    return (
+        f"- **In a shared model, telling the sensors apart matters more than the graph.** A learned "
+        f"4-number vector per sensor changes test MAE by {-max(vector):+.3f} to {-min(vector):+.3f} mph at "
+        f"{join_and(sizes)} sensors, the graph's neighbor averages by {-max(graph):+.3f} to {-min(graph):+.3f} "
+        f"and an LSTM instead of a GRU by {-max(lstm):+.3f} to {-min(lstm):+.3f} (negative is better)."
+    )
+
+
+def variants_readme_text(variants, scaling):
+    sizes, vector, lstm, graph = variant_numbers(variants, scaling)
+    large = str(sizes[-1])
+    shared = variants["models"]["sgru_id_time"][large]["core16_mae"]["mean"]
+    dense = scaling["models"]["gru_time"][large]["core16_mae"]["mean"]
+    return (
+        f"Two variants of the shared models are in the [variants report](reports/variants/report.md), tested at "
+        f"{join_and(sizes)} sensors. A learned vector of 4 numbers per sensor, which lets the shared network "
+        f"tell sensors apart, changes the test MAE on the sensors the models train on by {-max(vector):+.3f} to {-min(vector):+.3f} mph "
+        f"(negative is better), a bigger effect than the graph has, and with it the shared GRU scores "
+        f"{shared:.3f} on the first 16 sensors when trained on {sizes[-1]}, against {dense:.3f} for the dense GRU. The catch is that a model "
+        f"with those vectors can't forecast a sensor it wasn't trained on. Swapping the GRU for an LSTM changes "
+        f"it by {-max(lstm):+.3f} to {-min(lstm):+.3f}."
+    )
+
+
 def readme_blocks():
     """Bullets and short sections for the README, from whichever studies have run."""
     blocks = {
@@ -1079,6 +1122,7 @@ def readme_blocks():
     cost = load("reports/scaling/cost-summary.json")
     unc = load("reports/uncertainty/summary.json")
     shf = load("reports/shift/summary.json")
+    var = load("reports/variants/variants-summary.json")
 
     if scaling:
         sizes = scaling["sizes"]
@@ -1086,6 +1130,8 @@ def readme_blocks():
         models = scaling["models"]
         found = scale_findings(scaling, cost)
         blocks["bullets"] += [found[0], found[2]]
+        if var:
+            blocks["bullets"].append(variants_readme_bullet(var, scaling))
         rows = [
             ("ha", "Historical average"),
             ("gru_time", "Dense GRU"),
@@ -1112,6 +1158,7 @@ def readme_blocks():
             + f"\n{table}\n\n"
             f"![Accuracy by sensor count](reports/scaling/scaling-accuracy.png)\n\n"
             f"{scale_readme_text(scaling, cost)}\n\n"
+            f"{variants_readme_text(var, scaling) + chr(10) * 2 if var else ''}"
             f"The sizes' own-population scores, the cost in time and memory, and the limits are in the "
             f"[scaling report](reports/scaling/report.md).\n"
         )
@@ -1186,6 +1233,7 @@ VARIANT_GAPS = (
     ("slstm_time_vs_sgru_time", "LSTM - GRU"),
     ("sgru_id_time_vs_sgru_time", "GRU + vector - GRU"),
     ("sgraph_id_time_vs_sgraph_time", "Graph-GRU + vector - Graph-GRU"),
+    ("sgraph_id_time_vs_sgru_id_time", "Graph-GRU + vector - GRU + vector"),
 )
 
 
@@ -1210,6 +1258,22 @@ def variant_findings(summary, scaling):
         ]
         out.append(f"- **{label}:** " + "; ".join(parts) + ".")
     if scaling:
+        dense = scaling["models"].get("gru_time", {})
+        shared = models.get("sgru_id_time", {})
+        both = [k for k in sizes if str(k) in dense and str(k) in shared]
+        if both:
+            parts = ", ".join(
+                f"{shared[str(k)]['core16_mae']['mean']:.3f} against {dense[str(k)]['core16_mae']['mean']:.3f} "
+                f"at {k} sensors"
+                for k in both
+            )
+            large = str(both[-1])
+            out.append(
+                "- **Against the dense GRU from the scaling study** (same windows and seeds, same-16 MAE in "
+                f"mph): the shared GRU with a sensor vector scores {parts}, with "
+                f"{shared[large]['parameters']:,} parameters instead of {dense[large]['parameters']:,} at "
+                f"{large} sensors."
+            )
         same = [
             (
                 k,
@@ -1247,7 +1311,7 @@ Test MAE in mph on the same first {small} sensors, mean (SD over seeds):
 
 Parameters at {large} sensors: {params}.
 
-Gaps on identical windows (first minus second, negative favors the first; 95% interval from resampling test days, seeds averaged first):
+Gaps in test MAE on all the sensors each model was trained on, on identical windows (first minus second, negative favors the first; 95% interval from resampling test days, seeds averaged first). These are the same paired gaps as in the scaling study, so they aren't the same numbers as the differences between the same-{small} scores above:
 
 | Size | {gap_heads} |
 |---|{gap_rule}
@@ -1255,8 +1319,13 @@ Gaps on identical windows (first minus second, negative favors the first; 95% in
 
 {findings}
 
+![Accuracy by variant](variants-accuracy.png)
+
+The left panel scores each model on all the sensors it was trained on, the right one on the same first {small} sensors for every size. Persistence is the dotted grey line.
+
 ## Limits
 
+- A sensor vector ties the model to the sensors it was trained on: it can't forecast a new sensor without training a vector for it. The plain shared models don't have that problem, which is why the scaling study used them, so the vectors trade some of what sharing weights is for against accuracy.
 - Only {sizes} sensors, because every extra model is another full training run at each size. Whether the vectors help more (or overfit) at 207 sensors isn't tested here.
 - Two seeds, the same equal-update budget as before, and a fixed {dim}-number vector. A larger vector or a longer run might change the picture.
 - I didn't time these models; the cost comparison in the scaling study covers the GRU versions only.
@@ -1302,7 +1371,7 @@ def variants_page(summary, scaling, config):
         for k in sizes
     )
     params = ", ".join(
-        f"{VARIANT_LABELS[n].lower().replace('(reference)', '').strip()} {models[n][str(large)]['parameters']:,}"
+        f"{VARIANT_LABELS[n].replace(' (reference)', '')} {models[n][str(large)]['parameters']:,}"
         for n in VARIANT_LABELS
         if n in models
     )

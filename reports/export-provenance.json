@@ -183,5 +183,15 @@
     "export_sha256": "e8e306b9c88fb54210154e637b7f2b58b4751ee120eb469de9aeb10f2c879d22",
     "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
     "original_sha256": "b0d4a7b13b7b10cf42da253188ced068832cba60cbea3c6be6a32492842d1b74"
+  },
+  "reports/variants/n016/manifest.json": {
+    "export_sha256": "526e3fb8ef43c05f73a6b2d36066c73196e9720b3478a095bfc35371a822c685",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "ebb83677a0dea085c388971d0782deebc47796fac6ae0804af6a7dceaadbc870"
+  },
+  "reports/variants/n064/manifest.json": {
+    "export_sha256": "df8237e4927ffe03cf1324c186512a29b595773faf54a6e56aca02eab0c147f7",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "2e92cb99d230fe71195c3bea58a50f3101dac1b4171e707f80db4ba6453110cd"
   }
 }
