@@ -1,12 +1,7 @@
 version: 2
 updates:
+  # the pip pins match the recorded experiments, so those stay manual
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
-  - package-ecosystem: pip
-    directory: /
-    schedule:
-      interval: monthly
-    # pins match the recorded experiments, so review bumps by hand
-    open-pull-requests-limit: 3
