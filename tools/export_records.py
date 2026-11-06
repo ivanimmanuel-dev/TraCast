@@ -3,6 +3,7 @@
 from pathlib import Path
 import hashlib
 import json
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
@@ -26,10 +27,13 @@ def main():
             ]
         )
 
+    # long runs were launched from a frozen copy of the source kept in a temporary folder
+    frozen = re.compile(r"[A-Za-z]:[\\/][^\"]*?[\\/]frozen-[A-Za-z0-9-]+")
+
     def normalize(value):
         for source, target in replacements:
             value = value.replace(source, target)
-        return value
+        return frozen.sub("$FROZEN_COPY", value)
 
     def convert(value):
         if isinstance(value, str):

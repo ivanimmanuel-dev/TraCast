@@ -435,9 +435,9 @@ README = """# TraCast
 
 TraCast forecasts traffic speed 5 to 60 minutes ahead from the last hour of sensor readings. The data is METR-LA: 207 road sensors in Los Angeles, March to June 2012. Everything runs on a CPU laptop.
 
-I wanted to know four things. Do recurrent models beat simple baselines? Does the road graph help? Does knowing the time of day help? And does federated training lose anything compared with training on all the data in one place? Then I scaled it up to all 207 sensors, put prediction intervals on the forecasts and checked what happens when traffic drifts.
+I wanted to know four things. Do recurrent models beat simple baselines? Does the road graph help? Does knowing the time of day help? And does federated training lose anything compared with training on all the data in one place? Then I scaled it up to all 207 sensors, put prediction intervals on the forecasts and checked what happens when traffic drifts. Last, I federated the shared Graph-GRU across all 207 sensors, wrote a DCRNN-style diffusion GRU, and tested forecasting for sensors a model never trained on.
 
-[Technical report](reports/research-report.md) · [Two-page brief](reports/research-brief.pdf) · [Scaling](reports/scaling/report.md) · [Shared variants](reports/variants/report.md) · [Intervals](reports/uncertainty/report.md) · [Drift](reports/shift/report.md) · [Audit](docs/audit.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
+[Technical report](reports/research-report.md) · [Two-page brief](reports/research-brief.pdf) · [Scaling](reports/scaling/report.md) · [Shared variants](reports/variants/report.md) · [Federated graph](reports/fedgraph/report.md) · [DCRNN](reports/diffusion/report.md) · [FedProx](reports/fedopt/report.md) · [New sensors](reports/holdout/report.md) · [Intervals](reports/uncertainty/report.md) · [Drift](reports/shift/report.md) · [Audit](docs/audit.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
 
 ## What I found
 
@@ -455,15 +455,15 @@ Test MAE in mph on 16 sensors, forecasting 12 steps (60 minutes) from the previo
 
 My first run trained every model for five epochs. In {at_last} of {n_runs} runs the best validation epoch was the last one, so the models were still improving when training stopped. The numbers above come from a rerun with early stopping (up to {max_epochs} epochs) and {seeds} seeds. The five-epoch results are still in [reports/benchmark](reports/benchmark/report.md).
 
-{scaling_section}{uncertainty_section}{shift_section}## How it's set up
+{scaling_section}{uncertainty_section}{shift_section}{federated_graph_section}## How it's set up
 
 The first 70% of the timeline is train, the next 10% validation and the last 20% test, and windows never cross a split boundary. Zero and missing readings are left out of the loss and the metrics, inputs are forward-filled within a split, and normalization uses training data only. The saved model is the one with the best validation MAE; test scores come after that.
 
 The 16 sensors come from walking the published DCRNN distance graph from its first sensor, which gives 85 directed edges. Sensors and edge weights come from distances only, never from speeds. Graph-GRU gives each sensor its own speed plus the average of its upstream and downstream neighbors, passes that through a small shared layer, and feeds all 16 sensors into a GRU. "Self only" is the same model with the neighbor averages set to zero. One thing to keep in mind: every model here, the plain GRU too, reads all 16 sensors, so this tests the graph-weighted averages and not whether neighboring sensors matter.
 
-What this doesn't cover: one 16-sensor subset, one 24-day test window, no hyperparameter search, and a federated part that is a simulation on one machine with a small univariate GRU.
+What this doesn't cover: one 16-sensor subset, one 24-day test window, no hyperparameter search, and federated parts that are simulations on one machine.
 
-## Federated learning
+## The first federated study (12 sensors)
 
 The Flower simulation gives each of three clients its own set of sensors. Every round each client trains its copy of the same GRU on its own readings, and the server averages the weights, weighted by how many training examples each client has (one example is one sensor's readings). Centralized trains the same model on all clients' data together, from the same starting weights, normalization, masks and number of examples. Local-only trains each client by itself with the same amount of local work and no communication.
 
@@ -503,13 +503,19 @@ Then the experiments:
 .\\.venv\\Scripts\\python.exe -m tracast.cli scaling --config configs/variants.json --out runs/variants
 .\\.venv\\Scripts\\python.exe -m tracast.cli uncertainty --config configs/uncertainty.json --out runs/uncertainty
 .\\.venv\\Scripts\\python.exe -m tracast.cli shift --config configs/shift.json --out runs/shift
+
+# federated graph models: all 207 sensors, DCRNN, FedProx, held-out sensors (each takes hours)
+.\\.venv\\Scripts\\python.exe -m tracast.cli fedgraph --config configs/fedgraph.json --out runs/fedgraph
+.\\.venv\\Scripts\\python.exe -m tracast.cli fedgraph --config configs/fedgraph-diffusion.json --out runs/fedgraph-diffusion
+.\\.venv\\Scripts\\python.exe -m tracast.cli fedgraph --config configs/fedgraph-optimization.json --out runs/fedgraph-optimization
+.\\.venv\\Scripts\\python.exe -m tracast.cli holdout --config configs/holdout.json --out runs/holdout
 ```
 
 On Linux or WSL use `python3.11` and `.venv/bin/python`. The installed `tracast` command runs everything too (`tracast --help` lists the subcommands). Use a fresh output folder for each run. The [run guide](docs/reproducibility.md) has the rest.
 
 {next_section}## What's where
 
-- `src/tracast/`: data loading, models (dense and shared-weight), the benchmark, scaling, conformal intervals, drift replay and the federated code
+- `src/tracast/`: data loading, models (dense, shared-weight and the DCRNN-style diffusion GRU), the benchmark, scaling, conformal intervals, drift replay, held-out sensors and the federated code (the first small study and the federated graph models)
 - `tests/`: unit tests on small constructed arrays, no real data needed
 - `configs/`: one JSON file per experiment
 - `reports/`: saved results for every experiment, the technical report and the brief
@@ -545,7 +551,7 @@ def findings(ext, first_pass, fed):
         f"({m['linear']['mae']['mean']:.3f}) land in between, and the GRUs are well "
         f"ahead of both. (At 15 minutes persistence is still ahead of the historical "
         f"average.)",
-        f"- **Federated averaging is about as good as training each client alone.** "
+        f"- **In the first, small federated study (12 sensors, three clients), federated averaging was about as good as training each client alone.** "
         f"{fed['compare']}",
     ]
 
@@ -583,6 +589,9 @@ def build_readme(first_pass, records):
         if blocks["uncertainty"]
         else "",
         shift_section=blocks["shift"] + "\n" if blocks["shift"] else "",
+        federated_graph_section=blocks["federated_graph"] + "\n"
+        if blocks["federated_graph"]
+        else "",
         next_section=blocks["next"] + "\n",
     )
 

@@ -55,6 +55,19 @@ None found. These are checked by tests, not just by reading the code (`tests/tes
 
 One choice worth knowing about: in the replay experiment, missing readings are forward-filled across the split boundaries (the past is known when a model runs for real). The other experiments fill within each split, which is slightly more conservative at the start of validation and test. It only affects the first few windows of a split.
 
+## Federated pipeline
+
+Before federating the graph models I went through the existing federated code the same way. Nothing in it was wrong, but it couldn't be extended as it was, and a few details decided how the new version is built:
+
+- **The old federated task couldn't use a graph.** It trained a GRU that reads one sensor at a time, so there was nothing for a road graph to attach to. The new clients get windows over all their own sensors.
+- **Averaging whole state dicts would have mixed up the graphs.** The graph models keep their adjacency matrices as buffers, which land in `state_dict()`, and a client's matrix has the shape of its own sensor count. Averaging those would crash or blend graphs from different clients. The new code exchanges only the learned parameters (their shapes don't depend on the sensor count), and a test checks that no graph buffer is among them.
+- **FedProx's proximal term is squared in the paper and not in Flower's docs.** Flower's strategy only sends mu to the clients and its docstring shows the unsquared norm, while the paper uses (mu / 2) times the squared distance. The clients here use the squared form, with a test on it.
+- **Every client's normalization equals the global one.** Normalization is per sensor from training rows, so a client fitting it on its own sensors gets exactly the numbers a central fit would. A test rewrites other clients' sensors and this client's validation and test rows and checks that nothing changes.
+- **A cut graph is a second difference between "federated" and "pooled".** A federated client only has the edges inside its own sensor set, so comparing it with a pooled model on the full graph mixes two effects. The new study adds a pooled arm that gets only the in-client edges, which separates the cost of federated optimization from the cost of the cut graph.
+- **Conventions kept from the old study so the arms stay comparable:** a fresh optimizer each round (also in the pooled and local-only arms), clients weighted by their number of training examples, the best round picked on pooled validation MAE, and communication counted as uncompressed parameters three times per round per client (training down and up, validation down).
+
+Still open: it is one machine and no network, the validation statistics the server uses to pick a round would have to be reported by real clients, and the partition (a k-means cut of the coordinates) is one choice among many.
+
 ## What the data looks like
 
 - **Graph:** {edges} directed edges, {components} components (sizes {component_sizes}), and the sensor order in the data file matches the graph file.
@@ -924,11 +937,12 @@ def build_uncertainty():
 
 NEXT = """## What's next
 
-- Give the bigger networks more capacity (a larger hidden size; the [variants report](reports/variants/report.md) tried a learned vector per sensor at 16 and 64 sensors only) and train them to convergence. The same-16 scores got worse as the population grew, and I held the capacity and the update budget fixed, so this is the first thing to try.
-- Hold out sensors: train the shared model on some sensors and test it on ones it has never seen. Sharing weights makes that possible, and the dense models can't do it at all.
-- Multi-hop or learned graph features in the shared model, since one-hop averages were enough to help but are the simplest choice.
+- Bigger shared models and longer training. The scores on the first 16 sensors got worse as the training population grew, every federated arm's best round was its last, and training alone beat one set of shared weights for every area. A bigger shared model, or a few specialized ones, is the first thing to try, with the fine-tuning result (which already closes the gap) as the one to compare against.
+- A closer DCRNN: the paper's encoder-decoder with scheduled sampling, a second layer, and training for accuracy on all 207 sensors (mine predicts every horizon at once from the last hidden state, and is trained up to 64 sensors and only timed at 207).
+- Real deployment effects (partial participation, stragglers, dropped clients, a network) that a single-machine simulation can't show, and more rounds and learning-rate schedules for FedAvg and FedProx.
+- More than one geographic cut, and more seeds. The partitions are fixed k-means solutions and the federated studies use one or two seeds, so a different cut or another seed could change the smaller gaps.
+- Held-out sensors beyond one area: a random set of sensors, the graph model with a vector, and a better way to start a new sensor than the average vector (predicting it from descriptors didn't work).
 - Intervals that are joint across horizons and sensors, and conformal methods with guarantees conditional on the traffic state instead of only on average.
-- Federated learning with the shared model. Its size doesn't depend on the sensor count, which suits clients that own different sets of sensors.
 - More data: another year or another city, and drift with real change points (roadworks, a sensor replaced) and a change detector that decides when to adapt.
 """
 
@@ -1116,6 +1130,8 @@ def readme_blocks():
         "scaling": "",
         "uncertainty": "",
         "shift": "",
+        "federated_graph": "",
+        "federated_sections": [],
         "next": NEXT,
     }
     scaling = load("reports/scaling/scaling-summary.json")
@@ -1217,6 +1233,13 @@ def readme_blocks():
             "The data drift statistics, the regime breakdown and the limits are in the "
             "[drift report](reports/shift/report.md).\n"
         )
+
+    from fed_readme import blocks as federated_blocks
+
+    bullets, sections = federated_blocks()
+    blocks["bullets"] += bullets
+    blocks["federated_graph"] = "\n".join(sections.values())
+    blocks["federated_sections"] = list(sections.values())
     return blocks
 
 

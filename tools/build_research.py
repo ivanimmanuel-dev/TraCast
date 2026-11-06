@@ -140,7 +140,7 @@ As a check, the centralized reference is identical for both ownership rules, and
 
 ![Communication and convergence](federated-study/tradeoffs.png)
 
-{new_sections}## 10. What I take from this
+{new_sections}## {take_n}. What I take from this
 
 - **Give the model the clock.** Time of day and a weekend flag beat every architecture change I tried. By 30 minutes ahead, a plain historical average already beats persistence.
 - **The graph wasn't worth it here.** The neighbor averages helped a little without the clock and hurt a little with it, and Graph-GRU with the clock is not clearly different from a GRU with the clock.
@@ -149,7 +149,7 @@ As a check, the centralized reference is identical for both ownership rules, and
 {take_new}
 What this doesn't cover: one 16-sensor subset picked by a graph walk (not representative of every road, and neighbors outside the subset are missing), one 24-day test window (scores move by about 0.3 mph with the choice of days, though the gaps between models are much tighter), no hyperparameter search, and a federated task that is univariate and simulated on one machine, so its errors shouldn't be compared with the centralized tables. Timings are rough, and the byte counts only cover model weights.
 
-## 11. Reproducing it
+## {repro_n}. Reproducing it
 
 The [README](../README.md) and the [run guide](../docs/reproducibility.md) have the commands. They fetch checksum-verified data and use pinned dependencies. Each experiment's folder in `reports/` has its config, source and data hashes, sensor IDs, split ranges, scaler values, histories and per-horizon counts. Unit tests run on small constructed arrays, and the experiment commands are the real-data runs.
 
@@ -160,6 +160,7 @@ The [README](../README.md) and the [run guide](../docs/reproducibility.md) have 
 3. Hochreiter, S., Schmidhuber, J. (1997). Long Short-Term Memory. Neural Computation 9(8), 1735-1780. https://doi.org/10.1162/neco.1997.9.8.1735
 4. McMahan, H. B. et al. (2017). Communication-Efficient Learning of Deep Networks from Decentralized Data. AISTATS. https://arxiv.org/abs/1602.05629
 5. Beutel, D. J. et al. (2020). Flower: A Friendly Federated Learning Research Framework. https://arxiv.org/abs/2007.14390
+6. Li, T., Sahu, A. K., Zaheer, M., Sanjabi, M., Talwalkar, A., Smith, V. (2020). Federated Optimization in Heterogeneous Networks (FedProx). MLSys. https://arxiv.org/abs/1812.06127
 """
 
 BENCHMARK_PAGE = """# Five-epoch benchmark
@@ -251,17 +252,23 @@ def build_report():
         for key, number in (("scaling", 7), ("uncertainty", 8), ("shift", 9))
         if blocks[key]
     ]
-    new_sections = "\n".join(numbered) + "\n" if numbered else ""
+    federated = [
+        for_report(text, 10 + i) for i, text in enumerate(blocks["federated_sections"])
+    ]
+    new_sections = (
+        "\n".join(numbered + federated) + "\n" if numbered or federated else ""
+    )
+    take_n = 10 + len(federated)
     bullets = blocks["bullets"]
     new_summary = (
-        "Three later experiments extend this. " + " ".join(b[2:] for b in bullets)
+        "Later experiments extend this. " + " ".join(b[2:] for b in bullets)
         if bullets
         else ""
     )
     take_new = "".join(b + "\n" for b in bullets)
     next_section = (
         blocks["next"]
-        .replace("## What's next", "## 12. Where this could go next")
+        .replace("## What's next", f"## {take_n + 2}. Where this could go next")
         .replace("](reports/", "](")
         + "\n"
     )
@@ -296,6 +303,8 @@ def build_report():
         - grouped["fedavg_rmse"]["mean"],
         new_summary=new_summary,
         new_sections=new_sections,
+        take_n=take_n,
+        repro_n=take_n + 1,
         take_new=take_new,
         next_section=next_section,
     )
@@ -304,6 +313,26 @@ def build_report():
         BENCHMARK_PAGE, encoding="utf-8", newline="\n"
     )
     return first_pass, ext, fed
+
+
+def short(bullet, limit=235):
+    """The bold title and the start of a findings bullet, for the two-page brief.
+
+    Keeps the first sentence, and if that is long, stops at the last comma or semicolon
+    that isn't inside parentheses.
+    """
+    head, sep, rest = bullet.partition("** ")
+    if not sep:
+        return bullet
+    first = rest.split(". ")[0].rstrip(".")
+    if len(head) + len(first) > limit:
+        cut = -1
+        for i, ch in enumerate(first[: limit - len(head)]):
+            if ch in ",;" and first[:i].count("(") == first[:i].count(")"):
+                cut = i
+        if cut > 0:
+            first = first[:cut]
+    return f"{head}** {first}."
 
 
 def build_brief(first_pass, ext, fed):
@@ -468,24 +497,17 @@ def build_brief(first_pass, ext, fed):
                     strokeColor=None,
                 )
             )
-    extra = readme_blocks()["bullets"]
+    extra = [short(b) for b in readme_blocks()["bullets"]]
     later = []
     if extra:
-        later.append(heading("Bigger networks, intervals and drift"))
+        later.append(heading("Bigger networks, intervals, drift and federated graphs"))
         for bullet in extra:
             later.append(
                 Paragraph(bold(bullet[2:]), styles["BulletSmall"], bulletText="\u2022")
             )
-        figure = REPORTS / "uncertainty/uncertainty-conditions.png"
-        if figure.exists():
-            later.append(Image(str(figure), width=240, height=87))
     story += [
         drawing,
-        body(
-            '"Self only" zeroes the two averages. Every model reads all 16 sensors, so '
-            "that tests the graph-weighted averages, not whether neighbors matter."
-        ),
-        heading("Federated learning"),
+        heading("Federated learning (first, small study)"),
         body(
             f"Three simulated clients each hold four of twelve sensors and train the same "
             f"small GRU with Flower; the server averages the weights. I compare it with "
@@ -505,7 +527,7 @@ def build_brief(first_pass, ext, fed):
             "The technical report has the details; DATA.md has the data sources."
         ),
         Paragraph(
-            "References: Li et al., ICLR 2018 (METR-LA, DCRNN); Cho et al., EMNLP 2014 (GRU); Hochreiter and Schmidhuber, 1997 (LSTM); McMahan et al., AISTATS 2017 (FedAvg); Flower 1.42.0.",
+            "References: Li et al., ICLR 2018 (METR-LA, DCRNN); Cho et al., EMNLP 2014 (GRU); Hochreiter and Schmidhuber, 1997 (LSTM); McMahan et al., AISTATS 2017 (FedAvg); Li et al., MLSys 2020 (FedProx); Flower 1.42.0.",
             styles["CaptionSmall"],
         ),
     ]
