@@ -9,6 +9,106 @@
     "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
     "original_sha256": "be5934d081bb7e1111767d0d4b336bc66b94cebee91f719a583c38836eca1467"
   },
+  "reports/diffusion/federated/cases/central_dcrnn_full-s42/manifest.json": {
+    "export_sha256": "6042a888faf09736d97ddcc4f66f98bb82d57b9d431c69911ebbf141591b922f",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "48c831ee09be0db55513239d009dcf921588318b6ad900d3aa7ab0ade6cc4189"
+  },
+  "reports/diffusion/federated/cases/central_dcrnn_full-s7/manifest.json": {
+    "export_sha256": "6042a888faf09736d97ddcc4f66f98bb82d57b9d431c69911ebbf141591b922f",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "48c831ee09be0db55513239d009dcf921588318b6ad900d3aa7ab0ade6cc4189"
+  },
+  "reports/diffusion/federated/cases/central_dcrnn_local-s42/manifest.json": {
+    "export_sha256": "528f48c9cc17836e120bcbd8413769ac30777ec1d96a1f772370206da6afb210",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "00552947d96e04acdeacf64cb1c9c5bd955d85e4330c662be7ef5fa5531a196c"
+  },
+  "reports/diffusion/federated/cases/central_dcrnn_local-s7/manifest.json": {
+    "export_sha256": "528f48c9cc17836e120bcbd8413769ac30777ec1d96a1f772370206da6afb210",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "00552947d96e04acdeacf64cb1c9c5bd955d85e4330c662be7ef5fa5531a196c"
+  },
+  "reports/diffusion/federated/cases/central_sgraph_full-s42/manifest.json": {
+    "export_sha256": "533e15effbdc2f594b0cc2d63680cd9b43fd0df7ff2711b54be538ef70a588b5",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "e97ba955bf4bcaf9bd42686e1441d130d5195db7241943fe9d3a062be6a33362"
+  },
+  "reports/diffusion/federated/cases/central_sgraph_full-s7/manifest.json": {
+    "export_sha256": "533e15effbdc2f594b0cc2d63680cd9b43fd0df7ff2711b54be538ef70a588b5",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "e97ba955bf4bcaf9bd42686e1441d130d5195db7241943fe9d3a062be6a33362"
+  },
+  "reports/diffusion/federated/cases/central_sgraph_local-s42/manifest.json": {
+    "export_sha256": "32027e480c630f8e67f32fc029b37eef775216ce2a9ca23701b9cddb56596f60",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "85e20d0265a3616c2d6814eca74fb559dc4c8221d7af6b623c532ba266638d39"
+  },
+  "reports/diffusion/federated/cases/central_sgraph_local-s7/manifest.json": {
+    "export_sha256": "32027e480c630f8e67f32fc029b37eef775216ce2a9ca23701b9cddb56596f60",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "85e20d0265a3616c2d6814eca74fb559dc4c8221d7af6b623c532ba266638d39"
+  },
+  "reports/diffusion/federated/cases/central_sgru-s42/manifest.json": {
+    "export_sha256": "b5495125f8e5b7f16fd4a6ca4b4617b2fce54d83ee5d7ae029a039acb54b805e",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "d3abbd73689ecf66b77ed6235c52b7783be3605d5d2267d4c44adf590cae7654"
+  },
+  "reports/diffusion/federated/cases/central_sgru-s7/manifest.json": {
+    "export_sha256": "b5495125f8e5b7f16fd4a6ca4b4617b2fce54d83ee5d7ae029a039acb54b805e",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "d3abbd73689ecf66b77ed6235c52b7783be3605d5d2267d4c44adf590cae7654"
+  },
+  "reports/diffusion/federated/cases/fed_dcrnn-s42/manifest.json": {
+    "export_sha256": "645015464b1cf893f62526ae763402e22df1c8b92fc64b52f8d83d64c59aa433",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "748296da6b48bf0a202590432b2a6f17dc67774e9579f4981e9795b041dffafe"
+  },
+  "reports/diffusion/federated/cases/fed_dcrnn-s7/manifest.json": {
+    "export_sha256": "645015464b1cf893f62526ae763402e22df1c8b92fc64b52f8d83d64c59aa433",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "748296da6b48bf0a202590432b2a6f17dc67774e9579f4981e9795b041dffafe"
+  },
+  "reports/diffusion/federated/cases/fed_sgraph-s42/manifest.json": {
+    "export_sha256": "32d967f919df9e80d1b71a0eaaef4d3d287b5a9b0cb12f99a9a374515a155445",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "e6f3363a3277dfe9282fc9bf2d6d2da0632ddd83ddaab07f6a25d36c182bccef"
+  },
+  "reports/diffusion/federated/cases/fed_sgraph-s7/manifest.json": {
+    "export_sha256": "32d967f919df9e80d1b71a0eaaef4d3d287b5a9b0cb12f99a9a374515a155445",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "e6f3363a3277dfe9282fc9bf2d6d2da0632ddd83ddaab07f6a25d36c182bccef"
+  },
+  "reports/diffusion/federated/cases/fed_sgru-s42/manifest.json": {
+    "export_sha256": "0c6a3e60484f7a8cee976852db137fa58f344047c3e1e7406bbb00ace9ed53e7",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "f31155e632ae38d707ecf0d9e8a1c557a67ff72bf46455257cf4e755cae3c454"
+  },
+  "reports/diffusion/federated/cases/fed_sgru-s7/manifest.json": {
+    "export_sha256": "0c6a3e60484f7a8cee976852db137fa58f344047c3e1e7406bbb00ace9ed53e7",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "f31155e632ae38d707ecf0d9e8a1c557a67ff72bf46455257cf4e755cae3c454"
+  },
+  "reports/diffusion/federated/cases/local_dcrnn-s42/manifest.json": {
+    "export_sha256": "e0be85615a4219e2bfc8af76628188f4c5562296bd1763c2e1bb898df60e3d04",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "90e291c2781796bc147171d171d8eec37900f5de821c6b9c7184a70a6636510d"
+  },
+  "reports/diffusion/federated/cases/local_dcrnn-s7/manifest.json": {
+    "export_sha256": "e0be85615a4219e2bfc8af76628188f4c5562296bd1763c2e1bb898df60e3d04",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "90e291c2781796bc147171d171d8eec37900f5de821c6b9c7184a70a6636510d"
+  },
+  "reports/diffusion/federated/cases/local_sgraph-s42/manifest.json": {
+    "export_sha256": "295809735666e31ac0b9d85ee7431f31969f95f5d48494f331d2188b59e4b08f",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "e2b873758b879ea99fbec40024d991c674e6cb0bfe68dbd21e0475a787a8ef1f"
+  },
+  "reports/diffusion/federated/cases/local_sgraph-s7/manifest.json": {
+    "export_sha256": "295809735666e31ac0b9d85ee7431f31969f95f5d48494f331d2188b59e4b08f",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "e2b873758b879ea99fbec40024d991c674e6cb0bfe68dbd21e0475a787a8ef1f"
+  },
   "reports/federated-smoke/flower.log": {
     "export_sha256": "0bda9b732eb5ff9e1a0a593bb44934628fb2f60f41ae3d6e3da3aa8e4cc1d130",
     "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
@@ -143,6 +243,206 @@
     "export_sha256": "5bb122ee99ebec13e56963aad9d4f52dfa4955353197825c15f5cc5cbbd74a4d",
     "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
     "original_sha256": "07dc8e38f3894c42e450b9fed798c9c717d390046ce673c039d609357f1f7539"
+  },
+  "reports/fedgraph/cases/central_sgraph_full-s42/manifest.json": {
+    "export_sha256": "a3c1906d5d12ad1d9f97825008497af64340593fa0c3cd52c0b2f109ece4fa03",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "bc68c14b8b09afbb1432751bb02643e59b51f8690118d4824096b076602f9d3c"
+  },
+  "reports/fedgraph/cases/central_sgraph_full-s7/manifest.json": {
+    "export_sha256": "a3c1906d5d12ad1d9f97825008497af64340593fa0c3cd52c0b2f109ece4fa03",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "bc68c14b8b09afbb1432751bb02643e59b51f8690118d4824096b076602f9d3c"
+  },
+  "reports/fedgraph/cases/central_sgraph_local-s42/manifest.json": {
+    "export_sha256": "83602f10462919a0d4be7787d018610461ef05151c610bb9c995b7ceaca9b4ac",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "ef51ebf43d1c8cdd3651bacc34e31ef18be4f60e0b2bbb7565e865880aab4e4a"
+  },
+  "reports/fedgraph/cases/central_sgraph_local-s7/manifest.json": {
+    "export_sha256": "83602f10462919a0d4be7787d018610461ef05151c610bb9c995b7ceaca9b4ac",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "ef51ebf43d1c8cdd3651bacc34e31ef18be4f60e0b2bbb7565e865880aab4e4a"
+  },
+  "reports/fedgraph/cases/central_sgru-s42/manifest.json": {
+    "export_sha256": "f7335e2c7967f6345f733e22a691ccfc5d759104f63dde7d4a6e1622a977e66e",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "d1a5de221356996899b4a98c68bbba938374a20c30145257ff744805c2e811fe"
+  },
+  "reports/fedgraph/cases/central_sgru-s7/manifest.json": {
+    "export_sha256": "f7335e2c7967f6345f733e22a691ccfc5d759104f63dde7d4a6e1622a977e66e",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "d1a5de221356996899b4a98c68bbba938374a20c30145257ff744805c2e811fe"
+  },
+  "reports/fedgraph/cases/fed_sgraph-s42/manifest.json": {
+    "export_sha256": "e7d2e218b4893b405eee6e309d280e7a1e67fb9525674aefd5cc401ee7c8c1f8",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "dcd81f69a3c3418bb6d429bc5b76e1b1725afad240634f158164f4a28df6d4c9"
+  },
+  "reports/fedgraph/cases/fed_sgraph-s7/manifest.json": {
+    "export_sha256": "e7d2e218b4893b405eee6e309d280e7a1e67fb9525674aefd5cc401ee7c8c1f8",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "dcd81f69a3c3418bb6d429bc5b76e1b1725afad240634f158164f4a28df6d4c9"
+  },
+  "reports/fedgraph/cases/fed_sgru-s42/manifest.json": {
+    "export_sha256": "5c3887c64983b245f5d3e055a4b05ca5b1a5f8e5cd8cfc2c057bd4c22e8efda7",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "59ef9eac3d2dcadf1cf2bd103c51ea536bf35fea5dd6bbcef0e2d00cf7bf7a53"
+  },
+  "reports/fedgraph/cases/fed_sgru-s7/manifest.json": {
+    "export_sha256": "5c3887c64983b245f5d3e055a4b05ca5b1a5f8e5cd8cfc2c057bd4c22e8efda7",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "59ef9eac3d2dcadf1cf2bd103c51ea536bf35fea5dd6bbcef0e2d00cf7bf7a53"
+  },
+  "reports/fedgraph/cases/local_sgraph-s42/manifest.json": {
+    "export_sha256": "17a785139b42b411b74aa80bbabc19c38b9a47e8c8a33268c4306e6a63597650",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "74badf4df21c35c5afe34f4c9eb8a53ef309306b781fe7c1a8209b16c53c63db"
+  },
+  "reports/fedgraph/cases/local_sgraph-s7/manifest.json": {
+    "export_sha256": "17a785139b42b411b74aa80bbabc19c38b9a47e8c8a33268c4306e6a63597650",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "74badf4df21c35c5afe34f4c9eb8a53ef309306b781fe7c1a8209b16c53c63db"
+  },
+  "reports/fedopt/cases/bal_fedavg-s7/manifest.json": {
+    "export_sha256": "ae9c6d562be8d0d0b1fa183ff4bd6e7b38c7dae9105bb6e86125a26ca0d43a5a",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "a3a89e7fe0696861d23b22f58bad4c10d1e1f4df350a531c1a337a3ace7f759b"
+  },
+  "reports/fedopt/cases/bal_fedprox_0.1-s7/manifest.json": {
+    "export_sha256": "9bc8e0ab26eabfdd3deed2df302e5080d5d42bf95020926deff747c0fc953038",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "bc08f0c3b5b9700003ef4f1fda81148a6db8c6ca5bfed6f11c967edb8b531ca5"
+  },
+  "reports/fedopt/cases/central_full-s7/manifest.json": {
+    "export_sha256": "74d8e5235df1b1465cfad83e4ebd02afa193b0e13bca7ad73aadf78d6972abbe",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "5f8b44d4e5db1ac33010efafcfe0193eab2889338373e23359d7f4054ca3547d"
+  },
+  "reports/fedopt/cases/central_local_bal-s7/manifest.json": {
+    "export_sha256": "85863f2bf61d41dc46a3943455f1bae31b37d0d9a60ae8d4b3dcf34dfc4ebcec",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "720216ffc49d68d73fd6ccb58ff639f7d692562fe068bb2c929f729bba975852"
+  },
+  "reports/fedopt/cases/central_local_cong-s7/manifest.json": {
+    "export_sha256": "35cfa253150f5d78051ef469df679e541f2799da16b8ebd20abafe430c8f03a3",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "a8e61411d7f1d73474374d88e1c66e773d1cd9e1ad2d49913c45dd64e02fbaed"
+  },
+  "reports/fedopt/cases/central_local_geo-s7/manifest.json": {
+    "export_sha256": "6527ccffa682c279881242c28b8422f7134dce2c88ff5af9e1dab3fe29834fb8",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "0b3877f60cadd4c41f213c789097ff62a29862561db6df6ffcff4ed8746754d4"
+  },
+  "reports/fedopt/cases/cong_fedavg-s7/manifest.json": {
+    "export_sha256": "3d843cae7bdca7a0cdf958c26e5a80be0d78afa4bb26e66421bb318679f1306d",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "f62a6a8b4bc47129f6201a4d9b9beb06c421c6338dcc0b9c5d8210c383340622"
+  },
+  "reports/fedopt/cases/cong_fedprox_0.01-s7/manifest.json": {
+    "export_sha256": "71c9e5120aa4f427ccae49d0b582f6b9b1157cfb018cf1614253724afbac381a",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "187cc4fae1d3c482d4a175f4422dadedb70e2127cba030048d8b46ab123d0ef8"
+  },
+  "reports/fedopt/cases/cong_fedprox_0.1-s7/manifest.json": {
+    "export_sha256": "cd8cddfeea52b6f9448881f46c502a121ecfd242d5ccc62ddb5f8ae61e63f46f",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "638d165eac75ff599b58136bdf7fa468e6a46b80e0de2de48b3ea7bd63c96d35"
+  },
+  "reports/fedopt/cases/geo_e5-s7/manifest.json": {
+    "export_sha256": "cb57734d97708707e47678796869122eda3d28ae09ed37c825eb02d638a95440",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "d7650e0e88e55a71aed18ec57ac26290fc813808f5eeaef092dababbb7165a9c"
+  },
+  "reports/fedopt/cases/geo_e5_fedprox_0.1-s7/manifest.json": {
+    "export_sha256": "0539565ab2ce436c79932cd78ad5a3f53ecd0fdc7b2087b867b2063a9334fc3c",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "84e5b13a5505a72ff6570e7f25222b65470b6de50ecb27cead317fc3e015d98a"
+  },
+  "reports/fedopt/cases/geo_fedavg-s7/manifest.json": {
+    "export_sha256": "c32b53bc8ef8af2726869b179a53b5331cb04efd9e3ae7dd1cda97dabc8a1cc3",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "81cd1aea91d417fc4ba5661156f858fabf5607d0a0c3a9629a3276fb5ce2192f"
+  },
+  "reports/fedopt/cases/geo_fedprox_0.001-s7/manifest.json": {
+    "export_sha256": "c0bc391b9799e0fcee9ada9caccadbf947637252356beb43044fda269b865bfa",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "e9ed22f0e8836a5011dd01582d881bccc7628ab4b87d094e70bb8f87fd4644b2"
+  },
+  "reports/fedopt/cases/geo_fedprox_0.01-s7/manifest.json": {
+    "export_sha256": "291a5de97bce481a90cf121933bc4ba460423a45dcfb9f4bb8e44a467e97f1ea",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "b2d8e0f432aa3448f4acccf18c8e98248b5b7341276cf4406371d76c7d0d1525"
+  },
+  "reports/fedopt/cases/geo_fedprox_0.1-s7/manifest.json": {
+    "export_sha256": "5029c03c4a916557e0c3c13701ac6410742681f04e6e6b0ff4016595f3c319e4",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "570e02630eeece16d8b7555d3468ba8a7f7483e7f9417c254d2d668ebc68321d"
+  },
+  "reports/fedopt/cases/local_geo-s7/manifest.json": {
+    "export_sha256": "ee8bcee951a6a831e6c0d4e236d0502b70a6a5d09c55f83759a9cf1a7c87ab9c",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "be0b77086b681d65e63050f1fccbda05582a9e6b9e0c466e3594f1337b072630"
+  },
+  "reports/fedopt/personalization/cases/central_local_cong-s42/manifest.json": {
+    "export_sha256": "7cc1c9f12616fd349489786b06897a4ea4c81bfed16180bdf1fca608776dc2aa",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "a8d09af3ddea30adda0512cefffb4bc9525b4a30b395dc4b23256076295c2244"
+  },
+  "reports/fedopt/personalization/cases/central_local_cong-s7/manifest.json": {
+    "export_sha256": "7cc1c9f12616fd349489786b06897a4ea4c81bfed16180bdf1fca608776dc2aa",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "a8d09af3ddea30adda0512cefffb4bc9525b4a30b395dc4b23256076295c2244"
+  },
+  "reports/fedopt/personalization/cases/central_local_geo-s42/manifest.json": {
+    "export_sha256": "e944ef7c95a100fbc917463adce36ec524c2289b6f7a63dfe8503fcd5af62da3",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "6ffa043ec91fbb94b15a85c99f4113fbc1beda0837400866934b0f6809a6d05f"
+  },
+  "reports/fedopt/personalization/cases/central_local_geo-s7/manifest.json": {
+    "export_sha256": "e944ef7c95a100fbc917463adce36ec524c2289b6f7a63dfe8503fcd5af62da3",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "6ffa043ec91fbb94b15a85c99f4113fbc1beda0837400866934b0f6809a6d05f"
+  },
+  "reports/fedopt/personalization/cases/fed_cong-s42/manifest.json": {
+    "export_sha256": "ad6ff267e8eb40f5a080e29c98ed87b24c7a9b03d8df8506528802ecd8bb9b2c",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "3edd2d06b949c853016d0e9215a8ea29e330600e28348ca9f9bb7e307199c3a5"
+  },
+  "reports/fedopt/personalization/cases/fed_cong-s7/manifest.json": {
+    "export_sha256": "ad6ff267e8eb40f5a080e29c98ed87b24c7a9b03d8df8506528802ecd8bb9b2c",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "3edd2d06b949c853016d0e9215a8ea29e330600e28348ca9f9bb7e307199c3a5"
+  },
+  "reports/fedopt/personalization/cases/fed_geo-s42/manifest.json": {
+    "export_sha256": "b1a55dc22c901a10b277b01fdaa1fbbb377dafd3e755f70ccedfd1b3887a12ab",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "8a67ef5ad974b81582e1b3b09b0a3263d39f93794b03b51b214781cb08185720"
+  },
+  "reports/fedopt/personalization/cases/fed_geo-s7/manifest.json": {
+    "export_sha256": "b1a55dc22c901a10b277b01fdaa1fbbb377dafd3e755f70ccedfd1b3887a12ab",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "8a67ef5ad974b81582e1b3b09b0a3263d39f93794b03b51b214781cb08185720"
+  },
+  "reports/fedopt/personalization/cases/local_cong-s42/manifest.json": {
+    "export_sha256": "b05cfcb1485871198fd27d66b5666ce4e29c71847f6aa60d010bbcc369bce347",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "5c62ac742f2e1d466f78e6eff46a2c039f494b42f6e4260e9f406c25da235efb"
+  },
+  "reports/fedopt/personalization/cases/local_cong-s7/manifest.json": {
+    "export_sha256": "b05cfcb1485871198fd27d66b5666ce4e29c71847f6aa60d010bbcc369bce347",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "5c62ac742f2e1d466f78e6eff46a2c039f494b42f6e4260e9f406c25da235efb"
+  },
+  "reports/fedopt/personalization/cases/local_geo-s42/manifest.json": {
+    "export_sha256": "15bb78ea9fc42f3d5a4755b55e5f6b0ca3f7902ee5fb35b5f3a74b0dd3e3157c",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "b70b05b7cddc084fcb4cf089863fc643496ec1e98984bd9586955f14bf8a2064"
+  },
+  "reports/fedopt/personalization/cases/local_geo-s7/manifest.json": {
+    "export_sha256": "15bb78ea9fc42f3d5a4755b55e5f6b0ca3f7902ee5fb35b5f3a74b0dd3e3157c",
+    "operation": "Workstation path strings replaced by $REPO/$PYTHON_ENV; numerical values and identity hashes unchanged",
+    "original_sha256": "b70b05b7cddc084fcb4cf089863fc643496ec1e98984bd9586955f14bf8a2064"
   },
   "reports/graph-pilot/manifest.json": {
     "export_sha256": "08126c5b291a0dc1a8c8d4c2752d619c37d93f51200232777112ea455f7896a8",

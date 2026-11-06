@@ -153,6 +153,58 @@ Each case also trains a local-only arm. Every client starts from the shared init
 
 The pooled data keeps the canonical sensor order for both partition rules. The study checks that the pooled results and model hashes match for equal budgets, and that the models after one and three rounds match the first rounds of the five-round runs. The whole study takes about 14 minutes on a Ryzen 7 5825U. [Results](../reports/federated-study/findings.md).
 
+## Federated graph models
+
+The earlier federated study used a GRU that looks at one sensor at a time. These experiments federate the shared Graph-GRU and a DCRNN-style diffusion GRU, so clients can have different numbers of sensors and use their own part of the road graph. Everything is a single-machine simulation.
+
+The pieces:
+
+- `fedgraph.py` has the partitions (geographic k-means, balanced, congestion-grouped, random), the local graphs, a client's local update (FedAvg, or FedProx with the squared proximal term), evaluation, an in-process FedAvg/FedProx loop, the pooled (centralized) arm and the local-only arm.
+- `fedgraph_flower.py` has the Flower `ClientApp` and `ServerApp`. They call the same functions, and `flwr.simulation.run_simulation` runs them. The in-process loop uses Flower's own `aggregate_arrayrecords`, so the two paths give the same weights bit for bit (a test checks the client, and the equivalence run in `reports/fedgraph/` checks the server).
+- `fedgraph_study.py` runs arms x seeds from a settings file. Every case is its own folder and its own process, so a run can be stopped, resumed or split with `--arms` and `--seeds`, and `--summarize-only` rebuilds the table.
+
+### Federated shared Graph-GRU on all 207 sensors
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.cli fedgraph --config configs/fedgraph.json --out runs/fedgraph
+```
+
+Eight geographic clients, six arms (federated with and without the graph, pooled with the full graph, the local graphs only and no graph, and local-only), two seeds (7 and 42; a third was planned and dropped for time). Flower runs the federated arms. Each case takes about 25 minutes on 4 threads when nothing else is running, so the whole study is several hours.
+
+### DCRNN-style diffusion GRU
+
+```powershell
+# centralized comparison at 16 and 64 sensors, and the depth and direction ablation
+.\.venv\Scripts\python.exe -m tracast.cli scaling --config configs/diffusion.json --out runs/diffusion
+.\.venv\Scripts\python.exe -m tracast.cli scaling --config configs/diffusion-ablation.json --out runs/diffusion-ablation
+# federated and pooled, six clients on 64 sensors
+.\.venv\Scripts\python.exe -m tracast.cli fedgraph --config configs/fedgraph-diffusion.json --out runs/fedgraph-diffusion
+```
+
+The model names in the centralized configs encode the options: `dcrnn` is two hops in both directions, and the suffixes change it (`k0` to `k3` for the number of hops, `fwd`, `bwd` and `sym` for the direction, `perm` for a randomly relabelled graph, `h16` for 16 hidden units). The first two commands use the same benchmark, splits and training budget as the scaling study. The 16-sensor sizes ran three seeds. The 64-sensor size is far slower for DCRNN (about an hour per run on a loaded machine), so it was stopped after seed 7 and its table built from the trials that had finished:
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.cli scaling --config configs/diffusion.json --out runs/diffusion --assemble 64 --seeds 7
+```
+
+`--assemble` collects each trial's own `result.json` into the size's table and records in that size's `status.json` which seeds it used. A short run on an otherwise idle machine measures the cost (`configs/diffusion-cost.json`, 3 epochs, one seed, sizes 16, 64 and 207).
+
+### FedAvg, FedProx, client distributions and graph cuts
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.cli fedgraph --config configs/fedgraph-optimization.json --out runs/fedgraph-optimization
+```
+
+On 64 sensors with six clients, one seed (7; a second seed was dropped for time): FedAvg and FedProx (mu 0.1) under geographic, balanced and congestion-grouped clients, five local epochs against one at a fixed number of examples, and pooled models that see the full graph or only the graph inside a client. `budgets` in an arm gives the test score after fewer rounds, taken from the same run (training in round r never depends on later rounds, and a test checks this).
+
+### Sensors the model never trained on
+
+```powershell
+.\.venv\Scripts\python.exe -m tracast.cli holdout --config configs/holdout.json --out runs/holdout
+```
+
+A quarter of the sensors (one geographic area) are held out. The plain shared models are scored zero-shot, and the sensor-vector GRU is scored with a zero vector, the average vector, a vector fitted on the new sensors' first week with the network frozen, and a vector predicted from sensor descriptors by ridge regression. The references are the same models trained on every sensor.
+
 ## What each measurement means
 
 | Measurement | Definition |
@@ -176,10 +228,15 @@ Communication leaves out serialization, metrics, config and transport overhead. 
 .\.venv\Scripts\python.exe tools/architecture.py
 .\.venv\Scripts\python.exe tools/data_audit.py
 .\.venv\Scripts\python.exe tools/federated_page.py
+.\.venv\Scripts\python.exe tools/fed_figures.py
+.\.venv\Scripts\python.exe tools/fed_pages.py
+.\.venv\Scripts\python.exe tools/diffusion_page.py
+.\.venv\Scripts\python.exe tools/fedopt_page.py
+.\.venv\Scripts\python.exe tools/holdout_page.py
 .\.venv\Scripts\python.exe tools/build_research.py
 ```
 
-`pages.py` writes the scaling, shared-variants, intervals, drift and audit pages, `architecture.py` draws the shared-model schematic and `data_audit.py` needs the raw data to recompute the data facts. Run `pages.py` before `presentation.py`, because the README reads what it writes. These read the saved results and rebuild the README, the figures, the federated findings page, the technical report and the two-page PDF. They don't train anything. `tools/export_records.py` swaps local paths for `$REPO` and `$PYTHON_ENV` in saved records, and the export receipt keeps the before and after hashes. A manifest describes the code at the time of its run, so its source hashes can differ from the current checkout.
+`pages.py` writes the scaling, shared-variants, intervals, drift and audit pages (run it first), `fed_figures.py` draws the partition map and the federated and DCRNN schematics, `fed_pages.py`, `diffusion_page.py`, `fedopt_page.py` and `holdout_page.py` write the federated graph, DCRNN, FedProx and held-out sensor pages and copy their saved results into `reports/`, `architecture.py` draws the shared-model schematic and `data_audit.py` needs the raw data to recompute the data facts. Run `pages.py` before `presentation.py`, because the README reads what it writes. These read the saved results and rebuild the README, the figures, the federated findings page, the technical report and the two-page PDF. They don't train anything. `tools/export_records.py` swaps local paths for `$REPO` and `$PYTHON_ENV` in saved records, and the export receipt keeps the before and after hashes. A manifest describes the code at the time of its run, so its source hashes can differ from the current checkout.
 
 ## Configs
 
@@ -192,6 +249,12 @@ Communication leaves out serialization, metrics, config and transport overhead. 
 | [benchmark-extended.json](../configs/benchmark-extended.json) | Longer training with early stopping, calendar inputs, a historical average and a linear model, five seeds |
 | [scaling.json](../configs/scaling.json) | 16 to 207 sensors, dense and shared models, two seeds |
 | [scaling-cost.json](../configs/scaling-cost.json) | The same sizes and models for 3 epochs and one seed, run alone to measure time and memory |
+| [fedgraph.json](../configs/fedgraph.json) | Federated shared Graph-GRU on all 207 sensors, eight geographic clients, six arms |
+| [fedgraph-diffusion.json](../configs/fedgraph-diffusion.json) | Federated and pooled DCRNN against the shared Graph-GRU, 64 sensors, six clients |
+| [fedgraph-optimization.json](../configs/fedgraph-optimization.json) | FedAvg and FedProx, client distributions, local budgets, client counts and graph cuts, 64 sensors |
+| [diffusion.json](../configs/diffusion.json) | Centralized DCRNN, shared and dense baselines at 16 and 64 sensors |
+| [diffusion-ablation.json](../configs/diffusion-ablation.json) | DCRNN depth and direction ablation at 16 sensors |
+| [holdout.json](../configs/holdout.json) | Held-out sensors: zero-shot and vector fixes |
 | [variants.json](../configs/variants.json) | Shared LSTM and shared models with a vector per sensor, at 16 and 64 sensors, two seeds |
 | [uncertainty.json](../configs/uncertainty.json) | Prediction intervals for the dense GRU with calendar inputs, three seeds |
 | [shift.json](../configs/shift.json) | Static model vs three adaptation strategies, standard and stale settings, three seeds |
@@ -216,6 +279,9 @@ Communication leaves out serialization, metrics, config and transport overhead. 
 | [federated_task.py](../src/tracast/federated_task.py) | Sensor ownership, local datasets, shared training, pooled metrics |
 | [flower_client.py](../src/tracast/flower_client.py), [flower_server.py](../src/tracast/flower_server.py) | Flower messages, aggregation and per-round records |
 | [federated.py](../src/tracast/federated.py), [federated_study.py](../src/tracast/federated_study.py) | Launch simulations, compare round budgets and groupings |
+| [fedgraph.py](../src/tracast/fedgraph.py), [fedgraph_flower.py](../src/tracast/fedgraph_flower.py), [fedgraph_study.py](../src/tracast/fedgraph_study.py) | Federated graph models: partitions, local graphs, FedAvg and FedProx, the Flower apps and the arms x seeds runner |
+| [diffusion.py](../src/tracast/diffusion.py) | The DCRNN-style diffusion-convolutional GRU and the model-name options |
+| [inductive.py](../src/tracast/inductive.py) | Held-out sensors: zero-shot scoring and the sensor-vector fixes |
 | [compare_runs.py](../src/tracast/compare_runs.py) | Compare two federated runs, including saved checkpoint tensors |
 
 The [report index](../reports/README.md) explains what's in `reports/`.

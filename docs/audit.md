@@ -8,7 +8,7 @@ Before building on the code I went through it looking for leakage, wrong assumpt
 - **The dense graph ablation could not isolate the graph.** The "self only" model still got every sensor's readings through its input layer, so it was never really without neighbors. The earlier write-up said so, but the experiment couldn't fix it. The shared-weight models can: a shared GRU sees only its own sensor, and the shared Graph-GRU adds the two neighbor averages, nothing else.
 - **A plotting crash after a long run** (found earlier): early-stopped runs have different lengths and the convergence plot assumed equal ones. Fixed, with a test.
 
-I didn't find anything else that was wrong in the original pipeline, and I'd rather say that than pad this list.
+I didn't find anything else wrong in the original pipeline.
 
 ## Leakage checks
 
@@ -21,6 +21,19 @@ None found. These are checked by tests, not just by reading the code (`tests/tes
 - In the day-by-day replay a window counts as known only once its last target row has been observed. The tests corrupt the not-yet-arrived targets and check that no strategy's forecasts change, and that the online interval methods never read an outcome before it arrives.
 
 One choice worth knowing about: in the replay experiment, missing readings are forward-filled across the split boundaries (the past is known when a model runs for real). The other experiments fill within each split, which is slightly more conservative at the start of validation and test. It only affects the first few windows of a split.
+
+## Federated pipeline
+
+Before federating the graph models I went through the existing federated code the same way. Nothing in it was wrong, but it couldn't be extended as it was, and a few details decided how the new version is built:
+
+- **The old federated task couldn't use a graph.** It trained a GRU that reads one sensor at a time, so there was nothing for a road graph to attach to. The new clients get windows over all their own sensors.
+- **Averaging whole state dicts would have mixed up the graphs.** The graph models keep their adjacency matrices as buffers, which land in `state_dict()`, and a client's matrix has the shape of its own sensor count. Averaging those would crash or blend graphs from different clients. The new code exchanges only the learned parameters (their shapes don't depend on the sensor count), and a test checks that no graph buffer is among them.
+- **FedProx's proximal term is squared in the paper and not in Flower's docs.** Flower's strategy only sends mu to the clients and its docstring shows the unsquared norm, while the paper uses (mu / 2) times the squared distance. The clients here use the squared form, with a test on it.
+- **Every client's normalization equals the global one.** Normalization is per sensor from training rows, so a client fitting it on its own sensors gets exactly the numbers a central fit would. A test rewrites other clients' sensors and this client's validation and test rows and checks that nothing changes.
+- **A cut graph is a second difference between "federated" and "pooled".** A federated client only has the edges inside its own sensor set, so comparing it with a pooled model on the full graph mixes two effects. The new study adds a pooled arm that gets only the in-client edges, which separates the cost of federated optimization from the cost of the cut graph.
+- **Conventions kept from the old study so the arms stay comparable:** a fresh optimizer each round (also in the pooled and local-only arms), clients weighted by their number of training examples, the best round picked on pooled validation MAE, and communication counted as uncompressed parameters three times per round per client (training down and up, validation down).
+
+Still open: it is one machine and no network, the validation statistics the server uses to pick a round would have to be reported by real clients, and the partition (a k-means cut of the coordinates) is one choice among many.
 
 ## What the data looks like
 
