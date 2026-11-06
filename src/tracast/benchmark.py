@@ -55,7 +55,16 @@ def split_name(name):
 
 
 def valid_model(name):
-    return name == "ha" or split_name(name)[0] in BASES
+    from .diffusion import parse_name
+
+    base = split_name(name)[0]
+    return name == "ha" or base in BASES or parse_name(base) is not None
+
+
+def check_trial(name):
+    if name not in TRIALS and not valid_model(name):
+        raise argparse.ArgumentTypeError(f"unknown trial {name!r}")
+    return name
 
 
 @dataclass
@@ -130,11 +139,25 @@ class BenchmarkConfig:
             raise ValueError("scheduler_patience must be a positive integer")
 
 
-def model_for(name, config, weights):
+def model_for(name, config, weights, seed=0):
     if name in STATIC:
         return None
     base, timed = split_name(name)
     extra = 3 if timed else 0
+    from .diffusion import DCRNN, parse_name, permuted
+
+    options = parse_name(base)
+    if options is not None:
+        graph = permuted(weights, seed) if options["permute"] else weights
+        return DCRNN(
+            graph,
+            options["hidden"] or config.hidden,
+            config.horizon,
+            extra,
+            diffusion_steps=options["steps"],
+            mode=options["mode"],
+            layers=options["layers"],
+        )
     if base == "gru":
         return GRU(config.sensors, config.hidden, config.horizon, extra)
     if base == "lstm":
@@ -333,7 +356,7 @@ def trial(config, data, graph_dir, name, seed, out):
     out.mkdir(parents=True, exist_ok=False)
     write_json(out / "status.json", {"status": "running"})
     try:
-        model = model_for(name, config, weights)
+        model = model_for(name, config, weights, seed)
         generator = torch.Generator().manual_seed(seed)
         loaders = make_loaders(datasets, config, generator)
         mean, std = torch.from_numpy(scaler.mean), torch.from_numpy(scaler.std)
@@ -724,7 +747,7 @@ def main(argv=None):
     parser.add_argument("--data", default="data/raw/metr-la.h5")
     parser.add_argument("--topology", default="data/topology")
     parser.add_argument("--out", required=True)
-    parser.add_argument("--trial", choices=TRIALS)
+    parser.add_argument("--trial", type=check_trial)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args(argv)
     config = BenchmarkConfig(**json.loads(Path(args.config).read_text()))

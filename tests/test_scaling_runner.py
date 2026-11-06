@@ -112,3 +112,58 @@ def test_finished_sizes_are_skipped_and_unfinished_ones_set_aside(
         json.loads((tmp_path / "n032" / "status.json").read_text())["status"]
         == "complete"
     )
+
+
+def write_trials(folder, count):
+    """The per-trial folders a real run leaves behind, without the size-level tables."""
+    folder.mkdir(parents=True)
+    (folder / "protocol.json").write_text(
+        json.dumps(
+            {
+                "graph": {"directed_edges": 1},
+                "missing": {},
+                "scaler": {},
+                "splits": {},
+            }
+        )
+    )
+    for model, base in (("ha", 3.7), ("sgru_time", 3.2), ("gru_time", 3.1)):
+        for seed in (7,) if model == "ha" else (7, 42):
+            core = None if count == 16 else base + 0.01 * count / 16
+            trial = folder / f"{model}-seed-{seed}"
+            trial.mkdir()
+            result = fake_trial(model, seed, base + 0.02 * count / 16, core)
+            result["best_epoch"] = 3  # real trials of learned models record it
+            (trial / "result.json").write_text(json.dumps(result))
+    unfinished = folder / "sgru_time-seed-2026"
+    unfinished.mkdir()  # a trial that was cut off has no result
+    (folder / "gru_time-seed-2026.unfinished-stopped").mkdir()
+
+
+def test_a_stopped_run_can_be_assembled_from_its_finished_trials(tmp_path, monkeypatch):
+    import tracast.benchmark as benchmark
+
+    monkeypatch.setattr(benchmark, "plots", lambda *args: None)
+    write_trials(tmp_path / "n016", 16)
+    used = scaling.assemble(tmp_path, 16, seeds=[7])
+    assert used == [7]
+    results = json.loads((tmp_path / "n016" / "results.json").read_text())
+    assert {r["seed"] for r in results if r["model"] != "ha"} == {7}
+    assert any(r["model"] == "ha" for r in results)  # static baselines always stay
+    status = json.loads((tmp_path / "n016" / "status.json").read_text())
+    assert status["status"] == "complete" and status["assembled_from_finished_trials"]
+    assert status["seeds_used"] == [7]
+    summary = scaling.summarize(tmp_path)
+    assert summary["models"]["sgru_time"]["16"]["seeds"] == [7]
+
+
+def test_assembling_everything_keeps_every_finished_seed(tmp_path, monkeypatch):
+    import tracast.benchmark as benchmark
+
+    monkeypatch.setattr(benchmark, "plots", lambda *args: None)
+    write_trials(tmp_path / "n016", 16)
+    assert scaling.assemble(tmp_path, 16) == [7, 42]  # the cut-off seed has no result
+    with pytest.raises(ValueError):
+        (tmp_path / "n064").mkdir()
+        (tmp_path / "n064" / "protocol.json").write_text("{}")
+        scaling.assemble(tmp_path, 64)

@@ -35,6 +35,21 @@ PAIRS = [
     ("sgru_id_time", "sgru_time"),
     ("sgraph_id_time", "sgraph_time"),
     ("sgraph_id_time", "sgru_id_time"),
+    ("dcrnn_time", "sgraph_time"),
+    ("dcrnn_time", "sgru_time"),
+    ("dcrnn_time", "dcrnn_k0_time"),
+    ("dcrnn_time", "dcrnn_perm_time"),
+    ("dcrnn_time", "gru_time"),
+    ("dcrnn_time", "graph_gru_time"),
+    ("dcrnn_h16_time", "sgraph_time"),
+    ("dcrnn_h16_time", "dcrnn_k0_time"),
+    ("dcrnn_k1_time", "dcrnn_k0_time"),
+    ("dcrnn_k1_time", "dcrnn_time"),
+    ("dcrnn_k3_time", "dcrnn_time"),
+    ("dcrnn_fwd_time", "dcrnn_time"),
+    ("dcrnn_bwd_time", "dcrnn_time"),
+    ("dcrnn_sym_time", "dcrnn_time"),
+    ("dcrnn_time", "ha"),
     ("sgru_time", "gru_time"),
     ("sgraph_time", "graph_gru_time"),
     ("graph_gru_time", "gru_time"),
@@ -210,6 +225,15 @@ def figures(summary, out):
         "slstm_time": "Shared LSTM + calendar",
         "sgru_id_time": "Shared GRU + sensor vector",
         "sgraph_id_time": "Shared Graph-GRU + sensor vector",
+        "dcrnn_time": "DCRNN (2 hops) + calendar",
+        "dcrnn_h16_time": "DCRNN, 16 hidden units",
+        "dcrnn_k0_time": "DCRNN without diffusion",
+        "dcrnn_k1_time": "DCRNN, 1 hop",
+        "dcrnn_k3_time": "DCRNN, 3 hops",
+        "dcrnn_perm_time": "DCRNN, shuffled graph",
+        "dcrnn_fwd_time": "DCRNN, forward only",
+        "dcrnn_bwd_time": "DCRNN, reverse only",
+        "dcrnn_sym_time": "DCRNN, undirected",
     }
     styles = {
         "persistence": ("#667085", ":"),
@@ -222,6 +246,15 @@ def figures(summary, out):
         "slstm_time": ("#be123c", "--"),
         "sgru_id_time": ("#a16207", "-."),
         "sgraph_id_time": ("#0f766e", "-."),
+        "dcrnn_time": ("#dc2626", "-"),
+        "dcrnn_h16_time": ("#f97316", "-"),
+        "dcrnn_k0_time": ("#64748b", "-"),
+        "dcrnn_k1_time": ("#e879f9", "-"),
+        "dcrnn_k3_time": ("#7c3aed", "-"),
+        "dcrnn_perm_time": ("#0ea5e9", "-"),
+        "dcrnn_fwd_time": ("#84cc16", "-"),
+        "dcrnn_bwd_time": ("#14b8a6", "-"),
+        "dcrnn_sym_time": ("#eab308", "-"),
     }
     sizes = summary["sizes"]
     out = Path(out)
@@ -363,6 +396,54 @@ def _pick(entry, key, field):
     return value if field is None else value[field]
 
 
+def assemble(out, count, seeds=None):
+    """Build one size's results from its finished trials, for a run that was stopped early.
+
+    Every trial writes its own result.json when it finishes, and a size's table is only
+    built once all of its trials are done. When a long run is cut short (for time), this
+    collects the trials that did finish (optionally only some seeds), builds the same
+    table and plots, and records in status.json that it was assembled this way and from
+    which seeds, so the stop is visible in the saved files.
+    """
+    from .benchmark import aggregate, plots
+
+    folder = Path(out) / f"n{count:03d}"
+    results = []
+    for target in sorted(folder.glob("*-seed-*")):
+        if not target.is_dir() or ".unfinished" in target.name:
+            continue
+        path = target / "result.json"
+        if not path.exists():
+            continue
+        result = json.loads(path.read_text())
+        if (
+            seeds is None
+            or result["seed"] in seeds
+            or result["model"] in ("persistence", "ha")
+        ):
+            results.append(result)
+    if not results:
+        raise ValueError("No finished trials to assemble")
+    protocol = json.loads((folder / "protocol.json").read_text())
+    summary = aggregate(results)
+    write_json(folder / "results.json", results)
+    write_json(folder / "summary.json", summary)
+    plots(folder, results, summary, protocol)
+    used = sorted(
+        {r["seed"] for r in results if r["model"] not in ("persistence", "ha")}
+    )
+    write_json(
+        folder / "status.json",
+        {
+            "status": "complete",
+            "assembled_from_finished_trials": True,
+            "seeds_used": used,
+            "note": "The run was stopped before the remaining seeds finished; this table holds only the trials that completed.",
+        },
+    )
+    return used
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Scaling study over nested sensor subsets"
@@ -372,9 +453,22 @@ def main(argv=None):
     parser.add_argument("--topology", default="data/topology")
     parser.add_argument("--out", required=True)
     parser.add_argument("--summarize-only", action="store_true")
+    parser.add_argument(
+        "--assemble",
+        type=int,
+        metavar="SENSORS",
+        help="build that size's table from its finished trials, for a stopped run",
+    )
+    parser.add_argument(
+        "--seeds", help="with --assemble: comma-separated seeds to keep"
+    )
     args = parser.parse_args(argv)
     counts, config = load_config(args.config)
-    if args.summarize_only:
+    if args.assemble:
+        seeds = [int(x) for x in args.seeds.split(",")] if args.seeds else None
+        print("assembled from seeds", assemble(args.out, args.assemble, seeds))
+        summary = summarize(args.out)
+    elif args.summarize_only:
         summary = summarize(args.out)
     else:
         summary = run(counts, config, args.data, args.topology, args.out)
