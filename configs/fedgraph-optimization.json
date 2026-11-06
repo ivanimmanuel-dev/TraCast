@@ -1,0 +1,215 @@
+{
+  "name": "FedAvg and FedProx under different client distributions, budgets and graph cuts",
+  "base": {
+    "sensors": 64,
+    "rows": 34272,
+    "history": 12,
+    "horizon": 12,
+    "hidden": 32,
+    "model": "sgraph",
+    "diffusion_steps": 2,
+    "diffusion_mode": "both",
+    "clients": 6,
+    "partition": "geographic",
+    "partition_seed": 0,
+    "rounds": 30,
+    "local_epochs": 1,
+    "local_stride": 3,
+    "batch_size": 64,
+    "lr": 0.001,
+    "algorithm": "fedavg",
+    "proximal_mu": 0.0,
+    "seed": 42,
+    "threads": 3,
+    "threshold": 0.1,
+    "congestion_mph": 40.0,
+    "budgets": []
+  },
+  "seeds": [
+    7
+  ],
+  "arms": [
+    {
+      "name": "geo_fedavg",
+      "mode": "federated",
+      "runner": "inprocess",
+      "budgets": [
+        5,
+        10,
+        20,
+        30
+      ]
+    },
+    {
+      "name": "geo_fedprox_0.1",
+      "mode": "federated",
+      "runner": "inprocess",
+      "algorithm": "fedprox",
+      "proximal_mu": 0.1
+    },
+    {
+      "name": "cong_fedavg",
+      "mode": "federated",
+      "runner": "inprocess",
+      "partition": "congestion"
+    },
+    {
+      "name": "cong_fedprox_0.1",
+      "mode": "federated",
+      "runner": "inprocess",
+      "partition": "congestion",
+      "algorithm": "fedprox",
+      "proximal_mu": 0.1
+    },
+    {
+      "name": "bal_fedavg",
+      "mode": "federated",
+      "runner": "inprocess",
+      "partition": "balanced"
+    },
+    {
+      "name": "bal_fedprox_0.1",
+      "mode": "federated",
+      "runner": "inprocess",
+      "partition": "balanced",
+      "algorithm": "fedprox",
+      "proximal_mu": 0.1
+    },
+    {
+      "name": "central_full",
+      "mode": "central",
+      "edges": "full"
+    },
+    {
+      "name": "central_local_geo",
+      "mode": "central",
+      "edges": "local"
+    },
+    {
+      "name": "central_local_cong",
+      "mode": "central",
+      "edges": "local",
+      "partition": "congestion"
+    },
+    {
+      "name": "central_local_bal",
+      "mode": "central",
+      "edges": "local",
+      "partition": "balanced"
+    },
+    {
+      "name": "local_geo",
+      "mode": "local"
+    },
+    {
+      "name": "geo_e5",
+      "mode": "federated",
+      "runner": "inprocess",
+      "local_epochs": 5,
+      "rounds": 6,
+      "budgets": [
+        2,
+        4,
+        6
+      ]
+    },
+    {
+      "name": "geo_e5_fedprox_0.1",
+      "mode": "federated",
+      "runner": "inprocess",
+      "local_epochs": 5,
+      "rounds": 6,
+      "algorithm": "fedprox",
+      "proximal_mu": 0.1,
+      "budgets": [
+        2,
+        4,
+        6
+      ]
+    },
+    {
+      "name": "geo_fedprox_0.001",
+      "mode": "federated",
+      "runner": "inprocess",
+      "algorithm": "fedprox",
+      "proximal_mu": 0.001
+    },
+    {
+      "name": "geo_fedprox_0.01",
+      "mode": "federated",
+      "runner": "inprocess",
+      "algorithm": "fedprox",
+      "proximal_mu": 0.01
+    },
+    {
+      "name": "cong_fedprox_0.01",
+      "mode": "federated",
+      "runner": "inprocess",
+      "partition": "congestion",
+      "algorithm": "fedprox",
+      "proximal_mu": 0.01
+    }
+  ],
+  "pairs": [
+    [
+      "geo_fedprox_0.1",
+      "geo_fedavg"
+    ],
+    [
+      "cong_fedprox_0.1",
+      "cong_fedavg"
+    ],
+    [
+      "bal_fedprox_0.1",
+      "bal_fedavg"
+    ],
+    [
+      "geo_fedavg",
+      "central_local_geo"
+    ],
+    [
+      "central_local_geo",
+      "central_full"
+    ],
+    [
+      "geo_fedavg",
+      "local_geo"
+    ],
+    [
+      "cong_fedavg",
+      "central_local_cong"
+    ],
+    [
+      "bal_fedavg",
+      "central_local_bal"
+    ],
+    [
+      "geo_fedavg",
+      "cong_fedavg"
+    ],
+    [
+      "geo_fedavg",
+      "bal_fedavg"
+    ],
+    [
+      "geo_e5",
+      "geo_fedavg"
+    ],
+    [
+      "geo_e5_fedprox_0.1",
+      "geo_e5"
+    ],
+    [
+      "geo_fedprox_0.001",
+      "geo_fedavg"
+    ],
+    [
+      "geo_fedprox_0.01",
+      "geo_fedavg"
+    ],
+    [
+      "cong_fedprox_0.01",
+      "cong_fedavg"
+    ]
+  ]
+}

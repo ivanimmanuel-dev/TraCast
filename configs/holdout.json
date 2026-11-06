@@ -1,0 +1,25 @@
+{
+  "sensors": 64,
+  "rows": 34272,
+  "history": 12,
+  "horizon": 12,
+  "hidden": 32,
+  "embedding": 4,
+  "holdout": "region",
+  "holdout_fraction": 0.25,
+  "holdout_seed": 0,
+  "rounds": 30,
+  "local_stride": 3,
+  "batch_size": 64,
+  "lr": 0.001,
+  "few_shot_days": 7,
+  "fit_epochs": 30,
+  "fit_lr": 0.02,
+  "ridge_alpha": 1.0,
+  "seeds": [
+    7,
+    42
+  ],
+  "threads": 3,
+  "threshold": 0.1
+}

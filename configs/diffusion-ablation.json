@@ -1,0 +1,28 @@
+{
+  "sensor_counts": [16],
+  "rows": 34272,
+  "history": 12,
+  "horizon": 12,
+  "hidden": 32,
+  "embedding": 4,
+  "batch_size": 64,
+  "epochs": 30,
+  "lr": 0.001,
+  "seeds": [7, 42, 2026],
+  "threads": 3,
+  "threshold": 0.1,
+  "models": [
+    "dcrnn_k0_time",
+    "dcrnn_k1_time",
+    "dcrnn_time",
+    "dcrnn_k3_time",
+    "dcrnn_fwd_time",
+    "dcrnn_bwd_time",
+    "dcrnn_sym_time",
+    "ha"
+  ],
+  "patience": null,
+  "scheduler": "plateau",
+  "scheduler_patience": 4,
+  "train_stride": 3
+}

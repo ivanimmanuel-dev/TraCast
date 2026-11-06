@@ -1,0 +1,49 @@
+{
+  "name": "Short, isolated cost run for the federated shared Graph-GRU (3 rounds, one seed, nothing else running)",
+  "base": {
+    "sensors": 207,
+    "rows": 34272,
+    "history": 12,
+    "horizon": 12,
+    "hidden": 32,
+    "model": "sgraph",
+    "diffusion_steps": 2,
+    "clients": 8,
+    "partition": "geographic",
+    "partition_seed": 0,
+    "rounds": 3,
+    "local_epochs": 1,
+    "local_stride": 3,
+    "batch_size": 64,
+    "lr": 0.001,
+    "algorithm": "fedavg",
+    "proximal_mu": 0.0,
+    "seed": 42,
+    "threads": 8,
+    "threshold": 0.1,
+    "congestion_mph": 40.0
+  },
+  "seeds": [
+    7
+  ],
+  "arms": [
+    {
+      "name": "fed_sgraph",
+      "mode": "federated",
+      "runner": "flower",
+      "model": "sgraph"
+    },
+    {
+      "name": "central_sgraph_full",
+      "mode": "central",
+      "edges": "full",
+      "model": "sgraph"
+    },
+    {
+      "name": "local_sgraph",
+      "mode": "local",
+      "model": "sgraph"
+    }
+  ],
+  "pairs": []
+}

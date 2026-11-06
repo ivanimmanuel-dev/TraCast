@@ -1,0 +1,110 @@
+{
+  "name": "Does local fine-tuning of the federated model close the gap to local-only training?",
+  "base": {
+    "sensors": 64,
+    "rows": 34272,
+    "history": 12,
+    "horizon": 12,
+    "hidden": 32,
+    "model": "sgraph",
+    "diffusion_steps": 2,
+    "diffusion_mode": "both",
+    "clients": 6,
+    "partition": "geographic",
+    "partition_seed": 0,
+    "rounds": 30,
+    "local_epochs": 1,
+    "local_stride": 3,
+    "batch_size": 64,
+    "lr": 0.001,
+    "algorithm": "fedavg",
+    "proximal_mu": 0.0,
+    "seed": 42,
+    "threads": 3,
+    "threshold": 0.1,
+    "congestion_mph": 40.0,
+    "budgets": [],
+    "personalize_rounds": 0
+  },
+  "seeds": [
+    7,
+    42
+  ],
+  "arms": [
+    {
+      "name": "fed_geo",
+      "mode": "federated",
+      "runner": "inprocess",
+      "personalize_rounds": 10
+    },
+    {
+      "name": "fed_cong",
+      "mode": "federated",
+      "runner": "inprocess",
+      "personalize_rounds": 10,
+      "partition": "congestion"
+    },
+    {
+      "name": "local_geo",
+      "mode": "local"
+    },
+    {
+      "name": "local_cong",
+      "mode": "local",
+      "partition": "congestion"
+    },
+    {
+      "name": "central_local_geo",
+      "mode": "central",
+      "edges": "local"
+    },
+    {
+      "name": "central_local_cong",
+      "mode": "central",
+      "edges": "local",
+      "partition": "congestion"
+    }
+  ],
+  "pairs": [
+    [
+      "fed_geo+ft",
+      "fed_geo"
+    ],
+    [
+      "fed_geo+ft",
+      "local_geo"
+    ],
+    [
+      "fed_geo",
+      "local_geo"
+    ],
+    [
+      "fed_geo",
+      "central_local_geo"
+    ],
+    [
+      "fed_geo+ft",
+      "central_local_geo"
+    ],
+    [
+      "fed_cong+ft",
+      "fed_cong"
+    ],
+    [
+      "fed_cong+ft",
+      "local_cong"
+    ],
+    [
+      "fed_cong",
+      "local_cong"
+    ],
+    [
+      "fed_cong",
+      "central_local_cong"
+    ],
+    [
+      "fed_cong+ft",
+      "central_local_cong"
+    ]
+  ]
+}

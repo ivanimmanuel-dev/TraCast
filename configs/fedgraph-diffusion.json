@@ -1,0 +1,150 @@
+{
+  "name": "DCRNN-style diffusion GRU against the shared Graph-GRU, federated and pooled",
+  "base": {
+    "sensors": 64,
+    "rows": 34272,
+    "history": 12,
+    "horizon": 12,
+    "hidden": 32,
+    "model": "sgraph",
+    "diffusion_steps": 2,
+    "diffusion_mode": "both",
+    "clients": 6,
+    "partition": "geographic",
+    "partition_seed": 0,
+    "rounds": 30,
+    "local_epochs": 1,
+    "local_stride": 3,
+    "batch_size": 64,
+    "lr": 0.001,
+    "algorithm": "fedavg",
+    "proximal_mu": 0.0,
+    "seed": 42,
+    "threads": 3,
+    "threshold": 0.1,
+    "congestion_mph": 40.0,
+    "budgets": []
+  },
+  "seeds": [
+    7,
+    42
+  ],
+  "arms": [
+    {
+      "name": "fed_dcrnn",
+      "mode": "federated",
+      "runner": "flower",
+      "model": "dcrnn"
+    },
+    {
+      "name": "fed_sgraph",
+      "mode": "federated",
+      "runner": "flower",
+      "model": "sgraph"
+    },
+    {
+      "name": "fed_sgru",
+      "mode": "federated",
+      "runner": "inprocess",
+      "model": "sgru"
+    },
+    {
+      "name": "central_dcrnn_full",
+      "mode": "central",
+      "edges": "full",
+      "model": "dcrnn"
+    },
+    {
+      "name": "central_dcrnn_local",
+      "mode": "central",
+      "edges": "local",
+      "model": "dcrnn"
+    },
+    {
+      "name": "central_sgraph_full",
+      "mode": "central",
+      "edges": "full",
+      "model": "sgraph"
+    },
+    {
+      "name": "central_sgraph_local",
+      "mode": "central",
+      "edges": "local",
+      "model": "sgraph"
+    },
+    {
+      "name": "central_sgru",
+      "mode": "central",
+      "edges": "full",
+      "model": "sgru"
+    },
+    {
+      "name": "local_dcrnn",
+      "mode": "local",
+      "model": "dcrnn"
+    },
+    {
+      "name": "local_sgraph",
+      "mode": "local",
+      "model": "sgraph"
+    }
+  ],
+  "pairs": [
+    [
+      "fed_dcrnn",
+      "fed_sgraph"
+    ],
+    [
+      "fed_dcrnn",
+      "fed_sgru"
+    ],
+    [
+      "fed_sgraph",
+      "fed_sgru"
+    ],
+    [
+      "central_dcrnn_full",
+      "central_sgraph_full"
+    ],
+    [
+      "central_dcrnn_full",
+      "central_sgru"
+    ],
+    [
+      "central_sgraph_full",
+      "central_sgru"
+    ],
+    [
+      "central_dcrnn_local",
+      "central_dcrnn_full"
+    ],
+    [
+      "central_sgraph_local",
+      "central_sgraph_full"
+    ],
+    [
+      "fed_dcrnn",
+      "central_dcrnn_local"
+    ],
+    [
+      "fed_sgraph",
+      "central_sgraph_local"
+    ],
+    [
+      "fed_dcrnn",
+      "local_dcrnn"
+    ],
+    [
+      "fed_sgraph",
+      "local_sgraph"
+    ],
+    [
+      "fed_dcrnn",
+      "ha"
+    ],
+    [
+      "fed_sgraph",
+      "ha"
+    ]
+  ]
+}
