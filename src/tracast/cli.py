@@ -14,6 +14,8 @@ DELEGATED = {
     "scaling": ("tracast.scaling", "benchmark across nested sensor counts"),
     "uncertainty": ("tracast.uncertainty", "conformal prediction intervals"),
     "shift": ("tracast.shift", "drift and adaptation experiment"),
+    "fedgraph": ("tracast.fedgraph_study", "federated graph models on METR-LA"),
+    "holdout": ("tracast.inductive", "forecasting sensors the model never trained on"),
     "federated": ("tracast.federated", "three-client Flower simulation"),
     "study": ("tracast.federated_study", "federated round-budget study"),
     "compare": ("tracast.compare_runs", "check two federated runs for exact repeats"),
