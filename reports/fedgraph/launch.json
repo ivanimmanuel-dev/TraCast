@@ -1,0 +1,13 @@
+{
+  "base_commit": "5afa409596b5183aaf5f55de1f65702c361c4269",
+  "uncommitted_paths": [
+    " M src/tracast/cli.py",
+    "?? configs/fedgraph.json",
+    "?? src/tracast/fedgraph.py",
+    "?? src/tracast/fedgraph_flower.py",
+    "?? src/tracast/fedgraph_study.py",
+    "?? tests/test_fedgraph.py"
+  ],
+  "note": "Ran from a frozen copy of the working tree taken at launch; source hashes are in each case manifest.",
+  "frozen_copy_of": "src, tests, configs, pyproject.toml, requirements-lock.txt"
+}

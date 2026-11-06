@@ -1,0 +1,1177 @@
+{
+  "arms": {
+    "central_sgraph_full": {
+      "best_round": {
+        "mean": 3.0,
+        "n": 1,
+        "sd": null
+      },
+      "clients": [
+        {
+          "client": 0,
+          "mae": {
+            "mean": 4.51522264805248,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 8.23624118555541,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 34
+        },
+        {
+          "client": 1,
+          "mae": {
+            "mean": 4.224309045530677,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.942486409343757,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 21
+        },
+        {
+          "client": 2,
+          "mae": {
+            "mean": 3.663636393730873,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.511705083815723,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 28
+        },
+        {
+          "client": 3,
+          "mae": {
+            "mean": 5.123218277455696,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 9.9785507504418,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 25
+        },
+        {
+          "client": 4,
+          "mae": {
+            "mean": 3.898199769955971,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.402446693702707,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 26
+        },
+        {
+          "client": 5,
+          "mae": {
+            "mean": 4.263033016897589,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.684503870644085,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 32
+        },
+        {
+          "client": 6,
+          "mae": {
+            "mean": 2.008508975893528,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 4.18400751737733,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 31
+        },
+        {
+          "client": 7,
+          "mae": {
+            "mean": 2.599237177808957,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 4.108621648279066,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 10
+        }
+      ],
+      "horizon_mae": {
+        "10": {
+          "mean": 2.9148800604602583,
+          "n": 1,
+          "sd": null
+        },
+        "15": {
+          "mean": 3.180680764194315,
+          "n": 1,
+          "sd": null
+        },
+        "20": {
+          "mean": 3.3999326240390757,
+          "n": 1,
+          "sd": null
+        },
+        "25": {
+          "mean": 3.608243418530394,
+          "n": 1,
+          "sd": null
+        },
+        "30": {
+          "mean": 3.825139781006778,
+          "n": 1,
+          "sd": null
+        },
+        "35": {
+          "mean": 4.014687513397746,
+          "n": 1,
+          "sd": null
+        },
+        "40": {
+          "mean": 4.19402926773111,
+          "n": 1,
+          "sd": null
+        },
+        "45": {
+          "mean": 4.371181642824778,
+          "n": 1,
+          "sd": null
+        },
+        "5": {
+          "mean": 2.5858024913941584,
+          "n": 1,
+          "sd": null
+        },
+        "50": {
+          "mean": 4.551219065545336,
+          "n": 1,
+          "sd": null
+        },
+        "55": {
+          "mean": 4.717846211296412,
+          "n": 1,
+          "sd": null
+        },
+        "60": {
+          "mean": 4.877383837005882,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "horizon_rmse": {
+        "10": {
+          "mean": 5.417537591619263,
+          "n": 1,
+          "sd": null
+        },
+        "15": {
+          "mean": 6.06729927979491,
+          "n": 1,
+          "sd": null
+        },
+        "20": {
+          "mean": 6.568612043311242,
+          "n": 1,
+          "sd": null
+        },
+        "25": {
+          "mean": 7.026078560551959,
+          "n": 1,
+          "sd": null
+        },
+        "30": {
+          "mean": 7.4632552515100485,
+          "n": 1,
+          "sd": null
+        },
+        "35": {
+          "mean": 7.8301309551923834,
+          "n": 1,
+          "sd": null
+        },
+        "40": {
+          "mean": 8.147003275983959,
+          "n": 1,
+          "sd": null
+        },
+        "45": {
+          "mean": 8.473011896101866,
+          "n": 1,
+          "sd": null
+        },
+        "5": {
+          "mean": 4.5521805580685495,
+          "n": 1,
+          "sd": null
+        },
+        "50": {
+          "mean": 8.768344548343673,
+          "n": 1,
+          "sd": null
+        },
+        "55": {
+          "mean": 9.017119628533216,
+          "n": 1,
+          "sd": null
+        },
+        "60": {
+          "mean": 9.268956236478527,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "mae": {
+        "mean": 3.853407254207823,
+        "n": 1,
+        "sd": null
+      },
+      "mode": "central",
+      "parameters": 4236,
+      "peak_memory_method": "Windows PeakWorkingSetSize; whole fresh trial process",
+      "peak_memory_mib": {
+        "mean": 985.22265625,
+        "n": 1,
+        "sd": null
+      },
+      "rmse": {
+        "mean": 7.5203900097228225,
+        "n": 1,
+        "sd": null
+      },
+      "seeds": [
+        7
+      ],
+      "setup": {
+        "client_sensors": [
+          34,
+          21,
+          28,
+          25,
+          26,
+          32,
+          31,
+          10
+        ],
+        "clients": 8,
+        "edges_kept_fraction": 0.8409240924092409,
+        "partition": "geographic",
+        "weight_kept_fraction": 0.8732560292619967
+      },
+      "train_seconds": {
+        "mean": 69.63745880000351,
+        "n": 1,
+        "sd": null
+      },
+      "validation_curve": [
+        {
+          "mean": 3.652987679952761,
+          "n": 1,
+          "sd": null
+        },
+        {
+          "mean": 3.4885838761746095,
+          "n": 1,
+          "sd": null
+        },
+        {
+          "mean": 3.4513427088631006,
+          "n": 1,
+          "sd": null
+        }
+      ],
+      "wall_seconds": {
+        "mean": 91.74367709999933,
+        "n": 1,
+        "sd": null
+      }
+    },
+    "fed_sgraph": {
+      "best_round": {
+        "mean": 3.0,
+        "n": 1,
+        "sd": null
+      },
+      "clients": [
+        {
+          "client": 0,
+          "mae": {
+            "mean": 4.538661154512282,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 8.223089347881666,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 34
+        },
+        {
+          "client": 1,
+          "mae": {
+            "mean": 4.260385557392163,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.948625472904029,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 21
+        },
+        {
+          "client": 2,
+          "mae": {
+            "mean": 3.743609868166328,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.583360265130667,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 28
+        },
+        {
+          "client": 3,
+          "mae": {
+            "mean": 5.254552474474727,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 10.030733914728449,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 25
+        },
+        {
+          "client": 4,
+          "mae": {
+            "mean": 3.936571027537679,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.4080536044023555,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 26
+        },
+        {
+          "client": 5,
+          "mae": {
+            "mean": 4.312639705343102,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.687963163175896,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 32
+        },
+        {
+          "client": 6,
+          "mae": {
+            "mean": 2.0176389708383735,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 4.16115191376173,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 31
+        },
+        {
+          "client": 7,
+          "mae": {
+            "mean": 2.5895209836600497,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 4.066562538023019,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 10
+        }
+      ],
+      "communication": {
+        "scope": "Uncompressed parameter tensors only; metrics, configs and transport overhead excluded",
+        "selected_test_download_bytes": 135552,
+        "total_parameter_bytes": 1355520,
+        "training_and_validation_bytes": 1219968
+      },
+      "horizon_mae": {
+        "10": {
+          "mean": 2.949598322998725,
+          "n": 1,
+          "sd": null
+        },
+        "15": {
+          "mean": 3.214618397869293,
+          "n": 1,
+          "sd": null
+        },
+        "20": {
+          "mean": 3.4419509239703356,
+          "n": 1,
+          "sd": null
+        },
+        "25": {
+          "mean": 3.6555763722093793,
+          "n": 1,
+          "sd": null
+        },
+        "30": {
+          "mean": 3.8682409796958566,
+          "n": 1,
+          "sd": null
+        },
+        "35": {
+          "mean": 4.058686347912277,
+          "n": 1,
+          "sd": null
+        },
+        "40": {
+          "mean": 4.257083492018976,
+          "n": 1,
+          "sd": null
+        },
+        "45": {
+          "mean": 4.431543242503116,
+          "n": 1,
+          "sd": null
+        },
+        "5": {
+          "mean": 2.6110345656333416,
+          "n": 1,
+          "sd": null
+        },
+        "50": {
+          "mean": 4.608558257114885,
+          "n": 1,
+          "sd": null
+        },
+        "55": {
+          "mean": 4.778984772644541,
+          "n": 1,
+          "sd": null
+        },
+        "60": {
+          "mean": 4.936259097711201,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "horizon_rmse": {
+        "10": {
+          "mean": 5.440343373675595,
+          "n": 1,
+          "sd": null
+        },
+        "15": {
+          "mean": 6.082439904739307,
+          "n": 1,
+          "sd": null
+        },
+        "20": {
+          "mean": 6.587104519757731,
+          "n": 1,
+          "sd": null
+        },
+        "25": {
+          "mean": 7.042237996996024,
+          "n": 1,
+          "sd": null
+        },
+        "30": {
+          "mean": 7.476289314988154,
+          "n": 1,
+          "sd": null
+        },
+        "35": {
+          "mean": 7.84529739507971,
+          "n": 1,
+          "sd": null
+        },
+        "40": {
+          "mean": 8.171779437474198,
+          "n": 1,
+          "sd": null
+        },
+        "45": {
+          "mean": 8.483641537055105,
+          "n": 1,
+          "sd": null
+        },
+        "5": {
+          "mean": 4.5773175733860905,
+          "n": 1,
+          "sd": null
+        },
+        "50": {
+          "mean": 8.780499741114394,
+          "n": 1,
+          "sd": null
+        },
+        "55": {
+          "mean": 9.029440293728992,
+          "n": 1,
+          "sd": null
+        },
+        "60": {
+          "mean": 9.272870169158537,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "mae": {
+        "mean": 3.9009994120630775,
+        "n": 1,
+        "sd": null
+      },
+      "mode": "federated",
+      "parameters": 4236,
+      "peak_memory_method": "largest Ray client process (whole process, all rounds)",
+      "peak_memory_mib": {
+        "mean": 499.71484375,
+        "n": 1,
+        "sd": null
+      },
+      "rmse": {
+        "mean": 7.535096370115687,
+        "n": 1,
+        "sd": null
+      },
+      "seeds": [
+        7
+      ],
+      "setup": {
+        "client_sensors": [
+          34,
+          21,
+          28,
+          25,
+          26,
+          32,
+          31,
+          10
+        ],
+        "clients": 8,
+        "edges_kept_fraction": 0.8409240924092409,
+        "partition": "geographic",
+        "weight_kept_fraction": 0.8732560292619967
+      },
+      "train_seconds": {
+        "mean": 72.57227600000624,
+        "n": 1,
+        "sd": null
+      },
+      "validation_curve": [
+        {
+          "mean": 3.7886752995696025,
+          "n": 1,
+          "sd": null
+        },
+        {
+          "mean": 3.5539677846535027,
+          "n": 1,
+          "sd": null
+        },
+        {
+          "mean": 3.5074267522586795,
+          "n": 1,
+          "sd": null
+        }
+      ],
+      "wall_seconds": {
+        "mean": 107.99032730000181,
+        "n": 1,
+        "sd": null
+      }
+    },
+    "local_sgraph": {
+      "clients": [
+        {
+          "client": 0,
+          "mae": {
+            "mean": 4.459813566840185,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 8.215534232934315,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 34
+        },
+        {
+          "client": 1,
+          "mae": {
+            "mean": 4.190972488068927,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.899224141837266,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 21
+        },
+        {
+          "client": 2,
+          "mae": {
+            "mean": 3.664995847299797,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.619825869839876,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 28
+        },
+        {
+          "client": 3,
+          "mae": {
+            "mean": 4.97493569216985,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 9.965804695436947,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 25
+        },
+        {
+          "client": 4,
+          "mae": {
+            "mean": 3.8986122238540424,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.372601235158315,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 26
+        },
+        {
+          "client": 5,
+          "mae": {
+            "mean": 4.226081136214897,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 7.604548770860664,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 32
+        },
+        {
+          "client": 6,
+          "mae": {
+            "mean": 1.9720744107626456,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 4.203035004054676,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 31
+        },
+        {
+          "client": 7,
+          "mae": {
+            "mean": 2.3843026168804995,
+            "n": 1,
+            "sd": null
+          },
+          "rmse": {
+            "mean": 3.719085214969259,
+            "n": 1,
+            "sd": null
+          },
+          "sensors": 10
+        }
+      ],
+      "horizon_mae": {
+        "10": {
+          "mean": 2.8864172466778704,
+          "n": 1,
+          "sd": null
+        },
+        "15": {
+          "mean": 3.1432708305328863,
+          "n": 1,
+          "sd": null
+        },
+        "20": {
+          "mean": 3.363496593258398,
+          "n": 1,
+          "sd": null
+        },
+        "25": {
+          "mean": 3.5690619491307394,
+          "n": 1,
+          "sd": null
+        },
+        "30": {
+          "mean": 3.780457278422909,
+          "n": 1,
+          "sd": null
+        },
+        "35": {
+          "mean": 3.9648103572944,
+          "n": 1,
+          "sd": null
+        },
+        "40": {
+          "mean": 4.1448228328680345,
+          "n": 1,
+          "sd": null
+        },
+        "45": {
+          "mean": 4.3092251004920055,
+          "n": 1,
+          "sd": null
+        },
+        "5": {
+          "mean": 2.5510747597652594,
+          "n": 1,
+          "sd": null
+        },
+        "50": {
+          "mean": 4.483100017779404,
+          "n": 1,
+          "sd": null
+        },
+        "55": {
+          "mean": 4.637933868349339,
+          "n": 1,
+          "sd": null
+        },
+        "60": {
+          "mean": 4.7867287822771845,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "horizon_rmse": {
+        "10": {
+          "mean": 5.366877761674,
+          "n": 1,
+          "sd": null
+        },
+        "15": {
+          "mean": 6.018784015470902,
+          "n": 1,
+          "sd": null
+        },
+        "20": {
+          "mean": 6.544644828753321,
+          "n": 1,
+          "sd": null
+        },
+        "25": {
+          "mean": 7.005935656232397,
+          "n": 1,
+          "sd": null
+        },
+        "30": {
+          "mean": 7.448044248037899,
+          "n": 1,
+          "sd": null
+        },
+        "35": {
+          "mean": 7.8288322172005484,
+          "n": 1,
+          "sd": null
+        },
+        "40": {
+          "mean": 8.154686336429338,
+          "n": 1,
+          "sd": null
+        },
+        "45": {
+          "mean": 8.465676582857396,
+          "n": 1,
+          "sd": null
+        },
+        "5": {
+          "mean": 4.471565481045374,
+          "n": 1,
+          "sd": null
+        },
+        "50": {
+          "mean": 8.751273183263033,
+          "n": 1,
+          "sd": null
+        },
+        "55": {
+          "mean": 9.012953304689734,
+          "n": 1,
+          "sd": null
+        },
+        "60": {
+          "mean": 9.242684254155389,
+          "n": 1,
+          "sd": null
+        }
+      },
+      "mae": {
+        "mean": 3.801688625456214,
+        "n": 1,
+        "sd": null
+      },
+      "mode": "local",
+      "parameters": 4236,
+      "peak_memory_method": "Windows PeakWorkingSetSize; whole fresh trial process",
+      "peak_memory_mib": {
+        "mean": 491.69140625,
+        "n": 1,
+        "sd": null
+      },
+      "rmse": {
+        "mean": 7.500618789892982,
+        "n": 1,
+        "sd": null
+      },
+      "seeds": [
+        7
+      ],
+      "setup": {
+        "client_sensors": [
+          34,
+          21,
+          28,
+          25,
+          26,
+          32,
+          31,
+          10
+        ],
+        "clients": 8,
+        "edges_kept_fraction": 0.8409240924092409,
+        "partition": "geographic",
+        "weight_kept_fraction": 0.8732560292619967
+      },
+      "train_seconds": {
+        "mean": 65.48492299999634,
+        "n": 1,
+        "sd": null
+      },
+      "wall_seconds": {
+        "mean": 81.42929220000224,
+        "n": 1,
+        "sd": null
+      }
+    }
+  },
+  "base": {
+    "algorithm": "fedavg",
+    "batch_size": 64,
+    "clients": 8,
+    "congestion_mph": 40.0,
+    "diffusion_steps": 2,
+    "hidden": 32,
+    "history": 12,
+    "horizon": 12,
+    "local_epochs": 1,
+    "local_stride": 3,
+    "lr": 0.001,
+    "model": "sgraph",
+    "partition": "geographic",
+    "partition_seed": 0,
+    "proximal_mu": 0.0,
+    "rounds": 3,
+    "rows": 34272,
+    "seed": 42,
+    "sensors": 207,
+    "threads": 8,
+    "threshold": 0.1
+  },
+  "baselines": {
+    "ha": {
+      "clients": [
+        {
+          "client": 0,
+          "mae": 4.920625230192316
+        },
+        {
+          "client": 1,
+          "mae": 4.602494514138792
+        },
+        {
+          "client": 2,
+          "mae": 3.864374481012539
+        },
+        {
+          "client": 3,
+          "mae": 6.299663829939695
+        },
+        {
+          "client": 4,
+          "mae": 4.159651787891017
+        },
+        {
+          "client": 5,
+          "mae": 4.498865516182713
+        },
+        {
+          "client": 6,
+          "mae": 2.0430785579338386
+        },
+        {
+          "client": 7,
+          "mae": 2.412446815879183
+        }
+      ],
+      "horizon_mae": {
+        "10": 4.192826761087355,
+        "15": 4.192826991262251,
+        "20": 4.192738893426213,
+        "25": 4.192728566565347,
+        "30": 4.192946093088808,
+        "35": 4.193024027771608,
+        "40": 4.193076707878965,
+        "45": 4.193197579770028,
+        "5": 4.192806485189861,
+        "50": 4.193266502712459,
+        "55": 4.193320182512167,
+        "60": 4.193356351472539
+      },
+      "mae": 4.193009591811423,
+      "rmse": 7.861802584102279
+    },
+    "persistence": {
+      "clients": [
+        {
+          "client": 0,
+          "mae": 4.91220668604709
+        },
+        {
+          "client": 1,
+          "mae": 4.559214027142646
+        },
+        {
+          "client": 2,
+          "mae": 4.064921956348037
+        },
+        {
+          "client": 3,
+          "mae": 5.275415429613787
+        },
+        {
+          "client": 4,
+          "mae": 4.42875718215655
+        },
+        {
+          "client": 5,
+          "mae": 4.6262526958578905
+        },
+        {
+          "client": 6,
+          "mae": 2.4642492305196964
+        },
+        {
+          "client": 7,
+          "mae": 3.191741617809052
+        }
+      ],
+      "horizon_mae": {
+        "10": 3.2096920719292257,
+        "15": 3.501070221357529,
+        "20": 3.7535165385313416,
+        "25": 3.984492994422279,
+        "30": 4.209447036517813,
+        "35": 4.42485074524214,
+        "40": 4.62948810457362,
+        "45": 4.821384984046041,
+        "5": 2.814628670265983,
+        "50": 5.012178156342039,
+        "55": 5.197688185087362,
+        "60": 5.382734040581514
+      },
+      "mae": 4.245084726992478,
+      "rmse": 8.19558861482377
+    }
+  },
+  "git_commit": "5afa409596b5183aaf5f55de1f65702c361c4269",
+  "git_dirty": true,
+  "name": "Short, isolated cost run for the federated shared Graph-GRU (3 rounds, one seed, nothing else running)",
+  "paired_day_bootstrap": {},
+  "paired_note": "Gaps in test MAE (first minus second, negative favors the first) on identical targets; 95% intervals from resampling test days with training seeds averaged first.",
+  "partition": {
+    "clients": [
+      {
+        "client": 0,
+        "local_edges": 189,
+        "sensors": 34,
+        "train_examples": 814878
+      },
+      {
+        "client": 1,
+        "local_edges": 89,
+        "sensors": 21,
+        "train_examples": 503307
+      },
+      {
+        "client": 2,
+        "local_edges": 175,
+        "sensors": 28,
+        "train_examples": 671076
+      },
+      {
+        "client": 3,
+        "local_edges": 254,
+        "sensors": 25,
+        "train_examples": 599175
+      },
+      {
+        "client": 4,
+        "local_edges": 144,
+        "sensors": 26,
+        "train_examples": 623142
+      },
+      {
+        "client": 5,
+        "local_edges": 216,
+        "sensors": 32,
+        "train_examples": 766944
+      },
+      {
+        "client": 6,
+        "local_edges": 186,
+        "sensors": 31,
+        "train_examples": 742977
+      },
+      {
+        "client": 7,
+        "local_edges": 21,
+        "sensors": 10,
+        "train_examples": 239670
+      }
+    ],
+    "graph": {
+      "clients": [
+        {
+          "client": 0,
+          "local_edges": 189,
+          "locally_isolated_sensors": 1,
+          "sensors": 34
+        },
+        {
+          "client": 1,
+          "local_edges": 89,
+          "locally_isolated_sensors": 0,
+          "sensors": 21
+        },
+        {
+          "client": 2,
+          "local_edges": 175,
+          "locally_isolated_sensors": 0,
+          "sensors": 28
+        },
+        {
+          "client": 3,
+          "local_edges": 254,
+          "locally_isolated_sensors": 0,
+          "sensors": 25
+        },
+        {
+          "client": 4,
+          "local_edges": 144,
+          "locally_isolated_sensors": 0,
+          "sensors": 26
+        },
+        {
+          "client": 5,
+          "local_edges": 216,
+          "locally_isolated_sensors": 0,
+          "sensors": 32
+        },
+        {
+          "client": 6,
+          "local_edges": 186,
+          "locally_isolated_sensors": 0,
+          "sensors": 31
+        },
+        {
+          "client": 7,
+          "local_edges": 21,
+          "locally_isolated_sensors": 0,
+          "sensors": 10
+        }
+      ],
+      "directed_edges": 1515,
+      "edges_kept": 1274,
+      "edges_kept_fraction": 0.8409240924092409,
+      "weight_kept_fraction": 0.8732560292619967
+    },
+    "split": {
+      "test": {
+        "first": "2012-06-04 04:45:00",
+        "last": "2012-06-27 23:55:00",
+        "rows": 6855
+      },
+      "train": {
+        "first": "2012-03-01 00:00:00",
+        "last": "2012-05-23 07:05:00",
+        "rows": 23990
+      },
+      "val": {
+        "first": "2012-05-23 07:10:00",
+        "last": "2012-06-04 04:40:00",
+        "rows": 3427
+      }
+    }
+  },
+  "seeds": [
+    7
+  ]
+}

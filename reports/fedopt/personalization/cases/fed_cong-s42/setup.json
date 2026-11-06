@@ -1,0 +1,1381 @@
+{
+  "clients": [
+    {
+      "client": 0,
+      "local_edges": 13,
+      "missing": {
+        "test": {
+          "end": "2012-06-27 23:55:00",
+          "missing_fraction": 0.10276506862940123,
+          "nan_count": 0,
+          "per_sensor": {
+            "717570": {
+              "missing_fraction": 0.10561633843909556,
+              "nan": 0,
+              "zero": 724
+            },
+            "717580": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "717582": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "717585": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "717587": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "717592": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "762329": {
+              "missing_fraction": 0.12808169219547774,
+              "nan": 0,
+              "zero": 878
+            },
+            "764106": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "765604": {
+              "missing_fraction": 0.10911743253099927,
+              "nan": 0,
+              "zero": 748
+            },
+            "773880": {
+              "missing_fraction": 0.10722100656455143,
+              "nan": 0,
+              "zero": 735
+            },
+            "773974": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            }
+          },
+          "rows": 6855,
+          "sensors": 11,
+          "start": "2012-06-04 04:45:00",
+          "zero_count": 7749
+        },
+        "train": {
+          "end": "2012-05-23 07:05:00",
+          "missing_fraction": 0.0728295880859449,
+          "nan_count": 0,
+          "per_sensor": {
+            "717570": {
+              "missing_fraction": 0.059024593580658605,
+              "nan": 0,
+              "zero": 1416
+            },
+            "717580": {
+              "missing_fraction": 0.08982909545644019,
+              "nan": 0,
+              "zero": 2155
+            },
+            "717582": {
+              "missing_fraction": 0.05794080867027928,
+              "nan": 0,
+              "zero": 1390
+            },
+            "717585": {
+              "missing_fraction": 0.10687786577740725,
+              "nan": 0,
+              "zero": 2564
+            },
+            "717587": {
+              "missing_fraction": 0.09691538140892038,
+              "nan": 0,
+              "zero": 2325
+            },
+            "717592": {
+              "missing_fraction": 0.09374739474781159,
+              "nan": 0,
+              "zero": 2249
+            },
+            "762329": {
+              "missing_fraction": 0.06590245935806587,
+              "nan": 0,
+              "zero": 1581
+            },
+            "764106": {
+              "missing_fraction": 0.054230929553980824,
+              "nan": 0,
+              "zero": 1301
+            },
+            "765604": {
+              "missing_fraction": 0.06073363901625677,
+              "nan": 0,
+              "zero": 1457
+            },
+            "773880": {
+              "missing_fraction": 0.06098374322634431,
+              "nan": 0,
+              "zero": 1463
+            },
+            "773974": {
+              "missing_fraction": 0.054939558149228844,
+              "nan": 0,
+              "zero": 1318
+            }
+          },
+          "rows": 23990,
+          "sensors": 11,
+          "start": "2012-03-01 00:00:00",
+          "zero_count": 19219
+        },
+        "val": {
+          "end": "2012-06-04 04:40:00",
+          "missing_fraction": 0.054646258322943474,
+          "nan_count": 0,
+          "per_sensor": {
+            "717570": {
+              "missing_fraction": 0.061278085789320105,
+              "nan": 0,
+              "zero": 210
+            },
+            "717580": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717582": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717585": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717587": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717592": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "762329": {
+              "missing_fraction": 0.05544207761890867,
+              "nan": 0,
+              "zero": 190
+            },
+            "764106": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "765604": {
+              "missing_fraction": 0.05865188211263496,
+              "nan": 0,
+              "zero": 201
+            },
+            "773880": {
+              "missing_fraction": 0.05602567843594981,
+              "nan": 0,
+              "zero": 192
+            },
+            "773974": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            }
+          },
+          "rows": 3427,
+          "sensors": 11,
+          "start": "2012-05-23 07:10:00",
+          "zero_count": 2060
+        }
+      },
+      "normalization": "per-sensor mean and std from this client's training rows",
+      "sensor_count": 11,
+      "sensors": [
+        "773880",
+        "717570",
+        "717580",
+        "717585",
+        "717582",
+        "717587",
+        "765604",
+        "764106",
+        "717592",
+        "773974",
+        "762329"
+      ],
+      "train_examples": 263637
+    },
+    {
+      "client": 1,
+      "local_edges": 16,
+      "missing": {
+        "test": {
+          "end": "2012-06-27 23:55:00",
+          "missing_fraction": 0.13143690736688549,
+          "nan_count": 0,
+          "per_sensor": {
+            "717099": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "717491": {
+              "missing_fraction": 0.3185995623632385,
+              "nan": 0,
+              "zero": 2184
+            },
+            "717576": {
+              "missing_fraction": 0.09978118161925602,
+              "nan": 0,
+              "zero": 684
+            },
+            "717578": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "717583": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "718499": {
+              "missing_fraction": 0.12253829321663019,
+              "nan": 0,
+              "zero": 840
+            },
+            "760987": {
+              "missing_fraction": 0.11028446389496718,
+              "nan": 0,
+              "zero": 756
+            },
+            "761599": {
+              "missing_fraction": 0.17782640408460978,
+              "nan": 0,
+              "zero": 1219
+            },
+            "769403": {
+              "missing_fraction": 0.0975929978118162,
+              "nan": 0,
+              "zero": 669
+            },
+            "773906": {
+              "missing_fraction": 0.12954048140043764,
+              "nan": 0,
+              "zero": 888
+            },
+            "773954": {
+              "missing_fraction": 0.09788475565280817,
+              "nan": 0,
+              "zero": 671
+            }
+          },
+          "rows": 6855,
+          "sensors": 11,
+          "start": "2012-06-04 04:45:00",
+          "zero_count": 9911
+        },
+        "train": {
+          "end": "2012-05-23 07:05:00",
+          "missing_fraction": 0.08647163590890143,
+          "nan_count": 0,
+          "per_sensor": {
+            "717099": {
+              "missing_fraction": 0.09274697790746145,
+              "nan": 0,
+              "zero": 2225
+            },
+            "717491": {
+              "missing_fraction": 0.06923718215923301,
+              "nan": 0,
+              "zero": 1661
+            },
+            "717576": {
+              "missing_fraction": 0.11213005418924551,
+              "nan": 0,
+              "zero": 2690
+            },
+            "717578": {
+              "missing_fraction": 0.05719049604001667,
+              "nan": 0,
+              "zero": 1372
+            },
+            "717583": {
+              "missing_fraction": 0.09378907878282618,
+              "nan": 0,
+              "zero": 2250
+            },
+            "718499": {
+              "missing_fraction": 0.08478532721967487,
+              "nan": 0,
+              "zero": 2034
+            },
+            "760987": {
+              "missing_fraction": 0.1909128803668195,
+              "nan": 0,
+              "zero": 4580
+            },
+            "761599": {
+              "missing_fraction": 0.07544810337640684,
+              "nan": 0,
+              "zero": 1810
+            },
+            "769403": {
+              "missing_fraction": 0.05602334305960817,
+              "nan": 0,
+              "zero": 1344
+            },
+            "773906": {
+              "missing_fraction": 0.06402667778240934,
+              "nan": 0,
+              "zero": 1536
+            },
+            "773954": {
+              "missing_fraction": 0.054897874114214255,
+              "nan": 0,
+              "zero": 1317
+            }
+          },
+          "rows": 23990,
+          "sensors": 11,
+          "start": "2012-03-01 00:00:00",
+          "zero_count": 22819
+        },
+        "val": {
+          "end": "2012-06-04 04:40:00",
+          "missing_fraction": 0.0888134334297159,
+          "nan_count": 0,
+          "per_sensor": {
+            "717099": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717491": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717576": {
+              "missing_fraction": 0.3796323314852641,
+              "nan": 0,
+              "zero": 1301
+            },
+            "717578": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717583": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "718499": {
+              "missing_fraction": 0.07032389845345784,
+              "nan": 0,
+              "zero": 241
+            },
+            "760987": {
+              "missing_fraction": 0.0571928800700321,
+              "nan": 0,
+              "zero": 196
+            },
+            "761599": {
+              "missing_fraction": 0.05865188211263496,
+              "nan": 0,
+              "zero": 201
+            },
+            "769403": {
+              "missing_fraction": 0.08082871316019842,
+              "nan": 0,
+              "zero": 277
+            },
+            "773906": {
+              "missing_fraction": 0.06565509191712868,
+              "nan": 0,
+              "zero": 225
+            },
+            "773954": {
+              "missing_fraction": 0.05339947475926466,
+              "nan": 0,
+              "zero": 183
+            }
+          },
+          "rows": 3427,
+          "sensors": 11,
+          "start": "2012-05-23 07:10:00",
+          "zero_count": 3348
+        }
+      },
+      "normalization": "per-sensor mean and std from this client's training rows",
+      "sensor_count": 11,
+      "sensors": [
+        "718499",
+        "760987",
+        "773906",
+        "717576",
+        "773954",
+        "717578",
+        "717583",
+        "761599",
+        "717099",
+        "717491",
+        "769403"
+      ],
+      "train_examples": 263637
+    },
+    {
+      "client": 2,
+      "local_edges": 10,
+      "missing": {
+        "test": {
+          "end": "2012-06-27 23:55:00",
+          "missing_fraction": 0.10169086930574896,
+          "nan_count": 0,
+          "per_sensor": {
+            "716554": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "717572": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "717573": {
+              "missing_fraction": 0.09803063457330416,
+              "nan": 0,
+              "zero": 672
+            },
+            "718141": {
+              "missing_fraction": 0.09803063457330416,
+              "nan": 0,
+              "zero": 672
+            },
+            "718204": {
+              "missing_fraction": 0.0974471188913202,
+              "nan": 0,
+              "zero": 668
+            },
+            "759772": {
+              "missing_fraction": 0.10532458059810357,
+              "nan": 0,
+              "zero": 722
+            },
+            "764858": {
+              "missing_fraction": 0.0974471188913202,
+              "nan": 0,
+              "zero": 668
+            },
+            "769402": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "769418": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "773869": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "774067": {
+              "missing_fraction": 0.1361050328227571,
+              "nan": 0,
+              "zero": 933
+            }
+          },
+          "rows": 6855,
+          "sensors": 11,
+          "start": "2012-06-04 04:45:00",
+          "zero_count": 7668
+        },
+        "train": {
+          "end": "2012-05-23 07:05:00",
+          "missing_fraction": 0.08691500246314753,
+          "nan_count": 0,
+          "per_sensor": {
+            "716554": {
+              "missing_fraction": 0.08987077949145478,
+              "nan": 0,
+              "zero": 2156
+            },
+            "717572": {
+              "missing_fraction": 0.05452271779908295,
+              "nan": 0,
+              "zero": 1308
+            },
+            "717573": {
+              "missing_fraction": 0.07765735723218008,
+              "nan": 0,
+              "zero": 1863
+            },
+            "718141": {
+              "missing_fraction": 0.06594414339308045,
+              "nan": 0,
+              "zero": 1582
+            },
+            "718204": {
+              "missing_fraction": 0.11100458524385161,
+              "nan": 0,
+              "zero": 2663
+            },
+            "759772": {
+              "missing_fraction": 0.11796581909128803,
+              "nan": 0,
+              "zero": 2830
+            },
+            "764858": {
+              "missing_fraction": 0.055106294289287205,
+              "nan": 0,
+              "zero": 1322
+            },
+            "769402": {
+              "missing_fraction": 0.055147978324301794,
+              "nan": 0,
+              "zero": 1323
+            },
+            "769418": {
+              "missing_fraction": 0.16277615673197166,
+              "nan": 0,
+              "zero": 3905
+            },
+            "773869": {
+              "missing_fraction": 0.0783659858274281,
+              "nan": 0,
+              "zero": 1880
+            },
+            "774067": {
+              "missing_fraction": 0.08770320967069613,
+              "nan": 0,
+              "zero": 2104
+            }
+          },
+          "rows": 23990,
+          "sensors": 11,
+          "start": "2012-03-01 00:00:00",
+          "zero_count": 22936
+        },
+        "val": {
+          "end": "2012-06-04 04:40:00",
+          "missing_fraction": 0.1350770618351593,
+          "nan_count": 0,
+          "per_sensor": {
+            "716554": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717572": {
+              "missing_fraction": 0.054566676393346954,
+              "nan": 0,
+              "zero": 187
+            },
+            "717573": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "718141": {
+              "missing_fraction": 0.07936971111759557,
+              "nan": 0,
+              "zero": 272
+            },
+            "718204": {
+              "missing_fraction": 0.37817332944266124,
+              "nan": 0,
+              "zero": 1296
+            },
+            "759772": {
+              "missing_fraction": 0.058360081704114386,
+              "nan": 0,
+              "zero": 200
+            },
+            "764858": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "769402": {
+              "missing_fraction": 0.07732710825795155,
+              "nan": 0,
+              "zero": 265
+            },
+            "769418": {
+              "missing_fraction": 0.22702071782900496,
+              "nan": 0,
+              "zero": 778
+            },
+            "773869": {
+              "missing_fraction": 0.37817332944266124,
+              "nan": 0,
+              "zero": 1296
+            },
+            "774067": {
+              "missing_fraction": 0.07440910417274584,
+              "nan": 0,
+              "zero": 255
+            }
+          },
+          "rows": 3427,
+          "sensors": 11,
+          "start": "2012-05-23 07:10:00",
+          "zero_count": 5092
+        }
+      },
+      "normalization": "per-sensor mean and std from this client's training rows",
+      "sensor_count": 11,
+      "sensors": [
+        "773869",
+        "717573",
+        "718204",
+        "717572",
+        "774067",
+        "759772",
+        "716554",
+        "764858",
+        "769418",
+        "718141",
+        "769402"
+      ],
+      "train_examples": 263637
+    },
+    {
+      "client": 3,
+      "local_edges": 19,
+      "missing": {
+        "test": {
+          "end": "2012-06-27 23:55:00",
+          "missing_fraction": 0.12186194549433062,
+          "nan_count": 0,
+          "per_sensor": {
+            "717488": {
+              "missing_fraction": 0.0975929978118162,
+              "nan": 0,
+              "zero": 669
+            },
+            "717490": {
+              "missing_fraction": 0.3197665937272064,
+              "nan": 0,
+              "zero": 2192
+            },
+            "717571": {
+              "missing_fraction": 0.09788475565280817,
+              "nan": 0,
+              "zero": 671
+            },
+            "718496": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "761003": {
+              "missing_fraction": 0.0974471188913202,
+              "nan": 0,
+              "zero": 668
+            },
+            "764101": {
+              "missing_fraction": 0.10940919037199125,
+              "nan": 0,
+              "zero": 750
+            },
+            "764766": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "768066": {
+              "missing_fraction": 0.10007293946024799,
+              "nan": 0,
+              "zero": 686
+            },
+            "773916": {
+              "missing_fraction": 0.12866520787746172,
+              "nan": 0,
+              "zero": 882
+            },
+            "773953": {
+              "missing_fraction": 0.09803063457330416,
+              "nan": 0,
+              "zero": 672
+            },
+            "774204": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            }
+          },
+          "rows": 6855,
+          "sensors": 11,
+          "start": "2012-06-04 04:45:00",
+          "zero_count": 9189
+        },
+        "train": {
+          "end": "2012-05-23 07:05:00",
+          "missing_fraction": 0.06900223578005987,
+          "nan_count": 0,
+          "per_sensor": {
+            "717488": {
+              "missing_fraction": 0.055106294289287205,
+              "nan": 0,
+              "zero": 1322
+            },
+            "717490": {
+              "missing_fraction": 0.06886202584410171,
+              "nan": 0,
+              "zero": 1652
+            },
+            "717571": {
+              "missing_fraction": 0.05506461025427262,
+              "nan": 0,
+              "zero": 1321
+            },
+            "718496": {
+              "missing_fraction": 0.11734055856606919,
+              "nan": 0,
+              "zero": 2815
+            },
+            "761003": {
+              "missing_fraction": 0.05543976656940392,
+              "nan": 0,
+              "zero": 1330
+            },
+            "764101": {
+              "missing_fraction": 0.06081700708628595,
+              "nan": 0,
+              "zero": 1459
+            },
+            "764766": {
+              "missing_fraction": 0.05448103376406836,
+              "nan": 0,
+              "zero": 1307
+            },
+            "768066": {
+              "missing_fraction": 0.055648186744476864,
+              "nan": 0,
+              "zero": 1335
+            },
+            "773916": {
+              "missing_fraction": 0.06423509795748228,
+              "nan": 0,
+              "zero": 1541
+            },
+            "773953": {
+              "missing_fraction": 0.055648186744476864,
+              "nan": 0,
+              "zero": 1335
+            },
+            "774204": {
+              "missing_fraction": 0.11638182576073364,
+              "nan": 0,
+              "zero": 2792
+            }
+          },
+          "rows": 23990,
+          "sensors": 11,
+          "start": "2012-03-01 00:00:00",
+          "zero_count": 18209
+        },
+        "val": {
+          "end": "2012-06-04 04:40:00",
+          "missing_fraction": 0.06024352070456535,
+          "nan_count": 0,
+          "per_sensor": {
+            "717488": {
+              "missing_fraction": 0.07732710825795155,
+              "nan": 0,
+              "zero": 265
+            },
+            "717490": {
+              "missing_fraction": 0.05631747884447038,
+              "nan": 0,
+              "zero": 193
+            },
+            "717571": {
+              "missing_fraction": 0.05427487598482638,
+              "nan": 0,
+              "zero": 186
+            },
+            "718496": {
+              "missing_fraction": 0.05398307557630581,
+              "nan": 0,
+              "zero": 185
+            },
+            "761003": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "764101": {
+              "missing_fraction": 0.05865188211263496,
+              "nan": 0,
+              "zero": 201
+            },
+            "764766": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "768066": {
+              "missing_fraction": 0.08345491683688357,
+              "nan": 0,
+              "zero": 286
+            },
+            "773916": {
+              "missing_fraction": 0.06565509191712868,
+              "nan": 0,
+              "zero": 225
+            },
+            "773953": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "774204": {
+              "missing_fraction": 0.054566676393346954,
+              "nan": 0,
+              "zero": 187
+            }
+          },
+          "rows": 3427,
+          "sensors": 11,
+          "start": "2012-05-23 07:10:00",
+          "zero_count": 2271
+        }
+      },
+      "normalization": "per-sensor mean and std from this client's training rows",
+      "sensor_count": 11,
+      "sensors": [
+        "761003",
+        "773953",
+        "773916",
+        "774204",
+        "718496",
+        "717571",
+        "768066",
+        "764101",
+        "717488",
+        "764766",
+        "717490"
+      ],
+      "train_examples": 263637
+    },
+    {
+      "client": 4,
+      "local_edges": 14,
+      "missing": {
+        "test": {
+          "end": "2012-06-27 23:55:00",
+          "missing_fraction": 0.11231218088986142,
+          "nan_count": 0,
+          "per_sensor": {
+            "717483": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "717486": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "717489": {
+              "missing_fraction": 0.13552151714077315,
+              "nan": 0,
+              "zero": 929
+            },
+            "717492": {
+              "missing_fraction": 0.10707512764405544,
+              "nan": 0,
+              "zero": 734
+            },
+            "718089": {
+              "missing_fraction": 0.13800145878920497,
+              "nan": 0,
+              "zero": 946
+            },
+            "761604": {
+              "missing_fraction": 0.1274981765134938,
+              "nan": 0,
+              "zero": 874
+            },
+            "764949": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "765176": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "768469": {
+              "missing_fraction": 0.0974471188913202,
+              "nan": 0,
+              "zero": 668
+            },
+            "773904": {
+              "missing_fraction": 0.1289569657184537,
+              "nan": 0,
+              "zero": 884
+            }
+          },
+          "rows": 6855,
+          "sensors": 10,
+          "start": "2012-06-04 04:45:00",
+          "zero_count": 7699
+        },
+        "train": {
+          "end": "2012-05-23 07:05:00",
+          "missing_fraction": 0.06217590662776157,
+          "nan_count": 0,
+          "per_sensor": {
+            "717483": {
+              "missing_fraction": 0.06852855356398499,
+              "nan": 0,
+              "zero": 1644
+            },
+            "717486": {
+              "missing_fraction": 0.0558982909545644,
+              "nan": 0,
+              "zero": 1341
+            },
+            "717489": {
+              "missing_fraction": 0.05427261358899541,
+              "nan": 0,
+              "zero": 1302
+            },
+            "717492": {
+              "missing_fraction": 0.055147978324301794,
+              "nan": 0,
+              "zero": 1323
+            },
+            "718089": {
+              "missing_fraction": 0.08036681950812839,
+              "nan": 0,
+              "zero": 1928
+            },
+            "761604": {
+              "missing_fraction": 0.07640683618174239,
+              "nan": 0,
+              "zero": 1833
+            },
+            "764949": {
+              "missing_fraction": 0.05602334305960817,
+              "nan": 0,
+              "zero": 1344
+            },
+            "765176": {
+              "missing_fraction": 0.056565235514797835,
+              "nan": 0,
+              "zero": 1357
+            },
+            "768469": {
+              "missing_fraction": 0.05518966235931638,
+              "nan": 0,
+              "zero": 1324
+            },
+            "773904": {
+              "missing_fraction": 0.0633597332221759,
+              "nan": 0,
+              "zero": 1520
+            }
+          },
+          "rows": 23990,
+          "sensors": 10,
+          "start": "2012-03-01 00:00:00",
+          "zero_count": 14916
+        },
+        "val": {
+          "end": "2012-06-04 04:40:00",
+          "missing_fraction": 0.05771812080536913,
+          "nan_count": 0,
+          "per_sensor": {
+            "717483": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717486": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "717489": {
+              "missing_fraction": 0.053107674350744094,
+              "nan": 0,
+              "zero": 182
+            },
+            "717492": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "718089": {
+              "missing_fraction": 0.05544207761890867,
+              "nan": 0,
+              "zero": 190
+            },
+            "761604": {
+              "missing_fraction": 0.05602567843594981,
+              "nan": 0,
+              "zero": 192
+            },
+            "764949": {
+              "missing_fraction": 0.05281587394222352,
+              "nan": 0,
+              "zero": 181
+            },
+            "765176": {
+              "missing_fraction": 0.05602567843594981,
+              "nan": 0,
+              "zero": 192
+            },
+            "768469": {
+              "missing_fraction": 0.07966151152611614,
+              "nan": 0,
+              "zero": 273
+            },
+            "773904": {
+              "missing_fraction": 0.06565509191712868,
+              "nan": 0,
+              "zero": 225
+            }
+          },
+          "rows": 3427,
+          "sensors": 10,
+          "start": "2012-05-23 07:10:00",
+          "zero_count": 1978
+        }
+      },
+      "normalization": "per-sensor mean and std from this client's training rows",
+      "sensor_count": 10,
+      "sensors": [
+        "773904",
+        "768469",
+        "717489",
+        "761604",
+        "717492",
+        "718089",
+        "765176",
+        "764949",
+        "717486",
+        "717483"
+      ],
+      "train_examples": 239670
+    },
+    {
+      "client": 5,
+      "local_edges": 11,
+      "missing": {
+        "test": {
+          "end": "2012-06-27 23:55:00",
+          "missing_fraction": 0.11574033552151713,
+          "nan_count": 0,
+          "per_sensor": {
+            "716958": {
+              "missing_fraction": 0.1388767323121809,
+              "nan": 0,
+              "zero": 952
+            },
+            "716960": {
+              "missing_fraction": 0.13785557986870897,
+              "nan": 0,
+              "zero": 945
+            },
+            "717493": {
+              "missing_fraction": 0.09919766593727207,
+              "nan": 0,
+              "zero": 680
+            },
+            "718090": {
+              "missing_fraction": 0.125018234865062,
+              "nan": 0,
+              "zero": 857
+            },
+            "718379": {
+              "missing_fraction": 0.13785557986870897,
+              "nan": 0,
+              "zero": 945
+            },
+            "764760": {
+              "missing_fraction": 0.09715536105032822,
+              "nan": 0,
+              "zero": 666
+            },
+            "769405": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "769467": {
+              "missing_fraction": 0.09730123997082421,
+              "nan": 0,
+              "zero": 667
+            },
+            "773927": {
+              "missing_fraction": 0.12866520787746172,
+              "nan": 0,
+              "zero": 882
+            },
+            "773939": {
+              "missing_fraction": 0.09817651349380015,
+              "nan": 0,
+              "zero": 673
+            }
+          },
+          "rows": 6855,
+          "sensors": 10,
+          "start": "2012-06-04 04:45:00",
+          "zero_count": 7934
+        },
+        "train": {
+          "end": "2012-05-23 07:05:00",
+          "missing_fraction": 0.07772405168820341,
+          "nan_count": 0,
+          "per_sensor": {
+            "716958": {
+              "missing_fraction": 0.07736556898707794,
+              "nan": 0,
+              "zero": 1856
+            },
+            "716960": {
+              "missing_fraction": 0.07978324301792414,
+              "nan": 0,
+              "zero": 1914
+            },
+            "717493": {
+              "missing_fraction": 0.057815756565235514,
+              "nan": 0,
+              "zero": 1387
+            },
+            "718090": {
+              "missing_fraction": 0.07619841600666945,
+              "nan": 0,
+              "zero": 1828
+            },
+            "718379": {
+              "missing_fraction": 0.07002917882451021,
+              "nan": 0,
+              "zero": 1680
+            },
+            "764760": {
+              "missing_fraction": 0.05481450604418508,
+              "nan": 0,
+              "zero": 1315
+            },
+            "769405": {
+              "missing_fraction": 0.16269278866194248,
+              "nan": 0,
+              "zero": 3903
+            },
+            "769467": {
+              "missing_fraction": 0.05460608586911213,
+              "nan": 0,
+              "zero": 1310
+            },
+            "773927": {
+              "missing_fraction": 0.087411421425594,
+              "nan": 0,
+              "zero": 2097
+            },
+            "773939": {
+              "missing_fraction": 0.056523551479783246,
+              "nan": 0,
+              "zero": 1356
+            }
+          },
+          "rows": 23990,
+          "sensors": 10,
+          "start": "2012-03-01 00:00:00",
+          "zero_count": 18646
+        },
+        "val": {
+          "end": "2012-06-04 04:40:00",
+          "missing_fraction": 0.07899037058651882,
+          "nan_count": 0,
+          "per_sensor": {
+            "716958": {
+              "missing_fraction": 0.05573387802742924,
+              "nan": 0,
+              "zero": 191
+            },
+            "716960": {
+              "missing_fraction": 0.05573387802742924,
+              "nan": 0,
+              "zero": 191
+            },
+            "717493": {
+              "missing_fraction": 0.11175955646337905,
+              "nan": 0,
+              "zero": 383
+            },
+            "718090": {
+              "missing_fraction": 0.05631747884447038,
+              "nan": 0,
+              "zero": 193
+            },
+            "718379": {
+              "missing_fraction": 0.05544207761890867,
+              "nan": 0,
+              "zero": 190
+            },
+            "764760": {
+              "missing_fraction": 0.05485847680186752,
+              "nan": 0,
+              "zero": 188
+            },
+            "769405": {
+              "missing_fraction": 0.2264371170119638,
+              "nan": 0,
+              "zero": 776
+            },
+            "769467": {
+              "missing_fraction": 0.053107674350744094,
+              "nan": 0,
+              "zero": 182
+            },
+            "773927": {
+              "missing_fraction": 0.06565509191712868,
+              "nan": 0,
+              "zero": 225
+            },
+            "773939": {
+              "missing_fraction": 0.05485847680186752,
+              "nan": 0,
+              "zero": 188
+            }
+          },
+          "rows": 3427,
+          "sensors": 10,
+          "start": "2012-05-23 07:10:00",
+          "zero_count": 2707
+        }
+      },
+      "normalization": "per-sensor mean and std from this client's training rows",
+      "sensor_count": 10,
+      "sensors": [
+        "773927",
+        "718090",
+        "718379",
+        "764760",
+        "773939",
+        "717493",
+        "716960",
+        "716958",
+        "769467",
+        "769405"
+      ],
+      "train_examples": 239670
+    }
+  ],
+  "config": {
+    "algorithm": "fedavg",
+    "batch_size": 64,
+    "budgets": [],
+    "clients": 6,
+    "congestion_mph": 40.0,
+    "diffusion_mode": "both",
+    "diffusion_steps": 2,
+    "embedding": 4,
+    "hidden": 32,
+    "history": 12,
+    "horizon": 12,
+    "local_epochs": 1,
+    "local_stride": 3,
+    "lr": 0.001,
+    "model": "sgraph",
+    "partition": "congestion",
+    "partition_seed": 0,
+    "personalize_rounds": 10,
+    "proximal_mu": 0.0,
+    "rounds": 30,
+    "rows": 34272,
+    "seed": 42,
+    "sensors": 64,
+    "threads": 3,
+    "threshold": 0.1
+  },
+  "graph": {
+    "clients": [
+      {
+        "client": 0,
+        "local_edges": 13,
+        "locally_isolated_sensors": 0,
+        "sensors": 11
+      },
+      {
+        "client": 1,
+        "local_edges": 16,
+        "locally_isolated_sensors": 3,
+        "sensors": 11
+      },
+      {
+        "client": 2,
+        "local_edges": 10,
+        "locally_isolated_sensors": 1,
+        "sensors": 11
+      },
+      {
+        "client": 3,
+        "local_edges": 19,
+        "locally_isolated_sensors": 0,
+        "sensors": 11
+      },
+      {
+        "client": 4,
+        "local_edges": 14,
+        "locally_isolated_sensors": 3,
+        "sensors": 10
+      },
+      {
+        "client": 5,
+        "local_edges": 11,
+        "locally_isolated_sensors": 0,
+        "sensors": 10
+      }
+    ],
+    "directed_edges": 404,
+    "edges_kept": 83,
+    "edges_kept_fraction": 0.20544554455445543,
+    "weight_kept_fraction": 0.2484418526818033
+  },
+  "sensors": 64,
+  "split": {
+    "test": {
+      "first": "2012-06-04 04:45:00",
+      "last": "2012-06-27 23:55:00",
+      "rows": 6855
+    },
+    "train": {
+      "first": "2012-03-01 00:00:00",
+      "last": "2012-05-23 07:05:00",
+      "rows": 23990
+    },
+    "val": {
+      "first": "2012-05-23 07:10:00",
+      "last": "2012-06-04 04:40:00",
+      "rows": 3427
+    }
+  }
+}

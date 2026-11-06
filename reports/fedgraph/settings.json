@@ -1,0 +1,104 @@
+{
+  "arms": [
+    {
+      "mode": "federated",
+      "model": "sgraph",
+      "name": "fed_sgraph",
+      "runner": "flower"
+    },
+    {
+      "mode": "federated",
+      "model": "sgru",
+      "name": "fed_sgru",
+      "runner": "flower"
+    },
+    {
+      "edges": "full",
+      "mode": "central",
+      "model": "sgraph",
+      "name": "central_sgraph_full"
+    },
+    {
+      "edges": "local",
+      "mode": "central",
+      "model": "sgraph",
+      "name": "central_sgraph_local"
+    },
+    {
+      "edges": "full",
+      "mode": "central",
+      "model": "sgru",
+      "name": "central_sgru"
+    },
+    {
+      "mode": "local",
+      "model": "sgraph",
+      "name": "local_sgraph"
+    }
+  ],
+  "base": {
+    "algorithm": "fedavg",
+    "batch_size": 64,
+    "clients": 8,
+    "congestion_mph": 40.0,
+    "diffusion_steps": 2,
+    "hidden": 32,
+    "history": 12,
+    "horizon": 12,
+    "local_epochs": 1,
+    "local_stride": 3,
+    "lr": 0.001,
+    "model": "sgraph",
+    "partition": "geographic",
+    "partition_seed": 0,
+    "proximal_mu": 0.0,
+    "rounds": 30,
+    "rows": 34272,
+    "seed": 42,
+    "sensors": 207,
+    "threads": 4,
+    "threshold": 0.1
+  },
+  "git_commit": null,
+  "git_dirty": null,
+  "name": "Federated shared Graph-GRU on all 207 sensors",
+  "pairs": [
+    [
+      "fed_sgraph",
+      "fed_sgru"
+    ],
+    [
+      "central_sgraph_full",
+      "central_sgru"
+    ],
+    [
+      "central_sgraph_local",
+      "central_sgraph_full"
+    ],
+    [
+      "fed_sgraph",
+      "central_sgraph_local"
+    ],
+    [
+      "fed_sgraph",
+      "central_sgraph_full"
+    ],
+    [
+      "fed_sgraph",
+      "local_sgraph"
+    ],
+    [
+      "fed_sgraph",
+      "ha"
+    ],
+    [
+      "fed_sgraph",
+      "persistence"
+    ]
+  ],
+  "seeds": [
+    7,
+    42,
+    2026
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "benchmark": {
+    "batch_size": 64,
+    "core_sizes": [],
+    "embedding": 4,
+    "epochs": 30,
+    "hidden": 32,
+    "history": 12,
+    "horizon": 12,
+    "lr": 0.001,
+    "models": [
+      "dcrnn_k0_time",
+      "dcrnn_k1_time",
+      "dcrnn_time",
+      "dcrnn_k3_time",
+      "dcrnn_fwd_time",
+      "dcrnn_bwd_time",
+      "dcrnn_sym_time",
+      "ha"
+    ],
+    "patience": null,
+    "rows": 34272,
+    "scheduler": "plateau",
+    "scheduler_patience": 4,
+    "seeds": [
+      7,
+      42,
+      2026
+    ],
+    "sensors": 16,
+    "threads": 3,
+    "threshold": 0.1,
+    "train_stride": 3
+  },
+  "git_commit": null,
+  "git_dirty": null,
+  "sensor_counts": [
+    16
+  ]
+}

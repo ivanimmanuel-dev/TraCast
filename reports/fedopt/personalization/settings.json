@@ -1,0 +1,112 @@
+{
+  "arms": [
+    {
+      "mode": "federated",
+      "name": "fed_geo",
+      "personalize_rounds": 10,
+      "runner": "inprocess"
+    },
+    {
+      "mode": "federated",
+      "name": "fed_cong",
+      "partition": "congestion",
+      "personalize_rounds": 10,
+      "runner": "inprocess"
+    },
+    {
+      "mode": "local",
+      "name": "local_geo"
+    },
+    {
+      "mode": "local",
+      "name": "local_cong",
+      "partition": "congestion"
+    },
+    {
+      "edges": "local",
+      "mode": "central",
+      "name": "central_local_geo"
+    },
+    {
+      "edges": "local",
+      "mode": "central",
+      "name": "central_local_cong",
+      "partition": "congestion"
+    }
+  ],
+  "base": {
+    "algorithm": "fedavg",
+    "batch_size": 64,
+    "budgets": [],
+    "clients": 6,
+    "congestion_mph": 40.0,
+    "diffusion_mode": "both",
+    "diffusion_steps": 2,
+    "hidden": 32,
+    "history": 12,
+    "horizon": 12,
+    "local_epochs": 1,
+    "local_stride": 3,
+    "lr": 0.001,
+    "model": "sgraph",
+    "partition": "geographic",
+    "partition_seed": 0,
+    "personalize_rounds": 0,
+    "proximal_mu": 0.0,
+    "rounds": 30,
+    "rows": 34272,
+    "seed": 42,
+    "sensors": 64,
+    "threads": 3,
+    "threshold": 0.1
+  },
+  "git_commit": null,
+  "git_dirty": null,
+  "name": "Does local fine-tuning of the federated model close the gap to local-only training?",
+  "pairs": [
+    [
+      "fed_geo+ft",
+      "fed_geo"
+    ],
+    [
+      "fed_geo+ft",
+      "local_geo"
+    ],
+    [
+      "fed_geo",
+      "local_geo"
+    ],
+    [
+      "fed_geo",
+      "central_local_geo"
+    ],
+    [
+      "fed_geo+ft",
+      "central_local_geo"
+    ],
+    [
+      "fed_cong+ft",
+      "fed_cong"
+    ],
+    [
+      "fed_cong+ft",
+      "local_cong"
+    ],
+    [
+      "fed_cong",
+      "local_cong"
+    ],
+    [
+      "fed_cong",
+      "central_local_cong"
+    ],
+    [
+      "fed_cong+ft",
+      "central_local_cong"
+    ]
+  ],
+  "seeds": [
+    7,
+    42
+  ]
+}

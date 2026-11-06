@@ -1,0 +1,24 @@
+{
+  "base_commit": "5afa409596b5183aaf5f55de1f65702c361c4269",
+  "uncommitted_paths": [
+    " M src/tracast/benchmark.py",
+    " M src/tracast/cli.py",
+    " M src/tracast/scaling.py",
+    "?? configs/diffusion-ablation.json",
+    "?? configs/diffusion.json",
+    "?? configs/fedgraph-diffusion.json",
+    "?? configs/fedgraph-optimization.json",
+    "?? configs/fedgraph.json",
+    "?? configs/holdout.json",
+    "?? src/tracast/diffusion.py",
+    "?? src/tracast/fedgraph.py",
+    "?? src/tracast/fedgraph_flower.py",
+    "?? src/tracast/fedgraph_study.py",
+    "?? src/tracast/inductive.py",
+    "?? tests/test_diffusion.py",
+    "?? tests/test_fedgraph.py",
+    "?? tests/test_fedgraph_study.py",
+    "?? tests/test_inductive.py"
+  ],
+  "note": "Ran from a frozen copy of the working tree taken at launch; source hashes are in each manifest."
+}
