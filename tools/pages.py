@@ -41,7 +41,7 @@ Before building on the code I went through it looking for leakage, wrong assumpt
 - **The dense graph ablation could not isolate the graph.** The "self only" model still got every sensor's readings through its input layer, so it was never really without neighbors. The earlier write-up said so, but the experiment couldn't fix it. The shared-weight models can: a shared GRU sees only its own sensor, and the shared Graph-GRU adds the two neighbor averages, nothing else.
 - **A plotting crash after a long run** (found earlier): early-stopped runs have different lengths and the convergence plot assumed equal ones. Fixed, with a test.
 
-I didn't find anything else that was wrong in the original pipeline, and I'd rather say that than pad this list.
+I didn't find anything else wrong in the original pipeline.
 
 ## Leakage checks
 
@@ -1005,14 +1005,15 @@ def scale_readme_text(scaling, cost):
     )
     if better:
         text += (
-            f" Sharing the weights also wins once the network is big: at {join_and(k for k, _ in better)} "
+            f" Sharing the weights wins once the network is big: at {join_and(k for k, _ in better)} "
             f"sensors the shared GRU beats the dense one by "
             f"{-max(g['estimate'] for _, g in better):.3f} to {-min(g['estimate'] for _, g in better):.3f} mph "
             f"with {models['sgru_time'][str(large)]['parameters']:,} parameters instead of "
             f"{models['gru_time'][str(large)]['parameters']:,}."
         )
     text += (
-        f" What it costs is compute: at {large} sensors the shared Graph-GRU needs "
+        "\n\n"
+        f"Sharing costs compute, though: at {large} sensors the shared Graph-GRU needs "
         f"{epoch_seconds(source['models']['sgraph_time'][str(large)]):.1f} s per epoch against "
         f"{epoch_seconds(source['models']['graph_gru_time'][str(large)]):.1f} s for the dense one. And more "
         f"sensors did not make the first {small} better: trained on all {large}, the dense models are "
@@ -1113,13 +1114,14 @@ def variants_readme_text(variants, scaling):
     shared = variants["models"]["sgru_id_time"][large]["core16_mae"]["mean"]
     dense = scaling["models"]["gru_time"][large]["core16_mae"]["mean"]
     return (
-        f"Two variants of the shared models are in the [variants report](reports/variants/report.md), tested at "
-        f"{join_and(sizes)} sensors. A learned vector of 4 numbers per sensor, which lets the shared network "
-        f"tell sensors apart, changes the test MAE on the sensors the models train on by {-max(vector):+.3f} to {-min(vector):+.3f} mph "
-        f"(negative is better), a bigger effect than the graph has, and with it the shared GRU scores "
-        f"{shared:.3f} on the first 16 sensors when trained on {sizes[-1]}, against {dense:.3f} for the dense GRU. The catch is that a model "
-        f"with those vectors can't forecast a sensor it wasn't trained on. Swapping the GRU for an LSTM changes "
-        f"it by {-max(lstm):+.3f} to {-min(lstm):+.3f}."
+        f"The [variants report](reports/variants/report.md) tests two changes to the shared models at "
+        f"{join_and(sizes)} sensors. A learned vector of 4 numbers per sensor, which lets the network "
+        f"tell sensors apart, changes test MAE by {-max(vector):+.3f} to {-min(vector):+.3f} mph "
+        f"(negative is better), a bigger effect than the graph has. With it the shared GRU scores "
+        f"{shared:.3f} on the first 16 sensors when trained on {sizes[-1]}, against {dense:.3f} for the dense GRU. "
+        f"The catch is that a model with those vectors can't forecast a sensor it wasn't trained on "
+        f"(more on that below). Swapping the GRU for an LSTM changes it by only "
+        f"{-max(lstm):+.3f} to {-min(lstm):+.3f}."
     )
 
 
@@ -1164,7 +1166,7 @@ def readme_blocks():
         head = "| Trained on this many sensors | " + " | ".join(map(str, sizes)) + " |"
         blocks["scaling"] = (
             f"## Scaling to all {large} sensors\n\n"
-            f"Everything above uses {small} sensors from one highway. I ran the same comparison on nested "
+            f"The studies above use 12 or {small} of the {large} sensors. I ran the same comparison on nested "
             f"sets of {join_and(sizes)} sensors (each set contains the one before it), plus two "
             f"new models that share one small GRU across every sensor, so their size doesn't depend on how "
             f"many sensors there are. Test MAE in mph on the same first {small} sensors, whatever size "
@@ -1348,7 +1350,7 @@ The left panel scores each model on all the sensors it was trained on, the right
 
 ## Limits
 
-- A sensor vector ties the model to the sensors it was trained on: it can't forecast a new sensor without training a vector for it. The plain shared models don't have that problem, which is why the scaling study used them, so the vectors trade some of what sharing weights is for against accuracy.
+- A sensor vector ties the model to the sensors it was trained on, so it can't forecast a new sensor until a vector is learned for it. The plain shared models don't have that limit, which gives up part of the point of sharing weights in exchange for accuracy. The [held-out sensor study](../holdout/report.md) tests fitting a vector on a new sensor's first week.
 - Only {sizes} sensors, because every extra model is another full training run at each size. Whether the vectors help more (or overfit) at 207 sensors isn't tested here.
 - Two seeds, the same equal-update budget as before, and a fixed {dim}-number vector. A larger vector or a longer run might change the picture.
 - I didn't time these models; the cost comparison in the scaling study covers the GRU versions only.

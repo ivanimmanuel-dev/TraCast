@@ -433,19 +433,42 @@ Files: [summary](summary.json), [per-seed results](results.json), [protocol](pro
 
 README = """# TraCast
 
-TraCast forecasts traffic speed 5 to 60 minutes ahead from the last hour of sensor readings. The data is METR-LA: 207 road sensors in Los Angeles, March to June 2012. Everything runs on a CPU laptop.
+**Traffic-speed forecasting on METR-LA, from recurrent baselines to federated graph models, on a CPU.**
 
-I wanted to know four things. Do recurrent models beat simple baselines? Does the road graph help? Does knowing the time of day help? And does federated training lose anything compared with training on all the data in one place? Then I scaled it up to all 207 sensors, put prediction intervals on the forecasts and checked what happens when traffic drifts. Last, I federated the shared Graph-GRU across all 207 sensors, wrote a DCRNN-style diffusion GRU, and tested forecasting for sensors a model never trained on.
+[![Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml/badge.svg)](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml) ![Python 3.11](https://img.shields.io/badge/python-3.11-blue) ![MIT license](https://img.shields.io/badge/license-MIT-green)
 
-[Technical report](reports/research-report.md) · [Two-page brief](reports/research-brief.pdf) · [Scaling](reports/scaling/report.md) · [Shared variants](reports/variants/report.md) · [Federated graph](reports/fedgraph/report.md) · [DCRNN](reports/diffusion/report.md) · [FedProx](reports/fedopt/report.md) · [New sensors](reports/holdout/report.md) · [Intervals](reports/uncertainty/report.md) · [Drift](reports/shift/report.md) · [Audit](docs/audit.md) · [Run guide](docs/reproducibility.md) · [Data sources](DATA.md) · [Tests](https://github.com/ivanimmanuel-dev/TraCast/actions/workflows/tests.yml)
+TraCast forecasts the speed on 207 Los Angeles road sensors 5 to 60 minutes ahead from the last hour of readings (METR-LA, March to June 2012). It started with four questions: do recurrent models beat simple baselines, does the road graph help, does the time of day help, and does federated training lose anything against pooling the data? It grew into scaling to all 207 sensors, prediction intervals, drift, forecasting for sensors a model never saw, a DCRNN-style diffusion model, and federated learning on the whole network.
 
-## What I found
+Every number in the reports is generated from saved results, a comparison is only called better or worse when an interval over test days says so, and the tests include leakage checks.
+
+**Start with** the [technical report](reports/research-report.md) or the [two-page brief](reports/research-brief.pdf). **Studies:** [scaling](reports/scaling/report.md) · [shared variants](reports/variants/report.md) · [intervals](reports/uncertainty/report.md) · [drift](reports/shift/report.md) · [federated graph](reports/fedgraph/report.md) · [DCRNN](reports/diffusion/report.md) · [FedProx](reports/fedopt/report.md) · [new sensors](reports/holdout/report.md). **Also:** [audit](docs/audit.md) · [run guide](docs/reproducibility.md) · [data sources](DATA.md).
+
+## At a glance
 
 {findings}
 
-## Results
+## Quick start
 
-Test MAE in mph on 16 sensors, forecasting 12 steps (60 minutes) from the previous 12. The last 20% of the timeline (24 days) is the test set. Learned models are averaged over {seeds} seeds, with the standard deviation in parentheses. Persistence and the historical average aren't trained, so they run once. The [full table](reports/benchmark-extended/report.md) has RMSE, parameter counts and how much each score moves with the choice of test days.
+```powershell
+py -3.11 -m venv .venv
+.\\.venv\\Scripts\\python.exe -m pip install -r requirements-lock.txt
+.\\.venv\\Scripts\\python.exe -m pip install -e . --no-deps
+.\\.venv\\Scripts\\python.exe -m pytest -q -W error
+.\\.venv\\Scripts\\python.exe -m tracast.cli fetch
+.\\.venv\\Scripts\\python.exe -m tracast.cli run --config configs/smoke.json --out runs/gru-smoke
+```
+
+The recorded experiments ran on Python 3.11 and CPU PyTorch on Windows x64, and CI runs the tests on Windows and Ubuntu (on Linux use `python3.11` and `.venv/bin/python`). The last command trains one GRU on seven days of data as a smoke test. `tracast --help` lists every experiment, and the [run guide](docs/reproducibility.md) has the command for each, from the five-epoch benchmark to the multi-hour federated runs. Use a fresh output folder for each run.
+
+## How the experiments are set up
+
+The first 70% of the timeline is training, the next 10% validation and the last 20% (24 days) test, and windows never cross a split boundary. Zero and missing readings are left out of the loss and the scores, inputs are forward-filled within a split, and normalization uses training data only. The saved model is the one with the best validation MAE, and the test set is scored after that. Gaps between models are measured on identical windows, with 95% intervals from resampling test days.
+
+The early studies use 16 sensors picked by walking the published DCRNN distance graph from its first sensor, which gives 85 directed edges. Sensors and edge weights come from distances only, never from speeds. Graph-GRU gives each sensor its own speed plus the average of its upstream and downstream neighbors, passes that through a small shared layer and feeds all 16 sensors into a GRU; "self only" is the same model with the neighbor averages set to zero. Every model in those studies, the plain GRU included, reads all 16 sensors, so they test the graph-weighted averages and not whether neighboring sensors matter. The shared-weight models further down take that confound away.
+
+## Baselines and the clock (16 sensors)
+
+Test MAE in mph, forecasting 12 steps (60 minutes) from the previous 12. Learned models are averaged over {seeds} seeds, with the standard deviation in parentheses. Persistence and the historical average aren't trained, so they run once. The [full table](reports/benchmark-extended/report.md) has RMSE, parameter counts and how much each score moves with the choice of test days.
 
 | Model | MAE (SD) | 15 min | 60 min |
 |---|---:|---:|---:|
@@ -455,15 +478,7 @@ Test MAE in mph on 16 sensors, forecasting 12 steps (60 minutes) from the previo
 
 My first run trained every model for five epochs. In {at_last} of {n_runs} runs the best validation epoch was the last one, so the models were still improving when training stopped. The numbers above come from a rerun with early stopping (up to {max_epochs} epochs) and {seeds} seeds. The five-epoch results are still in [reports/benchmark](reports/benchmark/report.md).
 
-{scaling_section}{uncertainty_section}{shift_section}{federated_graph_section}## How it's set up
-
-The first 70% of the timeline is train, the next 10% validation and the last 20% test, and windows never cross a split boundary. Zero and missing readings are left out of the loss and the metrics, inputs are forward-filled within a split, and normalization uses training data only. The saved model is the one with the best validation MAE; test scores come after that.
-
-The 16 sensors come from walking the published DCRNN distance graph from its first sensor, which gives 85 directed edges. Sensors and edge weights come from distances only, never from speeds. Graph-GRU gives each sensor its own speed plus the average of its upstream and downstream neighbors, passes that through a small shared layer, and feeds all 16 sensors into a GRU. "Self only" is the same model with the neighbor averages set to zero. One thing to keep in mind: every model here, the plain GRU too, reads all 16 sensors, so this tests the graph-weighted averages and not whether neighboring sensors matter.
-
-What this doesn't cover: one 16-sensor subset, one 24-day test window, no hyperparameter search, and federated parts that are simulations on one machine.
-
-## The first federated study (12 sensors)
+## A first federated study (12 sensors)
 
 The Flower simulation gives each of three clients its own set of sensors. Every round each client trains its copy of the same GRU on its own readings, and the server averages the weights, weighted by how many training examples each client has (one example is one sensor's readings). Centralized trains the same model on all clients' data together, from the same starting weights, normalization, masks and number of examples. Local-only trains each client by itself with the same amount of local work and no communication.
 
@@ -476,55 +491,32 @@ Twelve sensors, fourteen days, three seeds, one local epoch per round. Sensors a
 
 {fed_cost} More in the [federated findings](reports/federated-study/findings.md).
 
-## Run
+{scaling_section}{uncertainty_section}{shift_section}{federated_graph_section}## Limits
 
-The recorded experiments ran on Python 3.11 and CPU PyTorch on Windows x64, and CI runs the tests on Windows and Ubuntu. From the repo folder:
+- **Data.** One city, one four-month period and one 24-day test window. The early studies use 16 sensors on a single highway corridor, and the test period has more missing readings than training (the [audit](docs/audit.md) has the numbers).
+- **Training.** No hyperparameter search, and models get equal update budgets rather than training to convergence, so a model that needs longer is undersold. Most federated studies use one or two seeds and one geographic partition.
+- **Federation.** Every federated run is a simulation on one machine: no real network, stragglers or dropped clients.
+- **Comparisons.** Nothing here is compared with published METR-LA numbers, because splits, horizons and budgets differ. The DCRNN-style model predicts all horizons at once instead of using the paper's decoder.
 
-```powershell
-py -3.11 -m venv .venv
-.\\.venv\\Scripts\\python.exe -m pip install -r requirements-lock.txt
-.\\.venv\\Scripts\\python.exe -m pip install -e . --no-deps
-.\\.venv\\Scripts\\python.exe -m tracast.cli fetch
-.\\.venv\\Scripts\\python.exe -m pytest -q -W error
-```
+Each report lists its own limits in more detail.
 
-Then the experiments:
+{next_section}## Repository map
 
-```powershell
-# five-epoch benchmark and the longer-training study
-.\\.venv\\Scripts\\python.exe -m tracast.benchmark --config configs/benchmark.json --out runs/benchmark
-.\\.venv\\Scripts\\python.exe -m tracast.benchmark --config configs/benchmark-extended.json --out runs/benchmark-extended
+- `src/tracast/` holds the package:
+  - data and protocol: `data.py`, `topology.py` (the pinned DCRNN road graph), `experiment.py`, `stats.py` (test-day bootstrap), `provenance.py`
+  - models: `model.py` (GRU), `graph_model.py`, `recurrent.py` (LSTM), `shared.py` (shared-weight models), `diffusion.py` (DCRNN-style), `baselines.py`
+  - experiments: `benchmark.py`, `scaling.py`, `uncertainty.py` and `conformal.py`, `shift.py`, `inductive.py` (held-out sensors)
+  - federated learning: `federated*.py` and `flower_*.py` (the first 12-sensor study), `fedgraph*.py` (the federated graph models: partitions, FedAvg and FedProx, the Flower apps, and the arms x seeds runner)
+- `tests/` has unit tests on small constructed arrays, so no real data is needed, plus leakage tests.
+- `configs/` has one JSON file per experiment.
+- `reports/` has the saved results for every experiment, the technical report and the brief.
+- `docs/` has the run guide and the audit of the code and data.
+- `tools/` has the scripts that rebuild this README, the figures and the reports from the saved results.
 
-# federated study
-.\\.venv\\Scripts\\python.exe -m tracast.federated_study --config configs/federated-study.json --out runs/federated-study
+## Credits and license
 
-# all 207 sensors, shared-model variants, prediction intervals, drift (the scaling run takes a few hours)
-.\\.venv\\Scripts\\python.exe -m tracast.cli scaling --config configs/scaling.json --out runs/scaling
-.\\.venv\\Scripts\\python.exe -m tracast.cli scaling --config configs/variants.json --out runs/variants
-.\\.venv\\Scripts\\python.exe -m tracast.cli uncertainty --config configs/uncertainty.json --out runs/uncertainty
-.\\.venv\\Scripts\\python.exe -m tracast.cli shift --config configs/shift.json --out runs/shift
-
-# federated graph models: all 207 sensors, DCRNN, FedProx, held-out sensors (each takes hours)
-.\\.venv\\Scripts\\python.exe -m tracast.cli fedgraph --config configs/fedgraph.json --out runs/fedgraph
-.\\.venv\\Scripts\\python.exe -m tracast.cli fedgraph --config configs/fedgraph-diffusion.json --out runs/fedgraph-diffusion
-.\\.venv\\Scripts\\python.exe -m tracast.cli fedgraph --config configs/fedgraph-optimization.json --out runs/fedgraph-optimization
-.\\.venv\\Scripts\\python.exe -m tracast.cli holdout --config configs/holdout.json --out runs/holdout
-```
-
-On Linux or WSL use `python3.11` and `.venv/bin/python`. The installed `tracast` command runs everything too (`tracast --help` lists the subcommands). Use a fresh output folder for each run. The [run guide](docs/reproducibility.md) has the rest.
-
-{next_section}## What's where
-
-- `src/tracast/`: data loading, models (dense, shared-weight and the DCRNN-style diffusion GRU), the benchmark, scaling, conformal intervals, drift replay, held-out sensors and the federated code (the first small study and the federated graph models)
-- `tests/`: unit tests on small constructed arrays, no real data needed
-- `configs/`: one JSON file per experiment
-- `reports/`: saved results for every experiment, the technical report and the brief
-- `docs/`: the run guide and the audit of the code and data
-- `tools/`: scripts that rebuild the README, figures and reports from the saved results
-
-The code is MIT licensed. The data and the DCRNN graph have their own terms, see [DATA.md](DATA.md).
+The code is MIT licensed. METR-LA and the road graph come from Li, Yu, Shahabi and Liu (ICLR 2018) and have their own terms, see [DATA.md](DATA.md). Federated runs use [Flower](https://flower.ai). The [technical report](reports/research-report.md#references) lists the papers behind the methods. To cite TraCast, use [CITATION.cff](CITATION.cff).
 """
-
 
 NL = chr(10)
 
@@ -557,6 +549,7 @@ def findings(ext, first_pass, fed):
 
 
 def build_readme(first_pass, records):
+    import glance
     from pages import readme_blocks
 
     blocks = readme_blocks()
@@ -569,7 +562,7 @@ def build_readme(first_pass, records):
     ]
     m = ext["models"]
     return README.format(
-        findings=NL.join(findings(ext, first_pass, fed) + blocks["bullets"]),
+        findings=NL.join(glance.bullets(ext)),
         seeds=len(ext["config"]["seeds"]),
         rows=NL.join(
             f"| {EXTENDED_LABELS[n]} | {mean_sd(m[n]['mae'])} | {at(m[n], 15):.3f} "

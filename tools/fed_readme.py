@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from fed_pages import claim, gap, load, mae, plural, seed_phrase  # noqa: E402
+from fed_pages import claim, load, mae, plural, seed_phrase, versus  # noqa: E402
 from pages import join_and  # noqa: E402
 
 
@@ -98,8 +98,16 @@ def federated(summary):
         + table(rows, ["| Arm | MAE (SD) | RMSE |", "|---|---:|---:|"])
         + "\n\n![Clients and the road graph](reports/fedgraph/partition-map.png)\n\n"
         + (
-            f"Federated training cost {gap(price)} mph against a pooled model with the same cut graph, and the "
-            f"local graph still helped ({gap(graph)} mph against the federated model with no graph). "
+            versus(
+                price, "Federated training", "a pooled model with the same cut graph"
+            )
+            + ", and "
+            + versus(
+                graph,
+                "the federated Graph-GRU",
+                "the federated GRU with no graph",
+            )
+            + (", so the local graph still helps. " if graph["ci95"][1] < 0 else ". ")
             if price and graph
             else ""
         )
@@ -225,13 +233,13 @@ def diffusion(central, ablation, fed):
         + " ".join(
             fact
             for fact in (
-                "Three hops are not clearly better than two."
-                if g_depth and g_depth["ci95"][0] <= 0 <= g_depth["ci95"][1]
-                else "",
                 f"Diffusion itself is worth {-g_k0['estimate']:.3f} mph over the same model with no hops."
                 if g_k0 and g_k0["ci95"][1] < 0
                 else "",
-                f"Treating the road as undirected is {g_dir['estimate']:.3f} mph worse than using both directions."
+                "Two hops are enough, since three are not clearly better."
+                if g_depth and g_depth["ci95"][0] <= 0 <= g_depth["ci95"][1]
+                else "",
+                f"Treating the road as undirected costs {g_dir['estimate']:.3f} mph against using both directions, so the direction matters."
                 if g_dir and g_dir["ci95"][0] > 0
                 else "",
                 federated_part.strip(),
@@ -245,6 +253,50 @@ def diffusion(central, ablation, fed):
 
 
 # --- held-out sensors -----------------------------------------------------------------
+
+
+def holdout_paragraph(summary):
+    pairs = summary["paired_day_bootstrap"]
+    m = summary["methods"]
+    new = pairs.get("sgraph_zero_shot_vs_oracle_sgraph")
+    fitted = pairs.get("sgru_id_fitted_vs_sgraph_zero_shot")
+    ridge = pairs.get("sgru_id_ridge_vs_sgru_id_mean")
+    parts = []
+    if new:
+        parts.append(
+            versus(
+                new,
+                "On a sensor it never saw, the shared Graph-GRU",
+                "the same model trained on it",
+                interval=False,
+            )
+            + "."
+        )
+    parts.append(
+        f"The sensor-vector model has no vector to use ({m['sgru_id_zero']['mae']['mean']:.3f} mph "
+        f"with a zero vector)."
+    )
+    if fitted:
+        parts.append(
+            versus(
+                fitted,
+                "Fitting just that vector on the first week",
+                "the zero-shot Graph-GRU",
+                interval=False,
+            )
+            + "."
+        )
+    if ridge:
+        parts.append(
+            versus(
+                ridge,
+                "A vector predicted from sensor descriptors",
+                "the average vector",
+                interval=False,
+            )
+            + "."
+        )
+    return " ".join(parts)
 
 
 def holdout(summary):
@@ -305,7 +357,9 @@ def holdout(summary):
             ],
             ["| Method | MAE (SD) |", "|---|---:|"],
         )
-        + "\n\nThe [report](reports/holdout/report.md) has the comparisons with intervals and the limits.\n"
+        + "\n\n"
+        + holdout_paragraph(summary)
+        + " The [report](reports/holdout/report.md) has the comparisons with intervals and the limits.\n"
     )
     return bullet, text
 
@@ -383,22 +437,64 @@ def optimization(summary, personal):
     text = (
         "## FedAvg, FedProx and different kinds of clients\n\n"
         "The [FedProx study](reports/fedopt/report.md) uses 64 sensors and six clients, cut three ways "
-        "(by area, balanced across congestion levels, or grouped by congestion level), and compares FedAvg and "
-        "FedProx at several strengths, five local epochs against one, pooled and local-only references, and "
-        "local fine-tuning of the federated model. "
-        + ("In that one seed " if len(summary["seeds"]) == 1 else "")
-        + "FedAvg's error followed how different the clients' speed distributions were rather than how "
-        "much of the road graph each cut kept, and five local epochs a round cut the communication by "
-        "about a factor of five at a small cost in accuracy. The FedProx grid "
-        f"used {seed_phrase(summary['seeds'])}"
+        "(by area, balanced across congestion levels, or grouped by congestion level). It compares "
+        "FedAvg and FedProx at several strengths, five local epochs against one, pooled and "
+        "local-only references, and local fine-tuning of the federated model. Test MAE in mph, "
+        f"{seed_phrase(summary['seeds'])}:\n\n"
+        + prox_table(summary)
+        + "\n\nFedAvg's error followed how different the clients' speed distributions were rather "
+        "than how much of the road graph each cut kept"
         + (
-            f" and the fine-tuning runs {seed_phrase(personal['seeds'])}"
-            if personal
+            " (one seed, so a hint rather than a result)"
+            if len(summary["seeds"]) == 1
             else ""
         )
-        + ".\n"
+        + ", and five local epochs a round cut the communication by about a factor of five at a "
+        "small cost in accuracy. " + fine_tuning_sentence(personal) + "\n"
     )
     return bullets, text
+
+
+def prox_table(summary):
+    rows = []
+    for tag, label in (
+        ("geo", "Geographic areas"),
+        ("bal", "Balanced"),
+        ("cong", "Congestion-grouped"),
+    ):
+        names = (
+            f"{tag}_fedavg",
+            f"{tag}_fedprox_0.001",
+            f"{tag}_fedprox_0.01",
+            f"{tag}_fedprox_0.1",
+        )
+        cells = [
+            f"{summary['arms'][n]['mae']['mean']:.3f}" if n in summary["arms"] else "-"
+            for n in names
+        ]
+        rows.append(f"| {label} | " + " | ".join(cells) + " |")
+    head = (
+        "| Clients | FedAvg | FedProx, mu 0.001 | FedProx, mu 0.01 | FedProx, mu 0.1 |\n"
+        "|---|---:|---:|---:|---:|"
+    )
+    return head + "\n" + "\n".join(rows)
+
+
+def fine_tuning_sentence(personal):
+    if not personal:
+        return ""
+    arms = personal["arms"]
+    g = pair(personal, "fed_geo+ft", "local_geo")
+    if not (g and "fed_geo+ft" in arms and "local_geo" in arms):
+        return ""
+    return (
+        f"Letting each client keep training the federated model on its own data took geographic "
+        f"clients from {arms['fed_geo']['mae']['mean']:.3f} to "
+        f"{arms['fed_geo+ft']['mae']['mean']:.3f} mph. Every client training alone scores "
+        f"{arms['local_geo']['mae']['mean']:.3f}, and "
+        + versus(g, "the fine-tuned model", "that", interval=False)
+        + "."
+    )
 
 
 def blocks():
