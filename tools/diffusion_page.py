@@ -558,6 +558,61 @@ def cost_table(cost):
     return "\n".join([head, "|---|---:|---:|---:|---:|"] + rows)
 
 
+def ablation_figure(ablation, path):
+    """One bar per ablation model, so a single sensor count doesn't become a row of dots."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    names = [
+        "ha",
+        "dcrnn_k0_time",
+        "dcrnn_k1_time",
+        "dcrnn_time",
+        "dcrnn_k3_time",
+        "dcrnn_fwd_time",
+        "dcrnn_bwd_time",
+        "dcrnn_sym_time",
+    ]
+    colors = {"ha": "#a16207", "dcrnn_k0_time": "#64748b"}
+    for name in ("dcrnn_k1_time", "dcrnn_time", "dcrnn_k3_time"):
+        colors[name] = "#1d4ed8"
+    for name in ("dcrnn_fwd_time", "dcrnn_bwd_time", "dcrnn_sym_time"):
+        colors[name] = "#087e8b"
+    size = str(ablation["sizes"][0])
+    rows = [
+        (name, ablation["models"][name][size]["mae"])
+        for name in names
+        if name in ablation["models"]
+    ]
+    ys = list(range(len(rows)))[::-1]
+    fig, ax = plt.subplots(figsize=(8, 3.8), constrained_layout=True)
+    ax.barh(
+        ys,
+        [m["mean"] for _, m in rows],
+        xerr=[m["sd"] or 0 for _, m in rows],
+        color=[colors[n] for n, _ in rows],
+        capsize=3,
+    )
+    for y, (_, m) in zip(ys, rows):
+        ax.text(
+            m["mean"] + (m["sd"] or 0) + 0.015,
+            y,
+            f"{m['mean']:.3f}",
+            va="center",
+            fontsize=8,
+        )
+    ax.set_yticks(ys, [NAMES[n] for n, _ in rows])
+    ax.set(
+        xlim=(2.8, 3.95),
+        xlabel=f"Test MAE on {size} sensors (mph), mean and seed SD",
+        title="DCRNN ablations: depth in blue, direction in teal",
+    )
+    fig.savefig(path, dpi=170)
+    plt.close(fig)
+
+
 def build():
     central = load(ROOT / "runs/diffusion/scaling-summary.json")
     ablation = load(ROOT / "runs/diffusion-ablation/scaling-summary.json")
@@ -573,7 +628,6 @@ def build():
         ("runs/diffusion/scaling-accuracy.png", "central-accuracy.png"),
         ("runs/diffusion-ablation/scaling-summary.json", "ablation-summary.json"),
         ("runs/diffusion-ablation/scaling-config.json", "ablation-config.json"),
-        ("runs/diffusion-ablation/scaling-accuracy.png", "ablation-accuracy.png"),
         ("runs/diffusion-cost/scaling-summary.json", "cost-summary.json"),
         ("runs/diffusion-cost/scaling-config.json", "cost-config.json"),
     ):
@@ -587,6 +641,7 @@ def build():
         ("convergence.png", "federated-convergence.png"),
     ):
         shutil.copy2(ROOT / "runs/fedgraph-diffusion" / png, out / new)
+    ablation_figure(ablation, out / "ablation-accuracy.png")
     (out / "report.md").write_bytes(page(central, ablation, fed, cost).encode())
     return fed
 

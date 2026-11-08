@@ -136,19 +136,21 @@ def client_rows(summary, order, labels=LABELS):
     return [head, rule] + rows
 
 
-def copy_results(source, target, extras=(), seeds=None):
+def copy_results(source, target, extras=(), seeds=None, figures=()):
     """Copy the small saved records (not the logs, jobs or checkpoints) into reports/.
 
     With seeds, only cases for those seeds are copied, so a stray finished run from a
-    seed that was dropped from the study never ends up in the reports.
+    seed that was dropped from the study never ends up in the reports. Only the figures
+    named in figures are copied, so the reports hold the charts a page actually shows.
     """
     source, target = Path(source), Path(target)
     target.mkdir(parents=True, exist_ok=True)
     for name in ("summary.json", "settings.json", "launch.json", *extras):
         if (source / name).exists():
             shutil.copy2(source / name, target / name)
-    for png in source.glob("*.png"):
-        shutil.copy2(png, target / png.name)
+    for name in figures:
+        if (source / name).exists():
+            shutil.copy2(source / name, target / name)
     cases = target / "cases"
     for folder in sorted(source.glob("*-s[0-9]*")):
         if ".unfinished" in folder.name or not (folder / "result.json").exists():
@@ -625,11 +627,26 @@ def headline_page(summary, cost=None):
     )
 
 
+HEADLINE_FIGURES = (
+    "accuracy.png",
+    "convergence.png",
+    "horizons.png",
+    "clients.png",
+    "partition-map.png",
+    "protocol.png",
+)
+
+
 def build_headline(source="runs/fedgraph", target="reports/fedgraph"):
     summary = load(ROOT / source / "summary.json")
     if summary is None:
         return None
-    copy_results(ROOT / source, ROOT / target, seeds=summary["seeds"])
+    copy_results(
+        ROOT / source,
+        ROOT / target,
+        seeds=summary["seeds"],
+        figures=HEADLINE_FIGURES,
+    )
     cost = load(ROOT / "runs/fedgraph-cost/summary.json")
     if cost:
         (ROOT / target / "cost-summary.json").write_bytes(

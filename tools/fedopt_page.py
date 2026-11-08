@@ -415,7 +415,7 @@ def make_figures(summary, out):
     rows = [(k, arm(summary, f), arm(summary, c)) for k, f, c in ks]
     rows = [r for r in rows if r[1]]
     full = arm(summary, "central_full")
-    if rows and full:
+    if len(rows) > 1 and full:
         fig, ax = plt.subplots(figsize=(6.5, 4), constrained_layout=True)
         xs = [r[0] for r in rows]
         ax.plot(
