@@ -445,16 +445,15 @@ def trial(config, data, graph_dir, name, seed, out):
 
 
 def aggregate(results):
+    def moments(items):
+        return {
+            "mean": float(np.mean(items)),
+            "sd": float(np.std(items, ddof=1)) if len(items) > 1 else None,
+        }
+
     summary = {}
     for name in dict.fromkeys(r["model"] for r in results):
         values = [r for r in results if r["model"] == name]
-
-        def moments(items):
-            return {
-                "mean": float(np.mean(items)),
-                "sd": float(np.std(items, ddof=1)) if len(items) > 1 else None,
-            }
-
         summary[name] = {
             "n": len(values),
             "seeds": [r["seed"] for r in values],
@@ -552,20 +551,57 @@ def aggregate(results):
     return report
 
 
+PLOT_ORDER = (
+    "persistence",
+    "ha",
+    "linear",
+    "linear_time",
+    "gru",
+    "gru_time",
+    "lstm",
+    "graph_gru",
+    "graph_gru_time",
+    "graph_self",
+    "graph_self_time",
+)
+PLOT_NAMES = {
+    "persistence": "Persistence",
+    "ha": "Historical average",
+    "linear": "Linear",
+    "gru": "GRU",
+    "lstm": "LSTM",
+    "graph_gru": "Graph-GRU",
+    "graph_self": "Graph-GRU (self only)",
+}
+
+
+def pretty(name):
+    """A readable model name for a legend: gru_time becomes 'GRU + calendar'."""
+    base, timed = split_name(name)
+    return PLOT_NAMES.get(base, base) + (" + calendar" if timed else "")
+
+
 def plots(out, results, summary, protocol):
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    models = summary["models"]
+    # saved summaries have sorted keys, so put the models back in a fixed order
+    models = {
+        n: summary["models"][n]
+        for n in sorted(
+            summary["models"],
+            key=lambda n: PLOT_ORDER.index(n) if n in PLOT_ORDER else len(PLOT_ORDER),
+        )
+    }
     fig, axes = plt.subplots(1, 2, figsize=(12, 4), constrained_layout=True)
     for name, value in models.items():
         for metric, ax in zip(("mae", "rmse"), axes):
             x = [r["minutes"] for r in value["horizons"]]
             y = np.array([r[metric]["mean"] for r in value["horizons"]])
             sd = np.array([r[metric]["sd"] or 0 for r in value["horizons"]])
-            ax.plot(x, y, label=name)
+            ax.plot(x, y, label=pretty(name))
             ax.fill_between(x, y - sd, y + sd, alpha=0.12)
             ax.set(
                 xlabel="Forecast horizon (minutes)",
@@ -602,7 +638,7 @@ def plots(out, results, summary, protocol):
                 ]
             )
             x = np.arange(1, len(y) + 1)
-            ax.plot(x, y, label=name)
+            ax.plot(x, y, label=pretty(name))
             ax.fill_between(x, y - sd, y + sd, alpha=0.12)
             ax.set(
                 xlabel="Epoch",
@@ -613,6 +649,7 @@ def plots(out, results, summary, protocol):
                     else "Validation convergence"
                 ),
             )
+            ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(integer=True))
             ax.legend(fontsize=8)
     fig.savefig(out / "convergence.png", dpi=150)
     plt.close(fig)

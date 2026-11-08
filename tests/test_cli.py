@@ -11,6 +11,11 @@ from tracast import cli
     "command,module",
     [
         ("benchmark", "tracast.benchmark"),
+        ("scaling", "tracast.scaling"),
+        ("uncertainty", "tracast.uncertainty"),
+        ("shift", "tracast.shift"),
+        ("fedgraph", "tracast.fedgraph_study"),
+        ("holdout", "tracast.inductive"),
         ("federated", "tracast.federated"),
         ("study", "tracast.federated_study"),
         ("compare", "tracast.compare_runs"),

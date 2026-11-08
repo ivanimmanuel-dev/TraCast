@@ -464,7 +464,23 @@ COLORS = [
     "#16a34a",
     "#a16207",
     "#475569",
+    "#0ea5e9",
+    "#be185d",
 ]
+
+
+ARM_LABELS = {
+    "fed_sgraph": "Federated Graph-GRU",
+    "fed_sgru": "Federated GRU (no graph)",
+    "fed_dcrnn": "Federated DCRNN",
+    "central_sgraph_full": "Pooled Graph-GRU, full graph",
+    "central_sgraph_local": "Pooled Graph-GRU, local graphs",
+    "central_sgru": "Pooled GRU",
+    "central_dcrnn_full": "Pooled DCRNN, full graph",
+    "central_dcrnn_local": "Pooled DCRNN, local graphs",
+    "local_sgraph": "Local-only Graph-GRU",
+    "local_dcrnn": "Local-only DCRNN",
+}
 
 
 def figures(summary, out):
@@ -475,8 +491,13 @@ def figures(summary, out):
 
     out = Path(out)
     arms = summary["arms"]
-    names = list(arms)
+    # saved summaries have sorted keys, so put the arms back in a fixed order
+    order = list(ARM_LABELS)
+    names = sorted(arms, key=lambda n: order.index(n) if n in order else len(order))
     color = {n: COLORS[i % len(COLORS)] for i, n in enumerate(names)}
+
+    def label(name):
+        return ARM_LABELS.get(name, name)
 
     fig, ax = plt.subplots(figsize=(8, 4), constrained_layout=True)
     x = np.arange(len(names))
@@ -496,7 +517,7 @@ def figures(summary, out):
         )
     low = min(arms[n]["mae"]["mean"] for n in names)
     ax.set_ylim(low - 0.4, summary["baselines"]["persistence"]["mae"] + 0.2)
-    ax.set_xticks(x, names, rotation=25, ha="right")
+    ax.set_xticks(x, [label(n) for n in names], rotation=25, ha="right")
     ax.set(ylabel="Test MAE (mph)", title="Test MAE, mean and seed SD")
     ax.legend(fontsize=8)
     fig.savefig(out / "accuracy.png", dpi=150)
@@ -509,7 +530,7 @@ def figures(summary, out):
             mean = np.array([c["mean"] for c in arms[n]["validation_curve"]])
             sd = np.array([c["sd"] or 0 for c in arms[n]["validation_curve"]])
             rounds = np.arange(1, len(mean) + 1)
-            ax.plot(rounds, mean, label=n, color=color[n])
+            ax.plot(rounds, mean, label=label(n), color=color[n])
             ax.fill_between(rounds, mean - sd, mean + sd, alpha=0.15, color=color[n])
         ax.set(
             xlabel="Round (federated) or epoch block (pooled)",
@@ -528,7 +549,7 @@ def figures(summary, out):
         ax.plot(
             [int(s) for s in steps],
             [arms[n]["horizon_mae"][s]["mean"] for s in steps],
-            label=n,
+            label=label(n),
             color=color[n],
         )
     for key, style in (("persistence", ":"), ("ha", "--")):
@@ -557,7 +578,7 @@ def figures(summary, out):
             np.arange(len(clients)) + j * width,
             [c["mae"]["mean"] for c in arms[n]["clients"]],
             width,
-            label=n,
+            label=label(n),
             color=color[n],
         )
     ax.set_xticks(

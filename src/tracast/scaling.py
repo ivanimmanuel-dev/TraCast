@@ -129,14 +129,8 @@ def summarize(out):
         }
         if found:
             comparisons[str(count)] = found
-        for model in dict.fromkeys(
-            r["model"] for r in json.loads((folder / "results.json").read_text())
-        ):
-            runs = [
-                r
-                for r in json.loads((folder / "results.json").read_text())
-                if r["model"] == model
-            ]
+        for model in dict.fromkeys(r["model"] for r in trials):
+            runs = [r for r in trials if r["model"] == model]
             horizons = {
                 h["minutes"]: _stats([r["test"]["per_horizon"][i]["mae"] for r in runs])
                 for i, h in enumerate(runs[0]["test"]["per_horizon"])

@@ -96,6 +96,11 @@ def day_ranges(dataset, idx):
 
 def prepare(config, data, graph_dir, train_fraction):
     bench = config.training()
+    if (bench.history, bench.horizon) != (12, 12):
+        # window_range and known_windows count rows for 12 input and 12 forecast steps
+        raise ValueError(
+            "The replay is written for 12 input steps and 12 forecast steps"
+        )
     frame = load(data, 207, bench.rows)
     ids, weights, _ = topology.load(
         graph_dir, frame.columns, bench.sensors, bench.threshold
@@ -560,8 +565,8 @@ def aggregate(runs):
         "weekend": [i for i, d in enumerate(regimes) if d["weekend"]],
     }
     out["regimes"] = {}
-    for name, days in groups.items():
-        days = list(days)
+    for name, group in groups.items():
+        days = list(group)
         if not days:
             continue
         out["regimes"][name] = {
@@ -602,7 +607,12 @@ def figures(summary, out):
         "head_daily": "Head fine-tune (daily)",
         "retrain_weekly": "Full fine-tune (weekly)",
     }
-    settings = summary["settings"]
+    # saved summaries have sorted keys, so put the settings back in a fixed order
+    settings = {
+        k: summary["settings"][k]
+        for k in ("standard", "stale", *summary["settings"])
+        if k in summary["settings"]
+    }
 
     first = next(iter(settings.values()))
     fig, axes = plt.subplots(1, 3, figsize=(14, 3.6), constrained_layout=True)
@@ -648,7 +658,12 @@ def figures(summary, out):
             xlabel="Test day",
             ylabel="MAE (mph)",
         )
-    axes[0][0].legend(fontsize=7)
+    fig.legend(
+        *axes[0][0].get_legend_handles_labels(),
+        loc="outside lower center",
+        ncol=5,
+        fontsize=8,
+    )
     fig.savefig(out / "shift-daily.png", dpi=170)
     plt.close(fig)
 

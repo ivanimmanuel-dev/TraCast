@@ -38,6 +38,8 @@ class LinearAR(nn.Module):
 
 
 class Metrics:
+    """Masked MAE and RMSE, overall and for each forecast horizon."""
+
     def __init__(self, horizon):
         self.absolute = torch.zeros(horizon, dtype=torch.float64)
         self.squared = torch.zeros(horizon, dtype=torch.float64)

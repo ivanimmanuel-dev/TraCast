@@ -419,8 +419,17 @@ def figures(summary, out):
     import matplotlib.pyplot as plt
 
     out = Path(out)
-    methods = summary["mean"]["methods"]
-    reliability = summary["mean"]["reliability"]
+    # saved summaries have sorted keys, so put the methods back in a fixed order
+    methods = {
+        n: summary["mean"]["methods"][n]
+        for n in LABELS
+        if n in summary["mean"]["methods"]
+    }
+    reliability = {
+        n: summary["mean"]["reliability"][n]
+        for n in LABELS
+        if n in summary["mean"]["reliability"]
+    }
     alpha = summary["alpha"]
 
     fig, ax = plt.subplots(figsize=(5.2, 4.6), constrained_layout=True)
@@ -471,7 +480,12 @@ def figures(summary, out):
         xlabel="Forecast horizon (minutes)",
         ylabel="Width (mph)",
     )
-    axes[0].legend(fontsize=7)
+    fig.legend(
+        *axes[0].get_legend_handles_labels(),
+        loc="outside lower center",
+        ncol=4,
+        fontsize=8,
+    )
     fig.savefig(out / "uncertainty-horizon.png", dpi=170)
     plt.close(fig)
 
@@ -495,7 +509,8 @@ def figures(summary, out):
         )
     ax.axhline(1 - alpha, color="#444444", linestyle=":")
     ax.set(
-        ylim=(0.5, 1.0),
+        ylim=(0.5, 1.13),
+        yticks=[0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
         ylabel="Empirical coverage",
         title="Coverage by traffic condition at the forecast origin",
     )
@@ -503,7 +518,7 @@ def figures(summary, out):
         [x + 0.4 - width / 2 for x in range(len(groups))],
         [label for _, label in groups],
     )
-    ax.legend(fontsize=7, ncol=4)
+    ax.legend(fontsize=7, ncol=4, loc="upper center")
     fig.savefig(out / "uncertainty-conditions.png", dpi=170)
     plt.close(fig)
 

@@ -54,6 +54,13 @@ def heterogeneity(clients):
     }
 
 
+def stats(items):
+    return {
+        "mean": float(np.mean(items)),
+        "sd": float(np.std(items, ddof=1)) if len(items) > 1 else None,
+    }
+
+
 def aggregate(cases):
     conditions = {}
     for key in dict.fromkeys(
@@ -62,13 +69,6 @@ def aggregate(cases):
         values = [
             c for c in cases if f"{c['partition_rule']}-{c['round_budget']}" == key
         ]
-
-        def stats(items):
-            return {
-                "mean": float(np.mean(items)),
-                "sd": float(np.std(items, ddof=1)) if len(items) > 1 else None,
-            }
-
         conditions[key] = {
             "n": len(values),
             "seeds": [c["seed"] for c in values],
@@ -281,6 +281,10 @@ def validate_settings(settings):
     return base
 
 
+def read(job, name):
+    return json.loads((job / name).read_text())
+
+
 def run(settings, data, out):
     base = validate_settings(settings)
     seeds = settings["seeds"]
@@ -303,23 +307,19 @@ def run(settings, data, out):
                     start = time.perf_counter()
                     job = prepare(config, data, out / case_id)
                     execute(job)
-
-                    def read(name):
-                        return json.loads((job / name).read_text())
-
-                    clients = read("clients.json")
+                    clients = read(job, "clients.json")
                     case = {
                         "case_id": case_id,
                         "seed": seed,
                         "partition_rule": rule,
                         "round_budget": budget,
                         "config": asdict(config),
-                        "fedavg": read("federated.json"),
-                        "centralized": read("centralized.json"),
-                        "local_only": read("local-only.json"),
+                        "fedavg": read(job, "federated.json"),
+                        "centralized": read(job, "centralized.json"),
+                        "local_only": read(job, "local-only.json"),
                         "clients": clients,
-                        "rounds": read("rounds.json"),
-                        "centralized_history": read("centralized-history.json"),
+                        "rounds": read(job, "rounds.json"),
+                        "centralized_history": read(job, "centralized-history.json"),
                         "heterogeneity": heterogeneity(clients),
                         "wall_seconds": time.perf_counter() - start,
                     }

@@ -188,6 +188,13 @@ def test_the_whole_experiment_runs_on_a_small_series(series, tmp_path, monkeypat
         assert (tmp_path / name).stat().st_size > 0
 
 
+def test_the_replay_refuses_window_sizes_it_was_not_written_for(series, monkeypatch):
+    monkeypatch.setattr(shift, "load", lambda *args: series)
+    cfg = shift.ShiftConfig(benchmark={"sensors": 3, "rows": 1900, "history": 6})
+    with pytest.raises(ValueError, match="12 input steps"):
+        shift.prepare(cfg, "unused", "unused", 0.7)
+
+
 def test_slot_bias_learns_a_daily_pattern_the_blurred_average_cannot():
     steps = 40
     slots = (np.arange(400) % steps)[:, None] + np.zeros((400, 3), dtype=int)

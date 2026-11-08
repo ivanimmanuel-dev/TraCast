@@ -341,7 +341,7 @@ def with_vectors(model, params, trained, held, rows_for_held):
     """Load trained parameters and put each sensor's vector where it belongs."""
     shared = OrderedDict((k, v) for k, v in params.items() if k != "node")
     with torch.no_grad():
-        for (name, target), source in zip(
+        for (_, target), source in zip(
             [(n, p) for n, p in model.named_parameters() if n != "node"],
             shared.values(),
         ):

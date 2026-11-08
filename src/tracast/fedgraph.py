@@ -252,7 +252,7 @@ def graph_report(weights, groups):
         clients.append(
             {
                 "client": i,
-                "sensors": int(len(g)),
+                "sensors": len(g),
                 "local_edges": int(np.count_nonzero(local)),
                 "locally_isolated_sensors": isolated,
             }
