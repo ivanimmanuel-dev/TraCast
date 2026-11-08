@@ -4,10 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tracast"
-version = "0.3.0"
-description = "CPU traffic-speed forecasting on METR-LA"
+version = "0.4.0"
+description = "Traffic-speed forecasting on METR-LA: shared-weight and diffusion GRUs, conformal intervals, drift, and federated graph learning on a CPU"
 readme = "README.md"
 license = {text = "MIT"}
+keywords = ["traffic forecasting", "METR-LA", "graph neural networks", "federated learning", "conformal prediction"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 requires-python = ">=3.11,<3.12"
 dependencies = ["numpy==1.26.4", "pandas==2.2.3", "tables==3.10.1", "matplotlib==3.9.2", "torch==2.5.1"]
 

@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: If you use TraCast, please cite it as below.
+title: "TraCast: traffic-speed forecasting on METR-LA"
+type: software
+authors:
+  - alias: ivanimmanuel-dev
+repository-code: "https://github.com/ivanimmanuel-dev/TraCast"
+license: MIT
+version: 0.4.0
+abstract: >-
+  Traffic-speed forecasting on METR-LA, from recurrent baselines to federated graph
+  models, on a CPU. Covers shared-weight and diffusion GRUs, conformal prediction
+  intervals, drift and adaptation, forecasting for unseen sensors, and federated
+  learning with Flower on all 207 sensors.
+keywords:
+  - traffic forecasting
+  - METR-LA
+  - graph neural networks
+  - federated learning
+  - conformal prediction
