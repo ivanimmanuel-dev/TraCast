@@ -48,7 +48,7 @@ Still open: it is one machine and no network, the validation statistics the serv
 - Zero counts as missing, which also drops real stopped traffic.
 - One city and one four-month period, with one test window of 24 days.
 - Overlapping windows (one per five minutes) are strongly correlated, so the number of independent test points is far smaller than the number of windows. The test-day intervals are my way of respecting that, and they are wide for that reason.
-- Seeds: two to five per cell depending on the experiment.
+- Seeds: one to five per cell depending on the experiment, and the FedProx study and the 64-sensor DCRNN comparison have only one.
 
 ## Speed and memory
 
