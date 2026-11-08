@@ -131,7 +131,7 @@ As a check, the centralized reference is identical for both ownership rules, and
 
 ## 7. Scaling to all 207 sensors
 
-Everything above uses 16 sensors from one highway. I ran the same comparison on nested sets of 16, 32, 64, 128 and 207 sensors (each set contains the one before it), plus two new models that share one small GRU across every sensor, so their size doesn't depend on how many sensors there are. Test MAE in mph on the same first 16 sensors, whatever size the model was trained on:
+The studies above use 12 or 16 of the 207 sensors. I ran the same comparison on nested sets of 16, 32, 64, 128 and 207 sensors (each set contains the one before it), plus two new models that share one small GRU across every sensor, so their size doesn't depend on how many sensors there are. Test MAE in mph on the same first 16 sensors, whatever size the model was trained on:
 
 | Trained on this many sensors | 16 | 32 | 64 | 128 | 207 |
 |---|---:|---:|---:|---:|---:|
@@ -143,9 +143,11 @@ Everything above uses 16 sensors from one highway. I ran the same comparison on 
 
 ![Accuracy by sensor count](scaling/scaling-accuracy.png)
 
-The graph helps the shared models at every size (-0.057 to -0.029 mph), which the dense models can't show because they already read every sensor. Sharing the weights also wins once the network is big: at 128 and 207 sensors the shared GRU beats the dense one by 0.157 to 0.242 mph with 4,044 parameters instead of 105,396. What it costs is compute: at 207 sensors the shared Graph-GRU needs 23.9 s per epoch against 2.1 s for the dense one. And more sensors did not make the first 16 better: trained on all 207, the dense models are +0.471 to +0.494 mph worse on those 16 targets, the shared ones +0.192 to +0.220.
+The graph helps the shared models at every size (-0.057 to -0.029 mph), which the dense models can't show because they already read every sensor. Sharing the weights wins once the network is big: at 128 and 207 sensors the shared GRU beats the dense one by 0.157 to 0.242 mph with 4,044 parameters instead of 105,396.
 
-Two variants of the shared models are in the [variants report](variants/report.md), tested at 16 and 64 sensors. A learned vector of 4 numbers per sensor, which lets the shared network tell sensors apart, changes the test MAE on the sensors the models train on by -0.208 to -0.107 mph (negative is better), a bigger effect than the graph has, and with it the shared GRU scores 3.045 on the first 16 sensors when trained on 64, against 3.233 for the dense GRU. The catch is that a model with those vectors can't forecast a sensor it wasn't trained on. Swapping the GRU for an LSTM changes it by -0.030 to -0.020.
+Sharing costs compute, though: at 207 sensors the shared Graph-GRU needs 23.9 s per epoch against 2.1 s for the dense one. And more sensors did not make the first 16 better: trained on all 207, the dense models are +0.471 to +0.494 mph worse on those 16 targets, the shared ones +0.192 to +0.220.
+
+The [variants report](variants/report.md) tests two changes to the shared models at 16 and 64 sensors. A learned vector of 4 numbers per sensor, which lets the network tell sensors apart, changes test MAE by -0.208 to -0.107 mph (negative is better), a bigger effect than the graph has. With it the shared GRU scores 3.045 on the first 16 sensors when trained on 64, against 3.233 for the dense GRU. The catch is that a model with those vectors can't forecast a sensor it wasn't trained on (more on that below). Swapping the GRU for an LSTM changes it by only -0.030 to -0.020.
 
 The sizes' own-population scores, the cost in time and memory, and the limits are in the [scaling report](scaling/report.md).
 
@@ -200,7 +202,7 @@ The first federated experiment was small: 12 sensors and a GRU that looked at on
 
 ![Clients and the road graph](fedgraph/partition-map.png)
 
-Federated training cost +0.076 (+0.061 to +0.090) mph against a pooled model with the same cut graph, and the local graph still helped (-0.034 (-0.046 to -0.022) mph against the federated model with no graph). Training alone won on every client; the [headline report](fedgraph/report.md) has the numbers by client and by forecast horizon. The weights are tiny next to the data (11.8 MiB exchanged over the whole run), though this is a single-machine simulation, not a deployment.
+Federated training was 0.076 mph worse than a pooled model with the same cut graph (interval +0.061 to +0.090), and the federated Graph-GRU was 0.034 mph better than the federated GRU with no graph (interval -0.046 to -0.022), so the local graph still helps. Training alone won on every client; the [headline report](fedgraph/report.md) has the numbers by client and by forecast horizon. The weights are tiny next to the data (11.8 MiB exchanged over the whole run), though this is a single-machine simulation, not a deployment.
 
 ## 11. A DCRNN-style diffusion GRU
 
@@ -217,7 +219,7 @@ The shared Graph-GRU only averages direct neighbors. DCRNN (Li et al., ICLR 2018
 
 ![The model](diffusion/dcrnn-architecture.png)
 
-Three hops are not clearly better than two. Diffusion itself is worth 0.174 mph over the same model with no hops. Treating the road as undirected is 0.102 mph worse than using both directions. Federated, with six clients on 64 sensors, that advantage reverses: federated DCRNN is 0.026 mph worse than the federated Graph-GRU (interval +0.005 to +0.051), although pooled it is 0.164 mph better. Federating costs DCRNN 0.259 mph and the Graph-GRU 0.072 against pooled models with the same cut graph. The [report](diffusion/report.md) has the ablations, the 64-sensor results and the federated runs.
+Diffusion itself is worth 0.174 mph over the same model with no hops. Two hops are enough, since three are not clearly better. Treating the road as undirected costs 0.102 mph against using both directions, so the direction matters. Federated, with six clients on 64 sensors, that advantage reverses: federated DCRNN is 0.026 mph worse than the federated Graph-GRU (interval +0.005 to +0.051), although pooled it is 0.164 mph better. Federating costs DCRNN 0.259 mph and the Graph-GRU 0.072 against pooled models with the same cut graph. The [report](diffusion/report.md) has the ablations, the 64-sensor results and the federated runs.
 
 ## 12. Sensors the model never saw
 
@@ -236,11 +238,19 @@ A sensor-vector model has a row per training sensor, so a new sensor has no vect
 | Shared Graph-GRU trained on all sensors | 3.759 (0.003) |
 | Sensor-vector GRU trained on all sensors | 3.563 (0.024) |
 
-The [report](holdout/report.md) has the comparisons with intervals and the limits.
+On a sensor it never saw, the shared Graph-GRU was 0.108 mph worse than the same model trained on it. The sensor-vector model has no vector to use (4.385 mph with a zero vector). Fitting just that vector on the first week was 0.179 mph better than the zero-shot Graph-GRU. A vector predicted from sensor descriptors was 0.212 mph worse than the average vector. The [report](holdout/report.md) has the comparisons with intervals and the limits.
 
 ## 13. FedAvg, FedProx and different kinds of clients
 
-The [FedProx study](fedopt/report.md) uses 64 sensors and six clients, cut three ways (by area, balanced across congestion levels, or grouped by congestion level), and compares FedAvg and FedProx at several strengths, five local epochs against one, pooled and local-only references, and local fine-tuning of the federated model. In that one seed FedAvg's error followed how different the clients' speed distributions were rather than how much of the road graph each cut kept, and five local epochs a round cut the communication by about a factor of five at a small cost in accuracy. The FedProx grid used seed 7 and the fine-tuning runs seeds 7 and 42.
+The [FedProx study](fedopt/report.md) uses 64 sensors and six clients, cut three ways (by area, balanced across congestion levels, or grouped by congestion level). It compares FedAvg and FedProx at several strengths, five local epochs against one, pooled and local-only references, and local fine-tuning of the federated model. Test MAE in mph, seed 7:
+
+| Clients | FedAvg | FedProx, mu 0.001 | FedProx, mu 0.01 | FedProx, mu 0.1 |
+|---|---:|---:|---:|---:|
+| Geographic areas | 3.476 | 3.498 | 3.559 | 3.794 |
+| Balanced | 3.452 | - | - | 3.802 |
+| Congestion-grouped | 3.526 | - | 3.591 | 3.812 |
+
+FedAvg's error followed how different the clients' speed distributions were rather than how much of the road graph each cut kept (one seed, so a hint rather than a result), and five local epochs a round cut the communication by about a factor of five at a small cost in accuracy. Letting each client keep training the federated model on its own data took geographic clients from 3.473 to 3.312 mph. Every client training alone scores 3.306, and the fine-tuned model was not clearly different from that (0.006 mph).
 
 ## 14. What I take from this
 

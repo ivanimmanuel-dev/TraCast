@@ -223,7 +223,8 @@ Communication leaves out serialization, metrics, config and transport overhead. 
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements-report.txt
-.\.venv\Scripts\python.exe tools/presentation.py
+
+# one page per study: each reads runs/ and writes reports/
 .\.venv\Scripts\python.exe tools/pages.py
 .\.venv\Scripts\python.exe tools/architecture.py
 .\.venv\Scripts\python.exe tools/data_audit.py
@@ -233,10 +234,21 @@ Communication leaves out serialization, metrics, config and transport overhead. 
 .\.venv\Scripts\python.exe tools/diffusion_page.py
 .\.venv\Scripts\python.exe tools/fedopt_page.py
 .\.venv\Scripts\python.exe tools/holdout_page.py
+
+# then swap local paths in the saved records and build the README, report and brief
+.\.venv\Scripts\python.exe tools/export_records.py
+.\.venv\Scripts\python.exe tools/presentation.py
 .\.venv\Scripts\python.exe tools/build_research.py
 ```
 
-`pages.py` writes the scaling, shared-variants, intervals, drift and audit pages (run it first), `fed_figures.py` draws the partition map and the federated and DCRNN schematics, `fed_pages.py`, `diffusion_page.py`, `fedopt_page.py` and `holdout_page.py` write the federated graph, DCRNN, FedProx and held-out sensor pages and copy their saved results into `reports/`, `architecture.py` draws the shared-model schematic and `data_audit.py` needs the raw data to recompute the data facts. Run `pages.py` before `presentation.py`, because the README reads what it writes. These read the saved results and rebuild the README, the figures, the federated findings page, the technical report and the two-page PDF. They don't train anything. `tools/export_records.py` swaps local paths for `$REPO` and `$PYTHON_ENV` in saved records, and the export receipt keeps the before and after hashes. A manifest describes the code at the time of its run, so its source hashes can differ from the current checkout.
+None of this trains anything. The order matters because each step reads what the one before it wrote:
+
+- `pages.py` writes the scaling, shared-variants, intervals, drift and audit pages. `architecture.py` draws the shared-model schematic, and `data_audit.py` needs the raw data to recompute the data facts.
+- `fed_figures.py` draws the partition map and the federated and DCRNN schematics. `fed_pages.py`, `diffusion_page.py`, `fedopt_page.py` and `holdout_page.py` write the federated graph, DCRNN, FedProx and held-out sensor pages and copy their saved results into `reports/`.
+- `export_records.py` swaps local paths for `$REPO` and `$PYTHON_ENV` in the saved records, and the export receipt keeps the before and after hashes. Run it after anything that copies results into `reports/`.
+- `presentation.py` builds the README, the extended benchmark page and the figures. The README's "At a glance" list comes from `glance.py`, which checks each sentence against its numbers and stops the build if a result has moved far enough that a sentence is no longer true. `build_research.py` then writes the technical report and the two-page PDF.
+
+A manifest describes the code at the time of its run, so its source hashes can differ from the current checkout.
 
 ## Configs
 

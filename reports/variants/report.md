@@ -38,7 +38,7 @@ The left panel scores each model on all the sensors it was trained on, the right
 
 ## Limits
 
-- A sensor vector ties the model to the sensors it was trained on: it can't forecast a new sensor without training a vector for it. The plain shared models don't have that problem, which is why the scaling study used them, so the vectors trade some of what sharing weights is for against accuracy.
+- A sensor vector ties the model to the sensors it was trained on, so it can't forecast a new sensor until a vector is learned for it. The plain shared models don't have that limit, which gives up part of the point of sharing weights in exchange for accuracy. The [held-out sensor study](../holdout/report.md) tests fitting a vector on a new sensor's first week.
 - Only 16 and 64 sensors, because every extra model is another full training run at each size. Whether the vectors help more (or overfit) at 207 sensors isn't tested here.
 - Two seeds, the same equal-update budget as before, and a fixed 4-number vector. A larger vector or a longer run might change the picture.
 - I didn't time these models; the cost comparison in the scaling study covers the GRU versions only.
