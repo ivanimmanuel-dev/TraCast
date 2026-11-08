@@ -1,3 +1,5 @@
+"""The tracast command: fetch the data, run a first model, and start any study."""
+
 import argparse
 from dataclasses import asdict
 import importlib

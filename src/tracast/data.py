@@ -1,3 +1,10 @@
+"""Fetching, checking and splitting METR-LA.
+
+The download is pinned to one dataset revision and checked against its SHA-256. Loading
+validates the schema, the dates and the sensor count. Zeros and NaNs count as missing,
+rows are split by time (70/10/20), and windows never cross a split boundary.
+"""
+
 from pathlib import Path
 import hashlib
 import http.client

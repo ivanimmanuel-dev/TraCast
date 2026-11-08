@@ -1,3 +1,9 @@
+"""The first centralized GRU experiment and the pieces the later studies reuse.
+
+Config, seeding, the training loop, the run manifest (source, versions and data hashes)
+and the plots. The benchmark, scaling and drift studies build on these.
+"""
+
 from dataclasses import asdict, dataclass
 from importlib.metadata import version
 from pathlib import Path

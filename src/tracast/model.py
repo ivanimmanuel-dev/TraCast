@@ -1,3 +1,5 @@
+"""The dense GRU and linear forecasters, and the masked metrics."""
+
 import torch
 from torch import nn
 
